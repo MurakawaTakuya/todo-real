@@ -5,11 +5,12 @@
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
+    "resolveJsonModule": true,
     "strict": true,
-    "target": "es2017"
+    "esModuleInterop": true,
+    "target": "es2017",
+    "moduleResolution": "node"
   },
   "compileOnSave": true,
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

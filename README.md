@@ -39,3 +39,29 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ```
 npm install -g firebase-tools
 ```
+
+## Emulate in local
+### Frontend
+```
+npm run dev
+```
+
+### Backend
+Make sure to build the functions before starting the emulator everytime you make changes to the functions
+```
+cd .\functions\
+npm run build
+```
+
+```
+firebase emulators:start
+```
+
+## Deploy to Firebase
+```
+firebase deploy
+```
+if you want to deploy only the functions
+```
+firebase deploy --only functions
+```

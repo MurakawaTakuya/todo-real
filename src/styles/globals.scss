@@ -1,7 +1,25 @@
-html,
-body {
+html {
+  background: linear-gradient(
+    0deg,
+    rgb(226 249 253) 10.5%,
+    rgb(231 247 242) 86.8%
+  );
   margin: 0;
   max-width: 100vw;
   overflow-x: hidden;
   padding: 0;
+}
+
+body {
+  background: white;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+  height: 100vh;
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+main {
+  background: white;
 }

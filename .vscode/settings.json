@@ -14,7 +14,7 @@
   "[scss]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": { 
+    "editor.codeActionsOnSave": {
       "source.fixAll.stylelint": "explicit"
     }
   },
@@ -24,6 +24,9 @@
   "files.insertFinalNewline": true,
   "editor.codeActionsOnSave": {
     "source.addMissingImports": "always",
-    "source.fixAll.eslint": "explicit"
-  }
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "always"
+  },
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always"
 }

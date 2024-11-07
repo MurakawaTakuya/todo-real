@@ -56,8 +56,8 @@ router.route("/").get(async (req: Request, res: Response) => {
 });
 
 // POST: 新しいユーザーを登録するエンドポイント
-router.route("/:userId").post(async (req: Request, res: Response) => {
-  const userId = req.params.userId; // URLパラメータからuserIdを取得
+router.route("/").post(async (req: Request, res: Response) => {
+  const userId = db.collection("user").doc().id; // FirebaseのドキュメントIDを生成
 
   if (!userId) {
     return res.status(400).json({ message: "User ID is required" });
@@ -92,7 +92,9 @@ router.route("/:userId").post(async (req: Request, res: Response) => {
       streak: streak,
     });
 
-    return res.status(201).json({ message: "User created successfully" });
+    return res
+      .status(201)
+      .json({ message: "User created successfully", userId });
   } catch (error) {
     return res.status(500).json({ message: "Error creating user", error });
   }

@@ -104,7 +104,7 @@ When a user with the same name already exists, the response will be
 ```json
 {
   "message":"A user with the same user name 'testUser' already exists"
-  }
+}
 ```
 
 ### ユーザー情報取得

@@ -9,7 +9,27 @@ interface User {
   streak: number;
 }
 
-// GET: userIdに基づいてユーザー情報を取得するエンドポイント
+// GET: 全てのユーザーデータを取得(アカウント機能を作成したら廃止)
+router.route("/").get(async (req: Request, res: Response) => {
+  try {
+    const userSnapshot = await db.collection("user").get();
+
+    if (userSnapshot.empty) {
+      return res.status(404).json({ message: "No users found" });
+    }
+
+    const userData = userSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return res.json(userData);
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching user data", error });
+  }
+});
+
+// GET: userIdに基づいてユーザー情報を取得
 router.route("/id/:userId").get(async (req: Request, res: Response) => {
   const userId = req.params.userId;
 
@@ -28,7 +48,7 @@ router.route("/id/:userId").get(async (req: Request, res: Response) => {
   }
 });
 
-// GET: userNameに基づいてユーザー情報を取得するエンドポイント
+// GET: userNameに基づいてユーザー情報を取得
 router.route("/name/:userName").get(async (req: Request, res: Response) => {
   const userName = req.params.userName;
 
@@ -53,27 +73,7 @@ router.route("/name/:userName").get(async (req: Request, res: Response) => {
   }
 });
 
-// GET: 全てのユーザーデータを取得するエンドポイント(アカウント機能を作成したら廃止)
-router.route("/").get(async (req: Request, res: Response) => {
-  try {
-    const userSnapshot = await db.collection("user").get();
-
-    if (userSnapshot.empty) {
-      return res.status(404).json({ message: "No users found" });
-    }
-
-    const userData = userSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
-    return res.json(userData);
-  } catch (error) {
-    return res.status(500).json({ message: "Error fetching user data", error });
-  }
-});
-
-// POST: 新しいユーザーを登録するエンドポイント
+// POST: 新しいユーザーを登録
 router.route("/").post(async (req: Request, res: Response) => {
   const userId = db.collection("user").doc().id; // FirebaseのドキュメントIDを生成
 

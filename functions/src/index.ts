@@ -31,6 +31,10 @@ app.use(express.json());
 import userRouer from "./routers/userRouter";
 app.use("/user", userRouer);
 
+import goalRouter from "./routers/goalRouter";
+app.use("/goal", goalRouter);
+
+// Cloud Functionsにデプロイする関数
 const region = "asia-northeast1";
 
 export const helloWorld = onRequest({ region: region }, (req, res) => {

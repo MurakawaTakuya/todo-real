@@ -9,8 +9,27 @@ interface User {
   streak: number;
 }
 
+// GET: userIdに基づいてユーザー情報を取得するエンドポイント
+router.route("/id/:userId").get(async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  try {
+    const userDoc = await getUserFromId(userId);
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.json({ id: userDoc.id, ...userDoc.data() });
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching user data", error });
+  }
+});
+
 // GET: userNameに基づいてユーザー情報を取得するエンドポイント
-router.route("/:userName").get(async (req: Request, res: Response) => {
+router.route("/name/:userName").get(async (req: Request, res: Response) => {
   const userName = req.params.userName;
 
   if (!userName) {
@@ -19,7 +38,6 @@ router.route("/:userName").get(async (req: Request, res: Response) => {
 
   try {
     const userSnapshot = await getUserFromName(userName);
-
     if (userSnapshot.empty) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -105,4 +123,8 @@ export default router;
 // ユーザー名からユーザー情報を取得
 const getUserFromName = async (userName: string) => {
   return await db.collection("user").where("name", "==", userName).get();
+};
+
+const getUserFromId = async (userId: string) => {
+  return await db.collection("user").doc(userId).get();
 };

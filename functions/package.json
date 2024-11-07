@@ -9,7 +9,7 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "emu": "concurrently -k -n \"TypeaScript,Emulator\" -c \"cyan.bold,green.bold\" \"npx tsc --watch\" \"firebase emulators:start\""
+    "emu": "concurrently -k -n \"TypeScript,Emulator\" -c \"cyan.bold,green.bold\" \"npx tsc --watch\" \"firebase emulators:start\""
   },
   "engines": {
     "node": "18"
@@ -25,6 +25,7 @@
     "concurrently": "^9.1.0",
     "eslint": "^8.57.1",
     "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-unused-imports": "^4.1.4",
     "firebase-functions-test": "^3.1.0",

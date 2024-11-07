@@ -45,4 +45,5 @@ database-debug.log
 firestore-debug.log
 ui-debug.log
 *.cache
+*.log
 functions\lib

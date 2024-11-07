@@ -15,7 +15,12 @@ module.exports = {
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: ["tsconfig.json", "tsconfig.functions.json"],
+    project: [
+      "tsconfig.json",
+      "tsconfig.functions.json",
+      "functions/tsconfig.json",
+      "functions/tsconfig.functions.json",
+    ],
     sourceType: "module",
   },
   ignorePatterns: [
@@ -28,5 +33,6 @@ module.exports = {
     quotes: ["error", "double"],
     "import/no-unresolved": 0,
     indent: ["error", 2],
+    "new-cap": ["error", { capIsNew: false }],
   },
 };

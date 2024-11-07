@@ -1,16 +1,14 @@
-name: Lint Check
+name: Lint Check for Root and src
 
 on:
   pull_request:
     types: [opened, synchronize]
+    paths:
+      - "src/**"
 
 jobs:
-  lint-check:
+  lint-check-root:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dir: [".", "functions"]
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -22,8 +20,6 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ${{ matrix.dir }}
 
       - name: Run Lint
         run: npm run lint
-        working-directory: ${{ matrix.dir }}

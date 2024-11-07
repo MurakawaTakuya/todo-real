@@ -1,0 +1,29 @@
+name: Lint Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  lint-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir: [".", "functions"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ${{ matrix.dir }}
+
+      - name: Run Lint
+        run: npm run lint
+        working-directory: ${{ matrix.dir }}

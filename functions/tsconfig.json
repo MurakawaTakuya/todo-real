@@ -12,5 +12,5 @@
     "moduleResolution": "node"
   },
   "compileOnSave": true,
-  "include": ["src"]
+  "include": ["src/*", "functions/src/**/*"]
 }

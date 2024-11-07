@@ -18,10 +18,7 @@ router.route("/:userName").get(async (req: Request, res: Response) => {
   }
 
   try {
-    const userSnapshot = await db
-      .collection("user")
-      .where("name", "==", userName)
-      .get();
+    const userSnapshot = await getUserFromName(userName);
 
     if (userSnapshot.empty) {
       return res.status(404).json({ message: "User not found" });
@@ -79,6 +76,15 @@ router.route("/:userId").post(async (req: Request, res: Response) => {
     return res.status(400).json({ message: "name and streak are required" });
   }
 
+  // すでに同じ名前のuserが存在する場合はエラーを返す
+  const userSnapshot = await getUserFromName(name);
+
+  if (!userSnapshot.empty) {
+    return res.status(409).json({
+      message: `A user with the same user name '${name}' already exists`,
+    });
+  }
+
   try {
     // userIdをドキュメント名として使用してデータを保存
     await db.collection("user").doc(userId).set({
@@ -93,3 +99,8 @@ router.route("/:userId").post(async (req: Request, res: Response) => {
 });
 
 export default router;
+
+// ユーザー名からユーザー情報を取得
+const getUserFromName = async (userName: string) => {
+  return await db.collection("user").where("name", "==", userName).get();
+};

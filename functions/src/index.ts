@@ -20,6 +20,7 @@ import serviceAccount from "./serviceAccountKey.json";
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+  storageBucket: "todo-real-c28fa.appspot.com",
 });
 
 const app = express();
@@ -28,11 +29,12 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+import goalRouter from "./routers/goalRouter";
+import postRouter from "./routers/postRouter";
 import userRouer from "./routers/userRouter";
 app.use("/user", userRouer);
-
-import goalRouter from "./routers/goalRouter";
 app.use("/goal", goalRouter);
+app.use("/post", postRouter);
 
 // Cloud Functionsにデプロイする関数
 const region = "asia-northeast1";

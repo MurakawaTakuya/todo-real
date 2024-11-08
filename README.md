@@ -175,3 +175,47 @@ the same as Get User Data by User Id
     }
   ]
   ```
+
+## Posts
+### Create Post
+- URL: /post
+- Method: POST
+- Request
+  - Headers
+    - Content-Type: multipart/form-data
+  - Body (form-data)
+    - file: ファイル (アップロードする画像ファイル)
+    - userId: string (投稿者のユーザーID)
+    - text: string (投稿内容のテキスト)
+    - goalId: string (関連するゴールのID)
+  - Example
+    - file: 選択した画像ファイル
+    - userId: "IK0Zc2hoUYaYjXoqzmCl"
+    - text: "今日は勉強をがんばった"
+    - goalId: "RXlHJiv3GtpzSDHhfljS"
+
+- Response
+  ```json
+  {
+    "message": "Post created successfully",
+    "postId": "generatedPostId",
+    "imageUrl": "https://storage.googleapis.com/your-bucket-name/post/generatedStoreId"
+  }
+  ```
+  imageUrl is the URL of the uploaded image.
+  
+### Get Post
+- URL: /post/:userId
+- Method: GET
+- Response
+  ```json
+  [
+    {
+      "id":"generatedPostId",
+      "userId":"IK0Zc2hoUYaYjXoqzmCl",
+      "text":"今日は勉強をがんばった",
+      "goalId":"RXlHJiv3GtpzSDHhfljS",
+      "imageUrl":"https://storage.googleapis.com/your-bucket-name/post/generatedStoreId"
+    }
+  ]
+  ```

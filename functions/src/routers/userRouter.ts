@@ -29,7 +29,7 @@ router.route("/").get(async (req: Request, res: Response) => {
   }
 });
 
-// GET: userIdに基づいてユーザー情報を取得
+// GET: userIdからユーザー情報を取得
 router.route("/id/:userId").get(async (req: Request, res: Response) => {
   const userId = req.params.userId;
 
@@ -48,7 +48,7 @@ router.route("/id/:userId").get(async (req: Request, res: Response) => {
   }
 });
 
-// GET: userNameに基づいてユーザー情報を取得
+// GET: userNameからユーザー情報を取得
 router.route("/name/:userName").get(async (req: Request, res: Response) => {
   const userName = req.params.userName;
 
@@ -94,7 +94,7 @@ router.route("/").post(async (req: Request, res: Response) => {
     return res.status(400).json({ message: "name and streak are required" });
   }
 
-  // すでに同じ名前のuserが存在する場合はエラーを返す
+  // 既に同じ名前のuserが存在する場合はエラーを返す
   const userSnapshot = await getUserFromName(name);
 
   if (!userSnapshot.empty) {

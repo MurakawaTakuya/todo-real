@@ -4,14 +4,13 @@ import admin from "firebase-admin";
 const router = express.Router();
 const db = admin.firestore();
 
-// Interface for Goal
 interface Goal {
   userId: string;
   deadline: Date;
   text: string;
 }
 
-// GET: すべての目標を取得
+// GET: 全ての目標を取得
 router.route("/").get(async (req: Request, res: Response) => {
   try {
     const goalSnapshot = await db.collection("goal").get();
@@ -30,7 +29,7 @@ router.route("/").get(async (req: Request, res: Response) => {
   }
 });
 
-// GET: 目標を取得
+// GET: userIdから目標を取得
 router.route("/:userId").get(async (req: Request, res: Response) => {
   const userId = req.params.userId;
 

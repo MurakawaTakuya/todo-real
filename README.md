@@ -1,8 +1,20 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
+First run this command to install required packages:
 
-First, run the development server:
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+(Every time you add a new package, you need to run this command again.)
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -29,12 +41,6 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
 ## Before using Firebase in local
 ```
 npm install -g firebase-tools
@@ -47,12 +53,13 @@ npm run dev
 ```
 
 ### Backend
-Make sure to build the functions before starting the emulator everytime you make changes to the functions
 ```
 cd .\functions\
-npm run build
+npm run emu
 ```
+This command includes `firebase emulators:start` and `npx tsc --watch` which watches the files and restarts the server when the files are changed.
 
+if you don't want ts-node to watch the files, just use
 ```
 firebase emulators:start
 ```
@@ -67,6 +74,7 @@ firebase deploy --only functions
 ```
 
 # API
+API is provided by Firebase Cloud Functions. Database is provided by Firestore.
 ## UserData
 ### Create User Data
 - URL: /user

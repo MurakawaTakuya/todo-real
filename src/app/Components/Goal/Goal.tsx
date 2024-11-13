@@ -33,8 +33,12 @@ export default function Goal() {
 
       setText("");
       setDueDate("");
-    } catch (error: any) {
-      console.error("Fetch error:", error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Fetch error:", error.message);
+      } else {
+        console.error("An unknown error occurred");
+      }
     }
   };
 

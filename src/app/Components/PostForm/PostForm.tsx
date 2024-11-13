@@ -5,16 +5,19 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import React, { ChangeEvent, useState } from "react";
 
-const ImageUploader: React.FC = () => {
+export default function PostForm() {
   const [image, setImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [text, setText] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [progress, setProgress] = useState<number>(100);
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    setImage(selectedFile || null);
-    setError("");
+    // TODO: 画像の更新
+  };
+
+  const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
+    // TODO: テキストの更新
   };
 
   const handleUpload = () => {
@@ -22,28 +25,68 @@ const ImageUploader: React.FC = () => {
       setError("ファイルが選択されていません");
       return;
     }
+    if (!text) {
+      setError("テキストが入力されていません");
+      return;
+    }
 
+    // アップロード開始
     uploadImage(
       image,
       (percent) => setProgress(percent),
       (errorMsg) => setError(errorMsg),
-      (url, hash) => {
+      async (url, hash) => {
         setImageUrl(url);
-        console.log("Generated Hash:", hash); // アップロード完了時にユニークIDを表示
+        console.log("Image is save at :", url);
+        console.log("Generated storage path hash:", hash);
+
+        const postData = {
+          userId: "temp", // authenticatorが準備できるまで仮で設定
+          storeId: `post/${hash}/image`,
+          text: text,
+          goalId: "temp", // authenticatorが準備できるまで仮で設定
+        };
+
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:5001/todo-real-c28fa/asia-northeast1/firestore/post/",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(postData),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("データの送信に失敗しました");
+          }
+
+          setProgress(100); // アップロード完了の進捗を表示
+          console.log("success:", postData);
+        } catch (err) {
+          setError("データの送信に失敗しました");
+          console.error(err);
+        }
       }
     );
   };
 
   return (
     <div>
-      <Typography variant="h6">ファイルをアップロード</Typography>
+      <Typography variant="h6">投稿内容を入力</Typography>
       {error && <Typography color="error">{error}</Typography>}
 
-      <input type="file" onChange={handleImageChange} />
-      <button onClick={handleUpload}>Upload</button>
+      {/* TODO: テキスト入力 */}
+
+      {/* TODO: 画像選択 */}
+
+      {/* TODO: アップロードボタン */}
 
       {progress !== 100 && <LinearProgressWithLabel value={progress} />}
 
+      {/* 一旦仮で表示 */}
       {imageUrl && (
         <Box mt={2}>
           <Typography variant="body1">アップロード完了:</Typography>
@@ -52,9 +95,7 @@ const ImageUploader: React.FC = () => {
       )}
     </div>
   );
-};
-
-export default ImageUploader;
+}
 
 interface LinearProgressWithLabelProps {
   value: number;

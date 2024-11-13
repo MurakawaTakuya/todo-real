@@ -1,11 +1,11 @@
+import ImageUploader from "./Components/PostForm/PostForm";
 import Posts from "./Components/Posts/Posts";
-import UpLoadTest from "./Components/Uploader/Uploader";
 
-export default function Home() {
+export default function Top() {
   return (
     <>
       <Posts />
-      <UpLoadTest />
+      <ImageUploader />
     </>
   );
 }

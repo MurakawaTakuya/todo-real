@@ -21,6 +21,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 
+console.log(firebaseConfig);
+
 if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
   connectStorageEmulator(storage, "localhost", 9199);
 }

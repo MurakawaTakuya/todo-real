@@ -1,12 +1,11 @@
 "use client";
-import { storage } from "@/app/firebase";
+import { uploadImage } from "@/app/utils/Uploader";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { ChangeEvent, useState } from "react";
 
-const Uploader: React.FC = () => {
+const ImageUploader: React.FC = () => {
   const [image, setImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -24,24 +23,13 @@ const Uploader: React.FC = () => {
       return;
     }
 
-    const storageRef = ref(storage, `images/test/${image.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, image);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setProgress(percent);
-      },
-      (error) => {
-        setError("ファイルアップに失敗しました。エラー: " + error.message);
-        setProgress(100);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setImageUrl(downloadURL);
-          setProgress(100);
-        });
+    uploadImage(
+      image,
+      (percent) => setProgress(percent),
+      (errorMsg) => setError(errorMsg),
+      (url, hash) => {
+        setImageUrl(url);
+        console.log("Generated Hash:", hash); // アップロード完了時にユニークIDを表示
       }
     );
   };
@@ -66,7 +54,7 @@ const Uploader: React.FC = () => {
   );
 };
 
-export default Uploader;
+export default ImageUploader;
 
 interface LinearProgressWithLabelProps {
   value: number;

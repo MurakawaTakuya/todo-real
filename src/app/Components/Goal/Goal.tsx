@@ -19,7 +19,7 @@ export default function Goal() {
           body: JSON.stringify({
             userId: "sampleUser123",
             text: text,
-            deadline: new Date(dueDate).toISOString(),
+            deadline: dueDate,
           }),
         }
       );

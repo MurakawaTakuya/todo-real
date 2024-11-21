@@ -29,7 +29,7 @@ const ImageUploader: React.FC = () => {
       (errorMsg) => setError(errorMsg),
       (url, hash) => {
         setImageUrl(url);
-        console.log("Generated Hash:", hash); // アップロード完了時にユニークIDを表示
+        // console.log("Generated Hash:", hash); // アップロード完了時にユニークIDを表示
       }
     );
   };

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectStorageEmulator, getStorage } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,11 +19,12 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+console.log("firebaseConfig initialized");
+export const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
-
-console.log(firebaseConfig);
+export const auth = getAuth(initializeApp(firebaseConfig));
 
 if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
   connectStorageEmulator(storage, "localhost", 9199);
+  connectAuthEmulator(auth, "http://127.0.0.1:9099");
 }

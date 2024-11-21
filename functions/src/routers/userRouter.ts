@@ -75,22 +75,17 @@ router.route("/name/:userName").get(async (req: Request, res: Response) => {
 
 // POST: 新しいユーザーを登録
 router.route("/").post(async (req: Request, res: Response) => {
-  const userId = db.collection("user").doc().id; // FirebaseのドキュメントIDを生成
-
-  if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
-  }
-
   let name: User["name"];
+  let uid: string;
   let streak: User["streak"];
 
   try {
-    ({ name, streak = 0 } = req.body as User);
+    ({ name, uid, streak = 0 } = req.body);
   } catch (error) {
     return res.status(400).json({ message: "Invalid request body", error });
   }
 
-  if (!name || streak === undefined) {
+  if (!name || !uid || streak === undefined) {
     return res.status(400).json({ message: "name and streak are required" });
   }
 
@@ -105,14 +100,12 @@ router.route("/").post(async (req: Request, res: Response) => {
 
   try {
     // userIdをドキュメント名として使用してデータを保存
-    await db.collection("user").doc(userId).set({
+    await db.collection("user").doc(uid).set({
       name: name,
       streak: streak,
     });
 
-    return res
-      .status(201)
-      .json({ message: "User created successfully", userId });
+    return res.status(201).json({ message: "User created successfully", uid });
   } catch (error) {
     return res.status(500).json({ message: "Error creating user", error });
   }

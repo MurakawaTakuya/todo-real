@@ -1,30 +1,19 @@
 "use client";
+import { createUser } from "@/utils/createUserAuth";
 import React, { useState } from "react";
 export default function UserForm() {
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
-      const response = await fetch(
-        "http://127.0.0.1:5001/todo-real-c28fa/asia-northeast1/firestore/user/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
-      console.log("Success:", data);
+      await createUser(email, password, name);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("errorCode:", (error as any)?.errorCode);
+      console.error("errorMessage:", (error as any)?.errorMessage);
     }
   };
 
@@ -32,11 +21,31 @@ export default function UserForm() {
     <form onSubmit={handleSubmit}>
       <label>
         Username:
+        {/* user name */}
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
+          autoComplete="username"
+        />
+        {/* email */}
+        Email:
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
+        />
+        {/* password */}
+        Password:
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="current-password"
         />
       </label>
       <button type="submit">Submit</button>

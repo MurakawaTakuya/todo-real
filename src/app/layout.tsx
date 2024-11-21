@@ -1,6 +1,7 @@
 import "@/styles/globals.scss";
 import type { Metadata } from "next";
 import Header from "./Components/Header/Header";
+import "./firebase";
 
 export const metadata: Metadata = {
   title: "Todo Real(仮)",

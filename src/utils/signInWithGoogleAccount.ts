@@ -18,6 +18,8 @@ export const signInWithGoogleAccount = async () => {
     console.log("Google login successful");
     // console.log("Google login successful:", result.user);
   } catch (error) {
-    console.error("Google login error:", error);
+    const errorCode = (error as any).code;
+    const errorMessage = (error as any).message;
+    throw new Error(`Error ${errorCode}: ${errorMessage}`);
   }
 };

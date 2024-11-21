@@ -1,6 +1,7 @@
 "use client";
 import { createUser } from "@/utils/createUserAuth";
 import { loginUser } from "@/utils/loginUserAuth";
+import { signInAsGuest } from "@/utils/signInAnonymously";
 import { signInWithGoogleAccount } from "@/utils/signInWithGoogleAccount";
 import React, { useState } from "react";
 export default function UserForm() {
@@ -32,6 +33,10 @@ export default function UserForm() {
 
   const handleGoogleLogin = async () => {
     await signInWithGoogleAccount();
+  };
+
+  const handleGuestLogin = async () => {
+    await signInAsGuest();
   };
 
   return (
@@ -92,6 +97,7 @@ export default function UserForm() {
         <button type="submit">Submit</button>
       </form>
       <button onClick={handleGoogleLogin}>Googleでログイン</button>
+      <button onClick={handleGuestLogin}>ゲストログイン</button>
     </>
   );
 }

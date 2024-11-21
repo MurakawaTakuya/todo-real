@@ -90,13 +90,13 @@ router.route("/").post(async (req: Request, res: Response) => {
   }
 
   // 既に同じ名前のuserが存在する場合はエラーを返す
-  const userSnapshot = await getUserFromName(name);
+  // const userSnapshot = await getUserFromName(name);
 
-  if (!userSnapshot.empty) {
-    return res.status(409).json({
-      message: `A user with the same user name '${name}' already exists`,
-    });
-  }
+  // if (!userSnapshot.empty) {
+  //   return res.status(409).json({
+  //     message: `A user with the same user name '${name}' already exists`,
+  //   });
+  // }
 
   try {
     // userIdをドキュメント名として使用してデータを保存

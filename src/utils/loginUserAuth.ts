@@ -20,9 +20,8 @@ export const loginUser = (email: string, password: string) => {
       console.log(user.uid, userData);
     })
     .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      throw new Error(`Error ${errorCode}: ${errorMessage}`);
+      console.error("errorCode:", (error as any)?.errorCode);
+      console.error("errorMessage:", (error as any)?.errorMessage);
     });
   return null;
 };

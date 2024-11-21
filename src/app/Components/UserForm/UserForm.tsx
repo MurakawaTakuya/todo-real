@@ -4,6 +4,7 @@ import { createUser } from "@/utils/createUserAuth";
 import { loginUser } from "@/utils/loginUserAuth";
 import { signInAsGuest } from "@/utils/signInAnonymously";
 import { signInWithGoogleAccount } from "@/utils/signInWithGoogleAccount";
+import { useUser } from "@/utils/UserContext";
 import { signOut } from "firebase/auth";
 import React, { useState } from "react";
 
@@ -11,6 +12,8 @@ export default function UserForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const { user } = useUser();
 
   const handleRegisterSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -42,6 +45,7 @@ export default function UserForm() {
 
   return (
     <>
+      <p>{user ? `ログイン中: ${user.name}` : "ログインしてください"}</p>
       アカウント作成
       <form onSubmit={handleRegisterSubmit}>
         <label>

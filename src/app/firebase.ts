@@ -1,16 +1,12 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import {
   browserLocalPersistence,
   connectAuthEmulator,
   getAuth,
   GoogleAuthProvider,
-  onAuthStateChanged,
   setPersistence,
 } from "firebase/auth";
 import { connectStorageEmulator, getStorage } from "firebase/storage";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -24,7 +20,6 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
 console.log("firebaseConfig initialized");
 export const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
@@ -40,33 +35,13 @@ setPersistence(auth, browserLocalPersistence)
     console.error("Error setting persistence:", error);
   });
 
-// ログイン状態を監視
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    const isGoogle = user.providerData.some(
-      (profile) => profile.providerId === "google.com"
-    );
-    const isEmail = user.providerData.some(
-      (profile) => profile.providerId === "password"
-    );
-    const isGuest = user.isAnonymous;
-
-    if (isGoogle) {
-      console.log("Googleアカウントでログインしています");
-    } else if (isEmail) {
-      console.log("メールとパスワードでログインしています");
-    } else if (isGuest) {
-      console.log("匿名（ゲスト）でログインしています");
-    } else {
-      console.log("その他の方法でログインしています");
-    }
-  } else {
-    console.log("No user is logged in.", user);
-  }
-});
-
 // エミュレータの設定
 if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
   connectStorageEmulator(storage, "localhost", 9199);
+  console.log("Storage: Emulator");
   connectAuthEmulator(auth, "http://127.0.0.1:9099");
+  console.log("Authentication: Emulator");
+} else {
+  console.log("Storage: Production");
+  console.log("Authentication: Production");
 }

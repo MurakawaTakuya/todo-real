@@ -1,6 +1,7 @@
 import { auth, googleProvider } from "@/app/firebase";
 import { getAdditionalUserInfo, signInWithPopup } from "firebase/auth";
 import { createUserAPI } from "./createUserAPI";
+import { updateUser } from "./UserContext";
 
 /**
  * Googleアカウントでログインする
@@ -12,10 +13,17 @@ export const signInWithGoogleAccount = async () => {
 
     // 初めての時だけユーザー情報を登録する
     if (getAdditionalUserInfo(result)?.isNewUser) {
+      // uidとdocument IDを一致させる
       await createUserAPI(
         result.user.displayName ?? "no name",
         result.user.uid
       );
+      updateUser({
+        uid: result.user.uid,
+        name: result.user.displayName ?? "no name",
+        streak: 0,
+        loginType: "Google",
+      });
     }
 
     console.log("Google login successful");

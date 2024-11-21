@@ -1,5 +1,6 @@
 /**
  * Cloud FunctionsのAPIを呼び出して、ユーザー情報をFirestoreに登録する
+ * Authenticationのuidと/userのdocument IDは同じにする
  *
  * @param {string} name
  * @param {string} uid

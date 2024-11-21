@@ -19,7 +19,7 @@ router.route("/").get(async (req: Request, res: Response) => {
     }
 
     const userData = userSnapshot.docs.map((doc) => ({
-      id: doc.id,
+      uid: doc.id,
       ...doc.data(),
     }));
 
@@ -42,7 +42,7 @@ router.route("/id/:userId").get(async (req: Request, res: Response) => {
     if (!userDoc.exists) {
       return res.status(404).json({ message: "User not found" });
     }
-    return res.json({ id: userDoc.id, ...userDoc.data() });
+    return res.json({ uid: userDoc.id, ...userDoc.data() });
   } catch (error) {
     return res.status(500).json({ message: "Error fetching user data", error });
   }
@@ -63,7 +63,7 @@ router.route("/name/:userName").get(async (req: Request, res: Response) => {
     }
 
     const userData = userSnapshot.docs.map((doc) => ({
-      id: doc.id,
+      uid: doc.id,
       ...doc.data(),
     }));
 

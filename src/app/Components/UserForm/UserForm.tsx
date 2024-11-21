@@ -35,8 +35,8 @@ export default function UserForm() {
       await signOut(auth);
       console.log("Signed out");
     } catch (error) {
-      console.error("errorCode:", (error as any)?.errorCode);
-      console.error("errorMessage:", (error as any)?.errorMessage);
+      console.error("errorCode:", (error as Error)?.name);
+      console.error("errorMessage:", (error as Error)?.message);
     }
   };
 

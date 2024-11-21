@@ -10,23 +10,19 @@ export /**
  * @return {*}  {Promise<User>}
  */
 const fetchUserAPI = async (uid: string): Promise<User> => {
-  try {
-    const response = await fetch(
-      `http://127.0.0.1:5001/todo-real-c28fa/asia-northeast1/firestore/user/id/${uid}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      new Error("Network response was not ok");
+  const response = await fetch(
+    `http://127.0.0.1:5001/todo-real-c28fa/asia-northeast1/firestore/user/id/${uid}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw error;
+  );
+
+  if (!response.ok) {
+    new Error("Network response was not ok");
   }
+  const data = await response.json();
+  return data;
 };

@@ -27,6 +27,7 @@ const ImageUploader: React.FC = () => {
       image,
       (percent) => setProgress(percent),
       (errorMsg) => setError(errorMsg),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       (url, hash) => {
         setImageUrl(url);
         // console.log("Generated Hash:", hash); // アップロード完了時にユニークIDを表示

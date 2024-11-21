@@ -5,25 +5,21 @@
  * @param {string} uid
  */
 export const createUserAPI = async (name: string, uid: string) => {
-  try {
-    const response = await fetch(
-      "http://127.0.0.1:5001/todo-real-c28fa/asia-northeast1/firestore/user/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ uid, name }),
-      }
-    );
-
-    if (!response.ok) {
-      new Error("Network response was not ok");
+  const response = await fetch(
+    "http://127.0.0.1:5001/todo-real-c28fa/asia-northeast1/firestore/user/",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ uid, name }),
     }
-    const data = await response.json();
-    console.log("Successfully created user");
-    // console.log("Success:", data);
-  } catch (error) {
-    throw error;
+  );
+
+  if (!response.ok) {
+    new Error("Network response was not ok");
   }
+  console.log("Successfully created user");
+  // const data = await response.json();
+  // console.log("Success:", data);
 };

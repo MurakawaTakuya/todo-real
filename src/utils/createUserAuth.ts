@@ -22,9 +22,8 @@ export const createUser = (email: string, password: string, name: string) => {
       // TODO: ログイン状態の維持
     })
     .catch((error) => {
-      const errorCode = error.code ? error.code : "unknown";
+      const errorCode = error.code ?? "unknown";
       const errorMessage = error.message;
-      // ..
       throw { errorCode, errorMessage };
     });
 };

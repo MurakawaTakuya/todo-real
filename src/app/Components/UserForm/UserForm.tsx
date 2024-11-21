@@ -1,6 +1,7 @@
 "use client";
 import { createUser } from "@/utils/createUserAuth";
 import { loginUser } from "@/utils/loginUserAuth";
+import { signInWithGoogleAccount } from "@/utils/signInWithGoogleAccount";
 import React, { useState } from "react";
 export default function UserForm() {
   const [name, setName] = useState("");
@@ -27,6 +28,10 @@ export default function UserForm() {
       console.error("errorCode:", (error as any)?.errorCode);
       console.error("errorMessage:", (error as any)?.errorMessage);
     }
+  };
+
+  const handleGoogleLogin = async () => {
+    await signInWithGoogleAccount();
   };
 
   return (
@@ -86,6 +91,7 @@ export default function UserForm() {
         </label>
         <button type="submit">Submit</button>
       </form>
+      <button onClick={handleGoogleLogin}>Googleでログイン</button>
     </>
   );
 }

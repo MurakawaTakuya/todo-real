@@ -1,9 +1,12 @@
 "use client";
+import { auth } from "@/app/firebase";
 import { createUser } from "@/utils/createUserAuth";
 import { loginUser } from "@/utils/loginUserAuth";
 import { signInAsGuest } from "@/utils/signInAnonymously";
 import { signInWithGoogleAccount } from "@/utils/signInWithGoogleAccount";
+import { signOut } from "firebase/auth";
 import React, { useState } from "react";
+
 export default function UserForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -11,24 +14,12 @@ export default function UserForm() {
 
   const handleRegisterSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    try {
-      await createUser(email, password, name);
-    } catch (error) {
-      console.error("errorCode:", (error as any)?.errorCode);
-      console.error("errorMessage:", (error as any)?.errorMessage);
-    }
+    await createUser(email, password, name);
   };
 
   const handleLoginSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // ログイン処理
-    try {
-      await loginUser(email, password);
-    } catch (error) {
-      console.error("errorCode:", (error as any)?.errorCode);
-      console.error("errorMessage:", (error as any)?.errorMessage);
-    }
+    await loginUser(email, password);
   };
 
   const handleGoogleLogin = async () => {
@@ -39,13 +30,22 @@ export default function UserForm() {
     await signInAsGuest();
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      console.log("Signed out");
+    } catch (error) {
+      console.error("errorCode:", (error as any)?.errorCode);
+      console.error("errorMessage:", (error as any)?.errorMessage);
+    }
+  };
+
   return (
     <>
       アカウント作成
       <form onSubmit={handleRegisterSubmit}>
         <label>
           Username:
-          {/* user name */}
           <input
             type="text"
             value={name}
@@ -53,7 +53,6 @@ export default function UserForm() {
             required
             autoComplete="username"
           />
-          {/* email */}
           Email:
           <input
             type="email"
@@ -62,7 +61,6 @@ export default function UserForm() {
             required
             autoComplete="email"
           />
-          {/* password */}
           Password:
           <input
             type="password"
@@ -72,7 +70,7 @@ export default function UserForm() {
             autoComplete="new-password"
           />
         </label>
-        <button type="submit">Submit</button>
+        <button type="submit">アカウント作成</button>
       </form>
       ログイン
       <form onSubmit={handleLoginSubmit}>
@@ -94,10 +92,11 @@ export default function UserForm() {
             autoComplete="current-password"
           />
         </label>
-        <button type="submit">Submit</button>
+        <button type="submit">ログイン</button>
       </form>
       <button onClick={handleGoogleLogin}>Googleでログイン</button>
       <button onClick={handleGuestLogin}>ゲストログイン</button>
+      <button onClick={handleLogout}>ログアウト</button>
     </>
   );
 }

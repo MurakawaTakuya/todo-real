@@ -17,7 +17,9 @@ export const createUser = (email: string, password: string, name: string) => {
 
       // uidとdocument IDを一致させる
       await createUserAPI(name, user.uid);
-      // console.log("user:", user);
+      console.log(user);
+      // TODO: ここでUseContextを使って、ユーザー情報を保持する
+      // TODO: ログイン状態の維持
     })
     .catch((error) => {
       const errorCode = error.code ? error.code : "unknown";

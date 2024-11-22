@@ -88,13 +88,15 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
   - example
     ```json
     {
-      "name": "testUser"
+      "name": "testUser",
+      "uid": "uid genereated by Firebase Authentication"
     }
     ```
     In case of streak is not specified, it will be set to 0.
     ```json
     {
       "name": "testUser",
+      "uid": "uid genereated by Firebase Authentication",
       "streak": 10
     }
     ```

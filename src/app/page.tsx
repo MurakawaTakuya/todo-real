@@ -1,4 +1,6 @@
+import Goal from "./Components/Goal/Goal";
 import Posts from "./Components/Posts/Posts";
+import UpLoadTest from "./Components/Uploader/Uploader";
 import UserForm from "./Components/UserForm/UserForm";
 
 export default function Home() {
@@ -6,6 +8,8 @@ export default function Home() {
     <>
       <Posts />
       <UserForm />
+      <UpLoadTest />
+      <Goal></Goal>
     </>
   );
 }

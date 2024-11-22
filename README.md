@@ -184,22 +184,21 @@ the same as Get User Data by User Id
   - Headers
     - Content-Type: multipart/form-data
   - Body (form-data)
-    - file: ファイル (アップロードする画像ファイル)
     - userId: string (投稿者のユーザーID)
+    - storeId: string (画像のストレージパス、/post/{storeId}/image)
     - text: string (投稿内容のテキスト)
     - goalId: string (関連するゴールのID)
   - Example
-    - file: 選択した画像ファイル
     - userId: "IK0Zc2hoUYaYjXoqzmCl"
+    - storeId: "generatedStoreHash"
     - text: "今日は勉強をがんばった"
     - goalId: "RXlHJiv3GtpzSDHhfljS"
 
 - Response
   ```json
   {
-    "message": "Post created successfully",
-    "postId": "generatedPostId",
-    "imageUrl": "https://storage.googleapis.com/your-bucket-name/post/generatedStoreId"
+      "message": "Post created successfully",
+      "postId": "mCKHSiUXRESoZhrUFvw6"
   }
   ```
   imageUrl is the URL of the uploaded image.
@@ -213,9 +212,9 @@ the same as Get User Data by User Id
     {
       "id":"generatedPostId",
       "userId":"IK0Zc2hoUYaYjXoqzmCl",
+      "storeId": "hoge hoge hash",
       "text":"今日は勉強をがんばった",
       "goalId":"RXlHJiv3GtpzSDHhfljS",
-      "imageUrl":"https://storage.googleapis.com/your-bucket-name/post/generatedStoreId"
     }
   ]
   ```

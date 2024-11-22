@@ -1,6 +1,8 @@
 import "@/styles/globals.scss";
+import { UserProvider } from "@/utils/UserContext";
 import type { Metadata } from "next";
 import Header from "./Components/Header/Header";
+import "./firebase";
 
 export const metadata: Metadata = {
   title: "Todo Real(仮)",
@@ -21,8 +23,10 @@ export default function RootLayout({
     <html lang="ja">
       <head></head>
       <body>
-        <Header />
-        <main>{children}</main>
+        <UserProvider>
+          <Header />
+          <main>{children}</main>
+        </UserProvider>
       </body>
     </html>
   );

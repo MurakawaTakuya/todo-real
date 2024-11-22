@@ -1,0 +1,204 @@
+"use client";
+import { auth } from "@/app/firebase";
+import { createUser } from "@/utils/createUserAuth";
+import { loginUser } from "@/utils/loginUserAuth";
+import { signInAsGuest } from "@/utils/signInAnonymously";
+import { signInWithGoogleAccount } from "@/utils/signInWithGoogleAccount";
+import { useUser } from "@/utils/UserContext";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import MuiCard from "@mui/material/Card";
+import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import { styled } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Typography from "@mui/material/Typography";
+import { signOut } from "firebase/auth";
+import React, { useState } from "react";
+
+const Card = styled(MuiCard)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignSelf: "center",
+  width: "100%",
+  padding: theme.spacing(4),
+  gap: theme.spacing(2),
+  margin: "auto",
+  boxShadow:
+    "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
+  borderRadius: "20px", // 全体を丸角にする
+  [theme.breakpoints.up("sm")]: {
+    width: "450px",
+  },
+}));
+
+const CenteredToggleButtonGroup = styled(ToggleButtonGroup)({
+  display: "flex",
+  justifyContent: "center",
+  marginBottom: "16px",
+});
+
+const RoundedButton = styled(Button)(({ theme }) => ({
+  borderRadius: "50px", // ボタンを丸角にする
+  padding: theme.spacing(1.5, 4), // ボタンの内側余白を調整
+}));
+
+export default function UserForm() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [formMode, setFormMode] = useState<"register" | "login">("register");
+
+  const { user } = useUser();
+
+  const handleRegisterSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    await createUser(email, password, name);
+  };
+
+  const handleLoginSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    await loginUser(email, password);
+  };
+
+  const handleGoogleLogin = async () => {
+    await signInWithGoogleAccount();
+  };
+
+  const handleGuestLogin = async () => {
+    await signInAsGuest();
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      console.log("Signed out");
+    } catch (error) {
+      console.error("errorCode:", (error as Error)?.name);
+      console.error("errorMessage:", (error as Error)?.message);
+    }
+  };
+
+  const handleFormModeChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newMode: "register" | "login"
+  ) => {
+    if (newMode) setFormMode(newMode);
+  };
+
+  return (
+    <>
+      <CssBaseline enableColorScheme />
+      <Stack
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        sx={{ height: "100vh", padding: 2 }}
+      >
+        <Card variant="outlined">
+          <Typography variant="h4" textAlign="center">
+            アカウント管理
+          </Typography>
+          <CenteredToggleButtonGroup
+            value={formMode}
+            exclusive
+            onChange={handleFormModeChange}
+            aria-label="form mode"
+          >
+            <ToggleButton value="register" aria-label="register">
+              新規登録
+            </ToggleButton>
+            <ToggleButton value="login" aria-label="login">
+              ログイン
+            </ToggleButton>
+          </CenteredToggleButtonGroup>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            {user ? (
+              <>
+                <Typography>ログイン中: {user.name}</Typography>
+                <RoundedButton variant="contained" onClick={handleLogout}>
+                  ログアウト
+                </RoundedButton>
+              </>
+            ) : formMode === "register" ? (
+              <>
+                <Typography>新規登録</Typography>
+                <form onSubmit={handleRegisterSubmit}>
+                  <TextField
+                    label="Username"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    fullWidth
+                    required
+                  />
+                  <TextField
+                    label="Email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    fullWidth
+                    required
+                  />
+                  <TextField
+                    label="Password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    fullWidth
+                    required
+                  />
+                  <RoundedButton type="submit" variant="contained" fullWidth>
+                    アカウント作成
+                  </RoundedButton>
+                </form>
+              </>
+            ) : (
+              <>
+                <Typography>ログイン</Typography>
+                <form onSubmit={handleLoginSubmit}>
+                  <TextField
+                    label="Email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    fullWidth
+                    required
+                  />
+                  <TextField
+                    label="Password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    fullWidth
+                    required
+                  />
+                  <RoundedButton type="submit" variant="contained" fullWidth>
+                    ログイン
+                  </RoundedButton>
+                </form>
+              </>
+            )}
+            <Divider>または</Divider>
+            <RoundedButton
+              fullWidth
+              variant="outlined"
+              onClick={handleGoogleLogin}
+            >
+              Googleでログイン
+            </RoundedButton>
+            <RoundedButton
+              fullWidth
+              variant="outlined"
+              onClick={handleGuestLogin}
+            >
+              ゲストログイン
+            </RoundedButton>
+          </Box>
+        </Card>
+      </Stack>
+    </>
+  );
+}

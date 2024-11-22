@@ -1,3 +1,4 @@
+// 画像アップロードテスト用
 "use client";
 import { uploadImage } from "@/app/utils/Uploader";
 import Box from "@mui/material/Box";
@@ -5,7 +6,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import React, { ChangeEvent, useState } from "react";
 
-const ImageUploader: React.FC = () => {
+export default function UploaderSample() {
   const [image, setImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -53,9 +54,7 @@ const ImageUploader: React.FC = () => {
       )}
     </div>
   );
-};
-
-export default ImageUploader;
+}
 
 interface LinearProgressWithLabelProps {
   value: number;

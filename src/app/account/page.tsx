@@ -100,7 +100,7 @@ export default function UserForm() {
       >
         <Card variant="outlined">
           <Typography variant="h4" textAlign="center">
-            アカウント管理
+            TODO-REAL
           </Typography>
           <CenteredToggleButtonGroup
             value={formMode}
@@ -127,75 +127,87 @@ export default function UserForm() {
               <>
                 <Typography>新規登録</Typography>
                 <form onSubmit={handleRegisterSubmit}>
-                  <TextField
-                    label="Username"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    fullWidth
-                    required
-                  />
-                  <TextField
-                    label="Email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    fullWidth
-                    required
-                  />
-                  <TextField
-                    label="Password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    required
-                  />
-                  <RoundedButton type="submit" variant="contained" fullWidth>
-                    アカウント作成
-                  </RoundedButton>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                  >
+                    <TextField
+                      label="Username"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      fullWidth
+                      required
+                    />
+                    <TextField
+                      label="Email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      fullWidth
+                      required
+                    />
+                    <TextField
+                      label="Password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      fullWidth
+                      required
+                    />
+                    <RoundedButton type="submit" variant="contained" fullWidth>
+                      アカウント作成
+                    </RoundedButton>
+                  </Box>
                 </form>
               </>
             ) : (
               <>
                 <Typography>ログイン</Typography>
                 <form onSubmit={handleLoginSubmit}>
-                  <TextField
-                    label="Email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    fullWidth
-                    required
-                  />
-                  <TextField
-                    label="Password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    required
-                  />
-                  <RoundedButton type="submit" variant="contained" fullWidth>
-                    ログイン
-                  </RoundedButton>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                  >
+                    <TextField
+                      label="Email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      fullWidth
+                      required
+                    />
+                    <TextField
+                      label="Password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      fullWidth
+                      required
+                    />
+                    <RoundedButton type="submit" variant="contained" fullWidth>
+                      ログイン
+                    </RoundedButton>
+                  </Box>
                 </form>
               </>
             )}
-            <Divider>または</Divider>
-            <RoundedButton
-              fullWidth
-              variant="outlined"
-              onClick={handleGoogleLogin}
-            >
-              Googleでログイン
-            </RoundedButton>
-            <RoundedButton
-              fullWidth
-              variant="outlined"
-              onClick={handleGuestLogin}
-            >
-              ゲストログイン
-            </RoundedButton>
+            {!user && (
+              <>
+                <Divider>または</Divider>
+                <RoundedButton
+                  fullWidth
+                  variant="outlined"
+                  onClick={handleGoogleLogin}
+                >
+                  Googleでログイン
+                </RoundedButton>
+                <RoundedButton
+                  fullWidth
+                  variant="outlined"
+                  onClick={handleGuestLogin}
+                >
+                  ゲストログイン
+                </RoundedButton>
+              </>
+            )}
           </Box>
         </Card>
       </Stack>

@@ -80,11 +80,14 @@ router.route("/").post(async (req: Request, res: Response) => {
 
   try {
     // goalId をドキュメント名として使用してデータを保存
-    await db.collection("goal").doc(goalId).set({
-      userId: userId,
-      deadline: deadline,
-      text: text,
-    });
+    await db
+      .collection("goal")
+      .doc(goalId)
+      .set({
+        userId: userId,
+        deadline: admin.firestore.Timestamp.fromDate(new Date(deadline)),
+        text: text,
+      });
 
     return res
       .status(201)

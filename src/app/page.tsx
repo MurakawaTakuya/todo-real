@@ -1,3 +1,4 @@
+import Goal from "./Components/Goal/Goal";
 import Posts from "./Components/Posts/Posts";
 import UpLoadTest from "./Components/Uploader/Uploader";
 
@@ -6,6 +7,7 @@ export default function Home() {
     <>
       <Posts />
       <UpLoadTest />
+      <Goal></Goal>
     </>
   );
 }

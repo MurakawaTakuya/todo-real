@@ -21,6 +21,14 @@ if (typeof window !== "undefined") {
           if (currentToken) {
             // ここでサーバーにトークンを送信したり、UIを更新
             console.log("currentToken:", currentToken);
+            navigator.clipboard.writeText(currentToken).then(
+              function () {
+                console.log("Async: Copying to clipboard was successful!");
+              },
+              function (err) {
+                console.error("Async: Could not copy text: ", err);
+              }
+            );
           } else {
             // ここでパーミッションリクエストUIを表示
             console.log(

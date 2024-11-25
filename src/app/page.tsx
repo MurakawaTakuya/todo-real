@@ -1,5 +1,5 @@
 import Goal from "./Components/Goal/Goal";
-import BasicModalDialog from "./Components/Modal/Modal";
+import GoalModal from "./Components/GoalModal/GoalModal";
 import ImageUploader from "./Components/PostForm/PostForm";
 import Posts from "./Components/Posts/Posts";
 import UserForm from "./Components/UserForm/UserForm";
@@ -11,7 +11,7 @@ export default function Top() {
       <ImageUploader />
       <UserForm />
       <Goal></Goal>
-      <BasicModalDialog />
+      <GoalModal />
     </>
   );
 }

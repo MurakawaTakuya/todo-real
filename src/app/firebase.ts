@@ -6,6 +6,7 @@ import {
   GoogleAuthProvider,
   setPersistence,
 } from "firebase/auth";
+import { getMessaging, Messaging } from "firebase/messaging";
 import { connectStorageEmulator, getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
@@ -24,6 +25,11 @@ console.log("firebaseConfig initialized");
 export const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
+let messaging: Messaging | null = null;
+if (typeof window !== "undefined") {
+  messaging = getMessaging(app);
+}
+export { messaging };
 export const googleProvider = new GoogleAuthProvider();
 
 // ブラウザを閉じてもログイン状態を維持

@@ -12,7 +12,7 @@ import {
 } from "@mui/joy";
 import React, { useState } from "react";
 
-export default function BasicModalDialog() {
+export default function GoalModal() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -97,7 +97,7 @@ export default function BasicModalDialog() {
                 required
               />
               <Input
-                type="date"
+                type="datetime-local"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
                 required

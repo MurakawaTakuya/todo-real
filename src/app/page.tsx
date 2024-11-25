@@ -1,6 +1,4 @@
 "use client";
-import "@/utils/getNotification";
-import "@/utils/messaging";
 import requestPermission from "@/utils/requestNotificationPermission";
 import { useEffect } from "react";
 import Goal from "./Components/Goal/Goal";

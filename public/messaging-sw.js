@@ -15,8 +15,6 @@ const firebaseConfig = {
   appId: "1:525849418012:web:9abf3c10d5553f39a902d9",
 };
 
-console.log(firebaseConfig);
-
 // Firebase アプリを初期化
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();

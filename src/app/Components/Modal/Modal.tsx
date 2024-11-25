@@ -1,14 +1,15 @@
 "use client";
-import Add from "@mui/icons-material/Add";
-import Button from "@mui/joy/Button";
-import DialogContent from "@mui/joy/DialogContent";
-import DialogTitle from "@mui/joy/DialogTitle";
-import FormControl from "@mui/joy/FormControl";
-import FormLabel from "@mui/joy/FormLabel";
-import Input from "@mui/joy/Input";
-import Modal from "@mui/joy/Modal";
-import ModalDialog from "@mui/joy/ModalDialog";
-import Stack from "@mui/joy/Stack";
+
+import { Add } from "@mui/icons-material";
+import {
+  Button,
+  DialogContent,
+  DialogTitle,
+  Input,
+  Modal,
+  ModalDialog,
+  Stack,
+} from "@mui/joy";
 import React, { useState } from "react";
 
 export default function BasicModalDialog() {
@@ -54,45 +55,69 @@ export default function BasicModalDialog() {
     }
   };
 
+  // 以下のJoy UIによるエラーを無効化
+  // Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release. Error Component Stack
+  const consoleError = console.error;
+  console.error = (...args) => {
+    if (args[0]?.includes("Accessing element.ref was removed")) {
+      return;
+    }
+    consoleError(...args);
+  };
+
   return (
-    <React.Fragment>
+    <>
       <Button
         variant="outlined"
-        color="neutral"
+        color="primary"
         startDecorator={<Add />}
         onClick={() => setOpen(true)}
       >
         Create Goal
       </Button>
-      <Modal open={open} onClose={() => setOpen(false)}>
-        <ModalDialog>
-          <DialogTitle>Create a Goal</DialogTitle>
+
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        keepMounted
+        disablePortal
+      >
+        <ModalDialog
+          aria-labelledby="create-goal-title"
+          aria-describedby="create-goal-description"
+        >
+          <DialogTitle>目標を作成</DialogTitle>
           <DialogContent>自分の目標を入力してください.</DialogContent>
           <form onSubmit={handleSubmit}>
-            <Stack spacing={2}>
-              <FormControl>
-                <FormLabel>Goal Title</FormLabel>
-                <Input
-                  autoFocus
-                  required
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Target Date</FormLabel>
-                <Input
-                  type="date"
-                  required
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                />
-              </FormControl>
-              <Button type="submit">Create Goal</Button>
+            <Stack spacing={2} sx={{ mt: 2 }}>
+              <Input
+                placeholder="Goal Title"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                required
+              />
+              <Input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                required
+              />
+              <Stack direction="row" spacing={1} justifyContent="flex-end">
+                <Button
+                  variant="plain"
+                  color="neutral"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" variant="solid" color="primary">
+                  Create Goal
+                </Button>
+              </Stack>
             </Stack>
           </form>
         </ModalDialog>
       </Modal>
-    </React.Fragment>
+    </>
   );
 }

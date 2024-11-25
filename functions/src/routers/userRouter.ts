@@ -19,7 +19,7 @@ router.route("/").get(async (req: Request, res: Response) => {
     }
 
     const userData = userSnapshot.docs.map((doc) => ({
-      id: doc.id,
+      uid: doc.id,
       ...doc.data(),
     }));
 
@@ -42,7 +42,7 @@ router.route("/id/:userId").get(async (req: Request, res: Response) => {
     if (!userDoc.exists) {
       return res.status(404).json({ message: "User not found" });
     }
-    return res.json({ id: userDoc.id, ...userDoc.data() });
+    return res.json({ uid: userDoc.id, ...userDoc.data() });
   } catch (error) {
     return res.status(500).json({ message: "Error fetching user data", error });
   }
@@ -63,7 +63,7 @@ router.route("/name/:userName").get(async (req: Request, res: Response) => {
     }
 
     const userData = userSnapshot.docs.map((doc) => ({
-      id: doc.id,
+      uid: doc.id,
       ...doc.data(),
     }));
 
@@ -75,44 +75,37 @@ router.route("/name/:userName").get(async (req: Request, res: Response) => {
 
 // POST: 新しいユーザーを登録
 router.route("/").post(async (req: Request, res: Response) => {
-  const userId = db.collection("user").doc().id; // FirebaseのドキュメントIDを生成
-
-  if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
-  }
-
   let name: User["name"];
+  let uid: string;
   let streak: User["streak"];
 
   try {
-    ({ name, streak = 0 } = req.body as User);
+    ({ name, uid, streak = 0 } = req.body);
   } catch (error) {
     return res.status(400).json({ message: "Invalid request body", error });
   }
 
-  if (!name || streak === undefined) {
+  if (!name || !uid || streak === undefined) {
     return res.status(400).json({ message: "name and streak are required" });
   }
 
   // 既に同じ名前のuserが存在する場合はエラーを返す
-  const userSnapshot = await getUserFromName(name);
+  // const userSnapshot = await getUserFromName(name);
 
-  if (!userSnapshot.empty) {
-    return res.status(409).json({
-      message: `A user with the same user name '${name}' already exists`,
-    });
-  }
+  // if (!userSnapshot.empty) {
+  //   return res.status(409).json({
+  //     message: `A user with the same user name '${name}' already exists`,
+  //   });
+  // }
 
   try {
     // userIdをドキュメント名として使用してデータを保存
-    await db.collection("user").doc(userId).set({
+    await db.collection("user").doc(uid).set({
       name: name,
       streak: streak,
     });
 
-    return res
-      .status(201)
-      .json({ message: "User created successfully", userId });
+    return res.status(201).json({ message: "User created successfully", uid });
   } catch (error) {
     return res.status(500).json({ message: "Error creating user", error });
   }

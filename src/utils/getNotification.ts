@@ -1,16 +1,23 @@
 "use client";
-// Handle incoming messages. Called when:
-// - a message is received while the app has focus
-// - the user clicks on an app notification created by a service worker
-//   `messaging.onBackgroundMessage` handler.
-import { getMessaging, onMessage } from "firebase/messaging";
+import { messaging } from "@/app/firebase";
+import { onMessage } from "firebase/messaging";
 
-if (typeof window !== "undefined") {
-  const messaging = getMessaging();
+// フォアグラウンド時の通知を受信
+if (typeof window !== "undefined" && messaging) {
   {
     onMessage(messaging, (payload) => {
-      console.log("Message received. ", payload);
-      // ...
+      console.log("Message foreground message:", payload);
+      if (payload.notification) {
+        const { title, body } = payload.notification;
+        const notification = new Notification(title ?? "Default Title", {
+          body,
+        });
+        notification.onclick = () => {
+          window.focus();
+        };
+      }
     });
   }
 }
+
+// バックグラウンド通知はService Worker(messaging-sw.js)で処理

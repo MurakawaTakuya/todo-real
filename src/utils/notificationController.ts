@@ -2,7 +2,8 @@
 import { messaging } from "@/app/firebase";
 import { getToken } from "firebase/messaging";
 
-export default function requestPermission() {
+// 通知を受信する
+export function requestPermission() {
   if (typeof window === "undefined") {
     return;
   }
@@ -46,4 +47,30 @@ export default function requestPermission() {
       console.log("Unable to get permission to notify.");
     }
   });
+}
+
+// 通知を解除する
+export function revokePermission() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  navigator.serviceWorker.ready
+    .then((registration) => {
+      return registration.pushManager.getSubscription();
+    })
+    .then((subscription) => {
+      if (subscription) {
+        // サブスクリプションが存在する場合に解除
+        return subscription.unsubscribe();
+      } else {
+        console.log("No subscription found.");
+      }
+    })
+    .then(() => {
+      console.log("Notification permission revoked.");
+    })
+    .catch((err) => {
+      console.error("An error occurred while revoking permission. ", err);
+    });
 }

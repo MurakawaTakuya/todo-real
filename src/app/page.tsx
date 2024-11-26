@@ -1,7 +1,7 @@
 import {
   requestPermission,
   revokePermission,
-} from "@/utils/notificationController";
+} from "@/utils/CloudMessaging/notificationController";
 import Button from "@mui/material/Button";
 import Goal from "./Components/Goal/Goal";
 import GoalModal from "./Components/GoalModal/GoalModal";

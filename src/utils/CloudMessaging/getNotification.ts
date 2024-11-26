@@ -6,7 +6,7 @@ import { onMessage } from "firebase/messaging";
 if (typeof window !== "undefined" && messaging) {
   {
     onMessage(messaging, (payload) => {
-      console.log("Message foreground message:", payload);
+      console.log("Received foreground message:", payload);
       if (payload.notification) {
         const { title, body } = payload.notification;
         const notification = new Notification(title ?? "Default Title", {

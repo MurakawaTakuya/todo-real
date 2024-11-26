@@ -1,6 +1,5 @@
 import "@/styles/globals.scss";
-import "@/utils/getNotification";
-import "@/utils/notificationController";
+import "@/utils/CloudMessaging/getNotification";
 import { UserProvider } from "@/utils/UserContext";
 import type { Metadata } from "next";
 import Header from "./Components/Header/Header";

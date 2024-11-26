@@ -19,21 +19,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
-// バックグラウンド時の通知を処理
+// バックグラウンド時の通知を処理(通知自体は何もしなくても受信される)
 messaging.onBackgroundMessage((payload) => {
-  console.log("[messaging-sw.js] Received background message:", payload);
-  const notification = payload.notification;
-  const notificationTitle = notification?.title || "Default Title";
-  const notificationOptions = {
-    body: notification?.body || "Default Body",
-    icon: notification?.icon || "",
-  };
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  console.log("Received background message:", payload);
 });
 
 // 通知クリック時の処理
 self.addEventListener("notificationclick", (event) => {
-  console.log("[messaging-sw.js] Notification click received:", event);
+  console.log("Notification click received:", event);
   event.notification.close();
 
   event.waitUntil(

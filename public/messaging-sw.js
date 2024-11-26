@@ -37,17 +37,12 @@ self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
   event.waitUntil(
-    clients
-      .matchAll({ type: "window", includeUncontrolled: true })
-      .then((clientList) => {
-        for (const client of clientList) {
-          if (client.url === "http://127.0.0.1:8080/" && "focus" in client) {
-            return client.focus();
-          }
-        }
-        if (clients.openWindow) {
-          return clients.openWindow("http://127.0.0.1:8080/");
-        }
-      })
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then(() => {
+      clients
+        .openWindow("https://todo-real-c28fa.web.app/")
+        .then((windowClient) => {
+          windowClient.focus();
+        });
+    })
   );
 });

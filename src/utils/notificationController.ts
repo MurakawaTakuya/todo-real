@@ -33,6 +33,8 @@ export function requestPermission() {
           if (currentToken) {
             // ここでサーバーにトークンを送信したり、UIを更新
             console.log("currentToken:", currentToken);
+            // ここでクリップボードにコピー
+            navigator.clipboard.writeText(currentToken);
           } else {
             // ここでパーミッションリクエストUIを表示
             console.log(

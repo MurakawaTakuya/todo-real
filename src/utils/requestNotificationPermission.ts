@@ -6,6 +6,7 @@ export default function requestPermission() {
   if (typeof window === "undefined") {
     return;
   }
+
   console.log("Requesting permission...");
   Notification.requestPermission().then((permission) => {
     if (permission === "granted") {
@@ -13,6 +14,9 @@ export default function requestPermission() {
 
       navigator.serviceWorker
         .register("/messaging-sw.js")
+        .then(() => {
+          return navigator.serviceWorker.ready;
+        })
         .then((registration) => {
           console.log("Service Worker registered:", registration);
           if (!messaging) {

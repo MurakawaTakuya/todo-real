@@ -57,13 +57,17 @@ export default function GoalModal() {
 
   // 以下のJoy UIによるエラーを無効化
   // Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release. Error Component Stack
-  const consoleError = console.error;
-  console.error = (...args) => {
-    if (args[0]?.includes("Accessing element.ref was removed")) {
-      return;
-    }
-    consoleError(...args);
-  };
+  try {
+    const consoleError = console.error;
+    console.error = (...args) => {
+      if (args[0]?.includes("Accessing element.ref was removed")) {
+        return;
+      }
+      consoleError(...args);
+    };
+  } catch {
+    console.error("Failed to disable Joy UI error");
+  }
 
   return (
     <>

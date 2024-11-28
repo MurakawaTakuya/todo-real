@@ -14,7 +14,7 @@ export const uploadImage = (
 
   // cryptoモジュールを使用してユニークなIDを生成
   const uniqueId = crypto.randomUUID();
-  const storageRef = ref(storage, `post/${uniqueId}/image`);
+  const storageRef = ref(storage, `post/${uniqueId}`);
   const uploadTask = uploadBytesResumable(storageRef, file);
 
   uploadTask.on(

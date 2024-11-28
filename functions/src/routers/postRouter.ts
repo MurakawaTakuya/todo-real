@@ -75,10 +75,13 @@ router.post("/", async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Invalid request body", error });
   }
 
-  if (!userId || !storeId || !text || !goalId) {
+  if (!userId || !storeId || !goalId) {
     return res
       .status(400)
       .json({ message: "userId, storeId, text, and goalId are required" });
+  }
+  if (!text) {
+    text = "";
   }
 
   try {

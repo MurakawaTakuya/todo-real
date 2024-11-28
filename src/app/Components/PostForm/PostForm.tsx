@@ -1,4 +1,5 @@
 "use client";
+import { functionsEndpoint } from "@/app/firebase";
 import { uploadImage } from "@/app/utils/Uploader";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -46,16 +47,13 @@ export default function PostForm() {
         };
 
         try {
-          const response = await fetch(
-            "http://127.0.0.1:5001/todo-real-c28fa/asia-northeast1/firestore/post/",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(postData),
-            }
-          );
+          const response = await fetch(`${functionsEndpoint}/post/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(postData),
+          });
 
           if (!response.ok) {
             throw new Error("データの送信に失敗しました");

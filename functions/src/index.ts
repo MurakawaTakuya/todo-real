@@ -9,6 +9,7 @@
 
 import cors from "cors";
 import express from "express";
+import rateLimit from "express-rate-limit";
 import admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
 import { onRequest } from "firebase-functions/v2/https";
@@ -29,6 +30,21 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// 10分間で最大300回に制限
+app.use(
+  rateLimit({
+    windowMs: 5 * 60 * 1000,
+    max: 1000,
+  })
+);
+// 1時間で最大1000回に制限
+app.use(
+  rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 20,
+  })
+);
+
 import goalRouter from "./routers/goalRouter";
 import postRouter from "./routers/postRouter";
 import userRouer from "./routers/userRouter";
@@ -44,7 +60,6 @@ export const helloWorld = onRequest({ region: region }, (req, res) => {
   res.send("Hello World!");
 });
 
-// /user/:userName
 export const firestore = onRequest({ region: region }, async (req, res) => {
   app(req, res);
 });

@@ -42,12 +42,20 @@ setPersistence(auth, browserLocalPersistence)
   });
 
 // エミュレータの設定
-if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
+let functionsEndpoint = "";
+if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "false") {
+  console.log("Storage: Production");
+  console.log("Authentication: Production");
+  functionsEndpoint = "https://firestore-okdtj725ta-an.a.run.app";
+  console.log("Functions: Production");
+} else {
   connectStorageEmulator(storage, "localhost", 9199);
   console.log("Storage: Emulator");
   connectAuthEmulator(auth, "http://127.0.0.1:9099");
   console.log("Authentication: Emulator");
-} else {
-  console.log("Storage: Production");
-  console.log("Authentication: Production");
+  functionsEndpoint =
+    "http://127.0.0.1:5001/todo-real-c28fa/asia-northeast1/firestore";
+  console.log("Functions: Emulator");
 }
+
+export { functionsEndpoint };

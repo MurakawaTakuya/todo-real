@@ -1,5 +1,6 @@
 "use client";
 
+import { functionsEndpoint } from "@/app/firebase";
 import { Add } from "@mui/icons-material";
 import {
   Button,
@@ -21,20 +22,17 @@ export default function GoalModal() {
     event.preventDefault();
 
     try {
-      const response = await fetch(
-        "http://127.0.0.1:5001/todo-real-c28fa/asia-northeast1/firestore/goal/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: "sampleUser123",
-            text: text,
-            deadline: dueDate,
-          }),
-        }
-      );
+      const response = await fetch(`${functionsEndpoint}/goal/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: "sampleUser123",
+          text: text,
+          deadline: dueDate,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);

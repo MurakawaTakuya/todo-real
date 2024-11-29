@@ -97,4 +97,8 @@ router.route("/").post(async (req: Request, res: Response) => {
   }
 });
 
+// PUT: 目標を更新
+
+// DELETE: 目標を削除
+
 export default router;

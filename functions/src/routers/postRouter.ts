@@ -98,4 +98,30 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
+// PUT: 投稿を更新
+router.put("/:postId", async (req: Request, res: Response) => {
+  const postId = req.params.postId;
+
+  let userId: Post["userId"];
+  let storeId: Post["storeId"];
+  let text: Post["text"];
+  let goalId: Post["goalId"];
+});
+
+// DELETE: 投稿を削除
+router.delete("/:postId", async (req: Request, res: Response) => {
+  const postId = req.params.postId;
+
+  if (!postId) {
+    return res.status(400).json({ message: "Post ID is required" });
+  }
+
+  try {
+    await db.collection("post").doc(postId).delete();
+    return res.json({ message: "Post deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "Error deleting post", error });
+  }
+});
+
 export default router;

@@ -111,6 +111,45 @@ router.route("/").post(async (req: Request, res: Response) => {
   }
 });
 
+// PUT: ユーザー情報を更新
+router.route("/:userId").put(async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  const { name, streak }: Partial<User> = req.body;
+
+  if (!name && streak === undefined) {
+    return res
+      .status(400)
+      .json({ message: "At least one of name or streak is required" });
+  }
+
+  const updateData: Partial<User> = {};
+  if (name) updateData.name = name;
+  if (streak !== undefined) updateData.streak = streak;
+
+  try {
+    await db.collection("user").doc(userId).update(updateData);
+    return res.json({ message: "User updated successfully", userId });
+  } catch (error) {
+    return res.status(500).json({ message: "Error updating user", error });
+  }
+});
+
+// DELETE: ユーザーを削除
+router.route("/:userId").delete(async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  try {
+    await db.collection("user").doc(userId).delete();
+    return res.json({ message: "User deleted successfully", userId });
+  } catch (error) {
+    return res.status(500).json({ message: "Error deleting user", error });
+  }
+});
+
 export default router;
 
 // ユーザー名からユーザー情報を取得

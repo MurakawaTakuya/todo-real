@@ -1,5 +1,6 @@
 "use client";
 import { functionsEndpoint } from "@/app/firebase";
+import { Post } from "@/types/types";
 import { uploadImage } from "@/utils/Uploader";
 import { useUser } from "@/utils/UserContext";
 import Box from "@mui/material/Box";
@@ -38,14 +39,15 @@ export default function PostForm() {
       (errorMsg) => setError(errorMsg),
       async (url, hash) => {
         setImageUrl(url);
-        console.log("Image is save at :", url);
+        console.log("Image is save at:", url);
         console.log("Generated storage path hash:", hash);
 
-        const postData = {
+        const postData: Post = {
           userId: user ? user.uid : "",
-          storeId: url, // トークン管理ができるまではurlをそのまま管理
+          storedId: url, // トークン管理ができるまではurlをそのまま管理
           text: text,
           goalId: "temp", // authenticatorが準備できるまで仮で設定
+          submittedAt: new Date(),
         };
 
         try {

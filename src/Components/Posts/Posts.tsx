@@ -11,9 +11,16 @@ interface Post {
   goalId: string;
 }
 
+interface Goal {
+  id: string;
+  title: string;
+  description: string;
+}
+
 // 投稿を取得してPostCardに渡す
-export default function Posts() {
+export default function DashBoard() {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
 
   useEffect(() => {
     fetch("https://firestore-okdtj725ta-an.a.run.app/post/")

@@ -134,7 +134,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
 - URL: /user/name/:userName
 - Method: GET
 - Response  
-the same as Get User Data by User Id
+  the same as Get User Data by User Id
 
 ## Goals
 ### Create Goal
@@ -169,12 +169,15 @@ the same as Get User Data by User Id
 - Response
   ```json
   [
-    {
-      "id":"RXlHJiv3GtpzSDHhfljS",
-      "userId":"IK0Zc2hoUYaYjXoqzmCl",
-      "deadline":"2024-12-31T23:59:59.000Z",
-      "text":"数学の勉強する"
-    }
+      {
+          "id": "AnaGg7GVwsXzJqSJdqGg",
+          "userId": "IK0Zc2hoUYaYjXoqzmCl",
+          "deadline": {
+              "_seconds": 1732321560,
+              "_nanoseconds": 0
+          },
+          "text": "数学の勉強する"
+      }
   ]
   ```
 
@@ -186,15 +189,21 @@ the same as Get User Data by User Id
   - Headers
     - Content-Type: multipart/form-data
   - Body (form-data)
-    - userId: string (投稿者のユーザーID)
-    - storeId: string (画像のストレージパス、/post/{storeId}/image)
-    - text: string (投稿内容のテキスト)
-    - goalId: string (関連するゴールのID)
+    - userId: string
+    - storedId: string (画像のストレージパス、/post/{storedId}/image)
+    - text: string
+    - goalId: string
+    - submittedAt: Date
   - Example
-    - userId: "IK0Zc2hoUYaYjXoqzmCl"
-    - storeId: "generatedStoreHash"
-    - text: "今日は勉強をがんばった"
-    - goalId: "RXlHJiv3GtpzSDHhfljS"
+    ```json
+    {
+        "userId": "IK0Zc2hoUYaYjXoqzmCl",
+        "storedId": "DF48XfTFc42l6C58lLDq",
+        "text": "今日は勉強をがんばった",
+        "goalId": "RXlHJiv3GtpzSDHhfljS",
+        "submittedAt": "2024-12-31T23:59:59.000Z"
+    }
+    ```
 
 - Response
   ```json
@@ -211,12 +220,13 @@ the same as Get User Data by User Id
 - Response
   ```json
   [
-    {
-      "id":"generatedPostId",
-      "userId":"IK0Zc2hoUYaYjXoqzmCl",
-      "storeId": "hoge hoge hash",
-      "text":"今日は勉強をがんばった",
-      "goalId":"RXlHJiv3GtpzSDHhfljS",
-    }
+      {
+          "id": "9fgWJA6wMN54EkxIC2WD",
+          "userId": "IK0Zc2hoUYaYjXoqzmCl",
+          "storedId": "t8eo1wEE7AT12eZo3dKA",
+          "text": "今日は勉強をがんばった",
+          "goalId": "RXlHJiv3GtpzSDHhfljS",
+          "submittedAt": "2024-12-31T23:59:59.000Z"
+      }
   ]
   ```

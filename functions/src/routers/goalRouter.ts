@@ -18,14 +18,18 @@ router.get("/", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "No goals found" });
     }
 
-    const goals = goalSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const goals = goalSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        deadline: new Date(data.deadline._seconds * 1000),
+      };
+    });
 
     return res.json(goals);
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching goals", error });
+    return res.status(500).json({ message: "Error fetching goals" });
   }
 });
 
@@ -47,14 +51,18 @@ router.get("/:userId", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "No goals found for this user" });
     }
 
-    const goals = goalSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const goals = goalSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        deadline: new Date(data.deadline._seconds * 1000),
+      };
+    });
 
     return res.json(goals);
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching goals", error });
+    return res.status(500).json({ message: "Error fetching goals" });
   }
 });
 
@@ -69,7 +77,7 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     ({ userId, deadline, text } = req.body as Goal);
   } catch (error) {
-    return res.status(400).json({ message: "Invalid request body", error });
+    return res.status(400).json({ message: "Invalid request body" });
   }
 
   if (!userId || !deadline || !text) {
@@ -93,7 +101,7 @@ router.post("/", async (req: Request, res: Response) => {
       .status(201)
       .json({ message: "Goal created successfully", goalId });
   } catch (error) {
-    return res.status(500).json({ message: "Error creating goal", error });
+    return res.status(500).json({ message: "Error creating goal" });
   }
 });
 
@@ -122,7 +130,7 @@ router.put("/:goalId", async (req: Request, res: Response) => {
     await db.collection("goal").doc(goalId).update(updateData);
     return res.json({ message: "Goal updated successfully", goalId });
   } catch (error) {
-    return res.status(500).json({ message: "Error updating goal", error });
+    return res.status(500).json({ message: "Error updating goal" });
   }
 });
 
@@ -138,7 +146,7 @@ router.delete("/:goalId", async (req: Request, res: Response) => {
     await db.collection("goal").doc(goalId).delete();
     return res.json({ message: "Goal deleted successfully", goalId });
   } catch (error) {
-    return res.status(500).json({ message: "Error deleting goal", error });
+    return res.status(500).json({ message: "Error deleting goal" });
   }
 });
 

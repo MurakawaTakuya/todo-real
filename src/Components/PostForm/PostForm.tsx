@@ -1,6 +1,7 @@
 "use client";
 import { functionsEndpoint } from "@/app/firebase";
 import { uploadImage } from "@/utils/Uploader";
+import { useUser } from "@/utils/UserContext";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
@@ -12,6 +13,7 @@ export default function PostForm() {
   const [text, setText] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [progress, setProgress] = useState<number>(100);
+  const { user } = useUser();
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -40,7 +42,7 @@ export default function PostForm() {
         console.log("Generated storage path hash:", hash);
 
         const postData = {
-          userId: "temp", // authenticatorが準備できるまで仮で設定
+          userId: user ? user.uid : "",
           storeId: url, // トークン管理ができるまではurlをそのまま管理
           text: text,
           goalId: "temp", // authenticatorが準備できるまで仮で設定
@@ -83,7 +85,12 @@ export default function PostForm() {
 
       <input type="file" onChange={handleImageChange} />
 
-      <button onClick={handleUpload}>Upload</button>
+      <button
+        onClick={handleUpload}
+        disabled={!user || user?.loginType === "Guest"}
+      >
+        Upload
+      </button>
 
       {progress !== 100 && <LinearProgressWithLabel value={progress} />}
 

@@ -1,12 +1,13 @@
+"use client";
+
 import GoalModal from "@/Components/GoalModal/GoalModal";
 import PostForm from "@/Components/PostForm/PostForm";
 import Posts from "@/Components/Posts/Posts";
-import UserForm from "@/Components/UserForm/UserForm";
 import {
   requestPermission,
   revokePermission,
 } from "@/utils/CloudMessaging/notificationController";
-import Button from "@mui/material/Button";
+import { Button } from "@mui/material";
 
 export default function Top() {
   return (
@@ -14,7 +15,6 @@ export default function Top() {
       <Posts />
       asdf
       <PostForm />
-      <UserForm />
       <GoalModal />
       <Button variant="contained" onClick={requestPermission}>
         通知を受信

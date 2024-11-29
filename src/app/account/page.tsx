@@ -46,7 +46,7 @@ const RoundedButton = styled(Button)(({ theme }) => ({
   padding: theme.spacing(1.5, 4),
 }));
 
-export default function UserForm() {
+export default function Account() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

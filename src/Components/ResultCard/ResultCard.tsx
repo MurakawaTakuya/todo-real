@@ -1,4 +1,6 @@
-import styles from "./PostCard.module.scss";
+// import styles from "./PostCard.module.scss";
+
+import Progress from "./Progress";
 
 // Postの中身の型を定義
 interface Post {
@@ -13,14 +15,21 @@ interface PostCardProps {
 }
 
 // 投稿を取得してPostCardに渡す
-export default function PostCard({ post }: PostCardProps) {
+export default function ResultCard({ post }: PostCardProps) {
   console.log(post);
   return (
-    <div className={styles.card}>
+    <>
+      {/* Stepper作成 */}
+      {/* goal表示 */}
+      {/* post表示 */}
       <p>User ID: {post.userId}</p>
       <p>Store ID: {post.storedId}</p>
       <p>Text: {post.text}</p>
       <p>Goal ID: {post.goalId}</p>
-    </div>
+
+      <Progress />
+    </>
   );
 }
+
+// ファイル名をresultcardとかにする

@@ -1,6 +1,6 @@
 "use client";
+import ResultCard from "@/Components/ResultCard/ResultCard";
 import { useEffect, useState } from "react";
-import PostCard from "../PostCard/PostCard";
 import styles from "./Posts.module.scss";
 
 // Postの中身の型を定義
@@ -34,7 +34,7 @@ export default function Posts() {
   return (
     <div className={styles.postsContainer}>
       {posts.map((post, index) => (
-        <PostCard key={index} post={post} />
+        <ResultCard key={index} post={post} />
       ))}
     </div>
   );

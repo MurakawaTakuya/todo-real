@@ -12,13 +12,14 @@ import {
 import { fetchUserAPI } from "./fetchUserAPI";
 
 interface UserContextValue {
-  user: UserData | null;
-  setUser: React.Dispatch<React.SetStateAction<UserData | null>>;
+  user: UserData | null | undefined;
+  setUser: React.Dispatch<React.SetStateAction<UserData | null | undefined>>;
 }
 
-let globalSetUser: React.Dispatch<
-  React.SetStateAction<UserData | null>
-> | null = null;
+let globalSetUser:
+  | React.Dispatch<React.SetStateAction<UserData | null | undefined>>
+  | null
+  | undefined = undefined;
 
 export const UserContext = createContext<UserContextValue | undefined>(
   undefined
@@ -29,7 +30,7 @@ interface Props {
 }
 
 export const UserProvider = ({ children }: Props) => {
-  const [user, setUser] = useState<UserData | null>(null);
+  const [user, setUser] = useState<UserData | null | undefined>(undefined);
 
   globalSetUser = setUser;
 
@@ -98,6 +99,14 @@ export const UserProvider = ({ children }: Props) => {
 
     return () => unsubscribe();
   }, []);
+
+  console.log(
+    user === undefined
+      ? "ローディング中"
+      : user === null
+      ? "ログインしていません"
+      : user
+  );
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

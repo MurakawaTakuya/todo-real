@@ -6,6 +6,7 @@ import {
   GoogleAuthProvider,
   setPersistence,
 } from "firebase/auth";
+import { getMessaging, Messaging } from "firebase/messaging";
 import { connectStorageEmulator, getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
@@ -24,6 +25,11 @@ console.log("firebaseConfig initialized");
 export const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
+let messaging: Messaging | null = null;
+if (typeof window !== "undefined") {
+  messaging = getMessaging(app);
+}
+export { messaging };
 export const googleProvider = new GoogleAuthProvider();
 
 // ブラウザを閉じてもログイン状態を維持
@@ -36,12 +42,20 @@ setPersistence(auth, browserLocalPersistence)
   });
 
 // エミュレータの設定
-if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true") {
+let functionsEndpoint = "";
+if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "false") {
+  console.log("Storage: Production");
+  console.log("Authentication: Production");
+  functionsEndpoint = "https://firestore-okdtj725ta-an.a.run.app";
+  console.log("Functions: Production");
+} else {
   connectStorageEmulator(storage, "localhost", 9199);
   console.log("Storage: Emulator");
   connectAuthEmulator(auth, "http://127.0.0.1:9099");
   console.log("Authentication: Emulator");
-} else {
-  console.log("Storage: Production");
-  console.log("Authentication: Production");
+  functionsEndpoint =
+    "http://127.0.0.1:5001/todo-real-c28fa/asia-northeast1/firestore";
+  console.log("Functions: Emulator");
 }
+
+export { functionsEndpoint };

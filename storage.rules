@@ -1,7 +1,7 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    match /post/{documentId}/image {
+    match /post/{documentId} {
       allow read, write: if true;
     }
   }

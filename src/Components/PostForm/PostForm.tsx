@@ -1,6 +1,6 @@
 "use client";
 import { functionsEndpoint } from "@/app/firebase";
-import { uploadImage } from "@/app/utils/Uploader";
+import { uploadImage } from "@/utils/Uploader";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";

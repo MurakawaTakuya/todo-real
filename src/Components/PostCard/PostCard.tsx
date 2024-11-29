@@ -13,7 +13,7 @@ interface PostCardProps {
 }
 
 // 投稿を取得してPostCardに渡す
-export default function Posts({ post }: PostCardProps) {
+export default function PostCard({ post }: PostCardProps) {
   console.log(post);
   return (
     <div className={styles.card}>

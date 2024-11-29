@@ -85,7 +85,10 @@ export default function PostForm() {
 
       <input type="file" onChange={handleImageChange} />
 
-      <button onClick={handleUpload} disabled={!user}>
+      <button
+        onClick={handleUpload}
+        disabled={!user || user?.loginType === "Guest"}
+      >
         Upload
       </button>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { functionsEndpoint } from "@/app/firebase";
+import { useUser } from "@/utils/UserContext";
 import { Add } from "@mui/icons-material";
 import {
   Button,
@@ -17,6 +18,7 @@ export default function GoalModal() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const { user } = useUser();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -28,7 +30,7 @@ export default function GoalModal() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: "sampleUser123",
+          userId: user ? user.uid : "",
           text: text,
           deadline: dueDate,
         }),
@@ -74,6 +76,7 @@ export default function GoalModal() {
         color="primary"
         startDecorator={<Add />}
         onClick={() => setOpen(true)}
+        disabled={!user || user?.loginType === "Guest"}
       >
         Create Goal
       </Button>
@@ -112,7 +115,12 @@ export default function GoalModal() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" variant="solid" color="primary">
+                <Button
+                  type="submit"
+                  variant="solid"
+                  color="primary"
+                  disabled={!user || user?.loginType === "Guest"}
+                >
                   Create Goal
                 </Button>
               </Stack>

@@ -1,3 +1,4 @@
+"use client";
 import Goal from "./Components/Goal/Goal";
 import Posts from "./Components/Posts/Posts";
 import UpLoadTest from "./Components/Uploader/Uploader";

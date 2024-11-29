@@ -29,7 +29,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   margin: "auto",
   boxShadow:
     "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
-  borderRadius: "20px", // 全体を丸角にする
+  borderRadius: "20px",
   [theme.breakpoints.up("sm")]: {
     width: "450px",
   },
@@ -42,8 +42,8 @@ const CenteredToggleButtonGroup = styled(ToggleButtonGroup)({
 });
 
 const RoundedButton = styled(Button)(({ theme }) => ({
-  borderRadius: "50px", // ボタンを丸角にする
-  padding: theme.spacing(1.5, 4), // ボタンの内側余白を調整
+  borderRadius: "50px",
+  padding: theme.spacing(1.5, 4),
 }));
 
 export default function UserForm() {
@@ -102,19 +102,21 @@ export default function UserForm() {
           <Typography variant="h4" textAlign="center">
             TODO-REAL
           </Typography>
-          <CenteredToggleButtonGroup
-            value={formMode}
-            exclusive
-            onChange={handleFormModeChange}
-            aria-label="form mode"
-          >
-            <ToggleButton value="register" aria-label="register">
-              新規登録
-            </ToggleButton>
-            <ToggleButton value="login" aria-label="login">
-              ログイン
-            </ToggleButton>
-          </CenteredToggleButtonGroup>
+          {!user && (
+            <CenteredToggleButtonGroup
+              value={formMode}
+              exclusive
+              onChange={handleFormModeChange}
+              aria-label="form mode"
+            >
+              <ToggleButton value="register" aria-label="register">
+                新規登録
+              </ToggleButton>
+              <ToggleButton value="login" aria-label="login">
+                ログイン
+              </ToggleButton>
+            </CenteredToggleButtonGroup>
+          )}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {user ? (
               <>

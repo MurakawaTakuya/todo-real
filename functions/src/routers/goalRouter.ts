@@ -98,7 +98,48 @@ router.route("/").post(async (req: Request, res: Response) => {
 });
 
 // PUT: 目標を更新
+router.route("/:goalId").put(async (req: Request, res: Response) => {
+  const goalId = req.params.goalId;
+  const { userId, deadline, text }: Partial<Goal> = req.body;
+
+  if (!userId && !deadline && !text) {
+    return res.status(400).json({
+      message: "At least one of userId, deadline, or text is required",
+    });
+  }
+
+  const updateData: Partial<Omit<Goal, "deadline">> & {
+    deadline?: admin.firestore.Timestamp;
+  } = {}; //型エラーが出たため書き方変更
+  if (userId) updateData.userId = userId;
+  if (deadline)
+    updateData.deadline = admin.firestore.Timestamp.fromDate(
+      new Date(deadline)
+    );
+  if (text) updateData.text = text;
+
+  try {
+    await db.collection("goal").doc(goalId).update(updateData);
+    return res.json({ message: "Goal updated successfully", goalId });
+  } catch (error) {
+    return res.status(500).json({ message: "Error updating goal", error });
+  }
+});
 
 // DELETE: 目標を削除
+router.route("/:goalId").delete(async (req: Request, res: Response) => {
+  const goalId = req.params.goalId;
+
+  if (!goalId) {
+    return res.status(400).json({ message: "Goal ID is required" });
+  }
+
+  try {
+    await db.collection("goal").doc(goalId).delete();
+    return res.json({ message: "Goal deleted successfully", goalId });
+  } catch (error) {
+    return res.status(500).json({ message: "Error deleting goal", error });
+  }
+});
 
 export default router;

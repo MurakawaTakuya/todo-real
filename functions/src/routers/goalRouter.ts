@@ -110,7 +110,7 @@ router.route("/:goalId").put(async (req: Request, res: Response) => {
 
   const updateData: Partial<Omit<Goal, "deadline">> & {
     deadline?: admin.firestore.Timestamp;
-  } = {}; //型エラーが出たため書き方変更
+  } = {}; // 型エラーが出たため書き方変更
   if (userId) updateData.userId = userId;
   if (deadline)
     updateData.deadline = admin.firestore.Timestamp.fromDate(

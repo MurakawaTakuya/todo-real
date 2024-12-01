@@ -85,17 +85,7 @@ router.post("/", async (req: Request, res: Response) => {
     return res.status(400).json({ message: "name and uid are required" });
   }
 
-  // 既に同じ名前のuserが存在する場合はエラーを返す
-  // const userSnapshot = await getUserFromName(name);
-
-  // if (!userSnapshot.empty) {
-  //   return res.status(409).json({
-  //     message: `A user with the same user name '${name}' already exists`,
-  //   });
-  // }
-
   try {
-    // userIdをドキュメント名として使用してデータを保存
     await db.collection("user").doc(uid).set({
       name: name,
       streak: streak,

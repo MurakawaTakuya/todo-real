@@ -63,7 +63,7 @@ router.get("/:userId", async (req: Request, res: Response) => {
 
 // POST: 新しい目標を作成
 router.post("/", async (req: Request, res: Response) => {
-  const goalId = db.collection("goal").doc().id; // FirebaseのドキュメントIDを生成
+  const goalId = db.collection("goal").doc().id;
 
   let userId: Goal["userId"];
   let deadline: Goal["deadline"];
@@ -82,7 +82,6 @@ router.post("/", async (req: Request, res: Response) => {
   }
 
   try {
-    // goalId をドキュメント名として使用してデータを保存
     await db
       .collection("goal")
       .doc(goalId)
@@ -113,7 +112,7 @@ router.put("/:goalId", async (req: Request, res: Response) => {
 
   const updateData: Partial<Omit<Goal, "deadline">> & {
     deadline?: admin.firestore.Timestamp;
-  } = {}; // 型エラーが出たため書き方変更
+  } = {};
   if (userId) updateData.userId = userId;
   if (deadline)
     updateData.deadline = admin.firestore.Timestamp.fromDate(

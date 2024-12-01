@@ -227,12 +227,14 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
 ## Result
 ### Get Result
 - URL: /result/:userId
-  - Empty userId will return all results
+  - Empty userId will return all results.
 - Parameters
-  - limit?: number - The maximum number of results to return.
+  - limit?: number - The maximum number of results to return.(Default is 10)
   - offset?: number - The number of results to skip before starting to collect the result set.
-  - TODO: onlyPast?: boolean - If true, only past results will be returned.
-  - TODO: onlyFuture?: boolean - If true, only future results will be returned.
+  - onlyPast?: boolean - If true, only past results will be returned.
+  - onlyFuture?: boolean - If true, only future results will be returned.
+    - Example1: /result/:userId?limit=30&offset=0&onlyPast
+    - Example2: /result/:userId?onlyFuture
 - Method: GET
 - Response
   ```json
@@ -249,7 +251,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
               "submittedAt": "2024-12-28T23:59:59.000Z"
           }
       ],
-      "failedOrPendingPosts": [ // TODO: Posts -> Results
+      "failedOrPendingResults": [
           {
               "goalId": "0qVTLfKJ80m50XD5HAOI",
               "userId": "FZ5KQ4sv0wZCow0MdwniPbyeBvVv",

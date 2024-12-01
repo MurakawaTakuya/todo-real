@@ -12,7 +12,7 @@ export default function DashBoard() {
   const [noResult, setNoResult] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch(`${functionsEndpoint}/result/`)
+    fetch(`${functionsEndpoint}/result/?onlyPast`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -28,7 +28,7 @@ export default function DashBoard() {
         } else {
           console.log(data);
           setSuccessResults(data.successResults);
-          setFailedResults(data.failedResults);
+          setFailedResults(data.failedOrPendingResults);
         }
       })
       .catch((error) => {
@@ -39,11 +39,6 @@ export default function DashBoard() {
         }
       });
   }, []);
-
-  useEffect(() => {
-    console.log("successResults", successResults);
-    console.log("failedResults", failedResults);
-  }, [successResults, failedResults]);
 
   return (
     <>

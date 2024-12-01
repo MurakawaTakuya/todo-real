@@ -63,7 +63,7 @@ router.get("/:userId", async (req: Request, res: Response) => {
 
 // POST: 新しい投稿を作成し、画像をStorageに保存
 router.post("/", async (req: Request, res: Response) => {
-  const postId = db.collection("post").doc().id; // FirebaseのドキュメントIDを生成
+  const postId = db.collection("post").doc().id;
 
   let userId: Post["userId"];
   let storedId: Post["storedId"];

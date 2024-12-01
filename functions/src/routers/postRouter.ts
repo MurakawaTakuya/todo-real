@@ -1,16 +1,9 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
+import { Post } from "./types";
 
 const router = express.Router();
 const db = admin.firestore();
-
-interface Post {
-  userId: string;
-  storedId: string;
-  text: string;
-  goalId: string;
-  submittedAt: Date;
-}
 
 // GET: 全ての投稿を取得
 router.get("/", async (req: Request, res: Response) => {

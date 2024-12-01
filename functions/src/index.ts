@@ -12,6 +12,11 @@ admin.initializeApp({
   storageBucket: "todo-real-c28fa.appspot.com",
 });
 
+import goalRouter from "./routers/goalRouter";
+import postRouter from "./routers/postRouter";
+import resultRouter from "./routers/resultRouter";
+import userRouer from "./routers/userRouter";
+
 const app = express();
 app.use(cors({ origin: true }));
 app.use(helmet());
@@ -33,14 +38,11 @@ app.use(
   })
 );
 
-import goalRouter from "./routers/goalRouter";
-import postRouter from "./routers/postRouter";
-import userRouer from "./routers/userRouter";
 app.use("/user", userRouer);
 app.use("/goal", goalRouter);
 app.use("/post", postRouter);
+app.use("/result", resultRouter);
 
-// Cloud Functionsにデプロイする関数
 const region = "asia-northeast1";
 
 export const helloWorld = onRequest({ region: region }, (req, res) => {

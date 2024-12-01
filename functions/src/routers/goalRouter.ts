@@ -1,14 +1,9 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
+import { Goal } from "./types";
 
 const router = express.Router();
 const db = admin.firestore();
-
-interface Goal {
-  userId: string;
-  deadline: Date;
-  text: string;
-}
 
 // GET: 全ての目標を取得
 router.get("/", async (req: Request, res: Response) => {

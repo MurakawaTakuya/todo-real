@@ -1,13 +1,9 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
+import { User } from "./types";
 
 const router = express.Router();
 const db = admin.firestore();
-
-interface User {
-  name: string;
-  streak: number;
-}
 
 // GET: 全てのユーザーデータを取得(アカウント機能を作成したら廃止)
 router.get("/", async (req: Request, res: Response) => {

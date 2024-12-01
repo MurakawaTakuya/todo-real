@@ -99,7 +99,7 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 // PUT: 投稿を更新
-router.route("/:postId").put(async (req: Request, res: Response) => {
+router.put("/:postId", async (req: Request, res: Response) => {
   const postId = req.params.postId;
   const { userId, storeId, text, goalId }: Partial<Post> = req.body;
 
@@ -124,7 +124,7 @@ router.route("/:postId").put(async (req: Request, res: Response) => {
 });
 
 // DELETE: 投稿を削除
-router.route("/:postId").delete(async (req: Request, res: Response) => {
+router.delete("/:postId", async (req: Request, res: Response) => {
   const postId = req.params.postId;
 
   if (!postId) {
@@ -133,7 +133,7 @@ router.route("/:postId").delete(async (req: Request, res: Response) => {
 
   try {
     await db.collection("post").doc(postId).delete();
-    return res.json({ message: "Post deleted successfully" });
+    return res.json({ message: "Post deleted successfully", postId });
   } catch (error) {
     return res.status(500).json({ message: "Error deleting post", error });
   }

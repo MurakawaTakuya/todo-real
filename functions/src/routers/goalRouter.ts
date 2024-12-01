@@ -11,7 +11,7 @@ interface Goal {
 }
 
 // GET: 全ての目標を取得
-router.route("/").get(async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     const goalSnapshot = await db.collection("goal").get();
     if (goalSnapshot.empty) {
@@ -30,7 +30,7 @@ router.route("/").get(async (req: Request, res: Response) => {
 });
 
 // GET: userIdから目標を取得
-router.route("/:userId").get(async (req: Request, res: Response) => {
+router.get("/:userId", async (req: Request, res: Response) => {
   const userId = req.params.userId;
 
   if (!userId) {
@@ -59,7 +59,7 @@ router.route("/:userId").get(async (req: Request, res: Response) => {
 });
 
 // POST: 新しい目標を作成
-router.route("/").post(async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   const goalId = db.collection("goal").doc().id; // FirebaseのドキュメントIDを生成
 
   let userId: Goal["userId"];
@@ -98,7 +98,7 @@ router.route("/").post(async (req: Request, res: Response) => {
 });
 
 // PUT: 目標を更新
-router.route("/:goalId").put(async (req: Request, res: Response) => {
+router.put("/:goalId", async (req: Request, res: Response) => {
   const goalId = req.params.goalId;
   const { userId, deadline, text }: Partial<Goal> = req.body;
 
@@ -127,7 +127,7 @@ router.route("/:goalId").put(async (req: Request, res: Response) => {
 });
 
 // DELETE: 目標を削除
-router.route("/:goalId").delete(async (req: Request, res: Response) => {
+router.delete("/:goalId", async (req: Request, res: Response) => {
   const goalId = req.params.goalId;
 
   if (!goalId) {

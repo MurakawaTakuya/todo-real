@@ -60,7 +60,8 @@ export default function PostForm() {
           }
 
           setProgress(100); // アップロード完了の進捗を表示
-          console.log("success:", postData);
+          const data = await response.json();
+          console.log("Success:", data);
         } catch (err) {
           setError("データの送信に失敗しました");
           console.error(err);

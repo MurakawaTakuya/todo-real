@@ -1,3 +1,4 @@
+import { GoalWithId, SuccessResult } from "@/types/types";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import Step, { stepClasses } from "@mui/joy/Step";
@@ -5,7 +6,15 @@ import StepIndicator, { stepIndicatorClasses } from "@mui/joy/StepIndicator";
 import Stepper from "@mui/joy/Stepper";
 import Typography, { typographyClasses } from "@mui/joy/Typography";
 
-export default function Progress() {
+interface ProgressProps {
+  successResults: SuccessResult[];
+  failedResults: GoalWithId[];
+}
+
+export default function Progress({
+  successResults,
+  failedResults,
+}: ProgressProps) {
   return (
     <Stepper
       orientation="vertical"

@@ -149,7 +149,7 @@ export default function Account() {
                     />
                     <TextField
                       label="Password"
-                      type="password"
+                      type="new-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       fullWidth
@@ -178,7 +178,7 @@ export default function Account() {
                     />
                     <TextField
                       label="Password"
-                      type="password"
+                      type="current-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       fullWidth

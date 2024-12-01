@@ -12,11 +12,26 @@ export interface Post {
   storedId: string;
   text: string;
   goalId: string;
-  submittedAt: Date; // TODO: dateじゃない
+  submittedAt: Date;
 }
 
 export interface Goal {
   userId: string;
   deadline: Date;
   text: string;
+}
+
+export interface GoalWithId extends Goal {
+  goalId: string;
+}
+
+export interface SuccessResult {
+  userId: string;
+  goalId: string;
+  postId: string;
+  goalText: string;
+  postText: string;
+  storedId: string;
+  deadline: Date;
+  submittedAt: Date;
 }

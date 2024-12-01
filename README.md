@@ -85,7 +85,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
   - Body
     - name: string
     - streak?: number
-  - example
+  - Example
     ```json
     {
       "name": "testUser",
@@ -147,7 +147,7 @@ the same as Get User Data by User Id
     - userId: string
     - deadline: Date
     - text: string
-  - example
+  - Example
     ```json
     {
         "userId": "IK0Zc2hoUYaYjXoqzmCl",

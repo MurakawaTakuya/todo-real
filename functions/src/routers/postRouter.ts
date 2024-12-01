@@ -98,4 +98,45 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
+// PUT: 投稿を更新
+router.put("/:postId", async (req: Request, res: Response) => {
+  const postId = req.params.postId;
+  const { userId, storeId, text, goalId }: Partial<Post> = req.body;
+
+  if (!userId && !storeId && !text && !goalId) {
+    return res
+      .status(400)
+      .json({ message: "At least one field is required to update" });
+  }
+
+  const updateData: Partial<Post> = {};
+  if (userId) updateData.userId = userId;
+  if (storeId) updateData.storeId = storeId;
+  if (text) updateData.text = text;
+  if (goalId) updateData.goalId = goalId;
+
+  try {
+    await db.collection("post").doc(postId).update(updateData);
+    return res.json({ message: "Post updated successfully", postId });
+  } catch (error) {
+    return res.status(500).json({ message: "Error updating post", error });
+  }
+});
+
+// DELETE: 投稿を削除
+router.delete("/:postId", async (req: Request, res: Response) => {
+  const postId = req.params.postId;
+
+  if (!postId) {
+    return res.status(400).json({ message: "Post ID is required" });
+  }
+
+  try {
+    await db.collection("post").doc(postId).delete();
+    return res.json({ message: "Post deleted successfully", postId });
+  } catch (error) {
+    return res.status(500).json({ message: "Error deleting post", error });
+  }
+});
+
 export default router;

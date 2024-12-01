@@ -13,7 +13,6 @@ export default function Top() {
   return (
     <>
       <Posts />
-      asdf
       <PostForm />
       <GoalModal />
       <Button variant="contained" onClick={requestPermission}>

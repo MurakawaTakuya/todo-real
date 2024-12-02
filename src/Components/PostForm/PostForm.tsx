@@ -1,5 +1,6 @@
 "use client";
 import { functionsEndpoint } from "@/app/firebase";
+import { Post } from "@/types/types";
 import { uploadImage } from "@/utils/Uploader";
 import { useUser } from "@/utils/UserContext";
 import Box from "@mui/material/Box";
@@ -38,14 +39,15 @@ export default function PostForm() {
       (errorMsg) => setError(errorMsg),
       async (url, hash) => {
         setImageUrl(url);
-        console.log("Image is save at :", url);
+        console.log("Image is save at:", url);
         console.log("Generated storage path hash:", hash);
 
-        const postData = {
+        const postData: Post = {
           userId: user ? user.uid : "",
-          storeId: url, // トークン管理ができるまではurlをそのまま管理
+          storedId: url, // TODO: トークン管理ができるまではurlをそのまま管理
           text: text,
-          goalId: "temp", // authenticatorが準備できるまで仮で設定
+          goalId: "temp", // TODO: 実際のgoalIdを入れる
+          submittedAt: new Date(),
         };
 
         try {
@@ -95,11 +97,9 @@ export default function PostForm() {
 
       {progress !== 100 && <LinearProgressWithLabel value={progress} />}
 
-      {/* 一旦仮で表示 */}
       {imageUrl && (
         <Box mt={2}>
           <Typography variant="body1">アップロード完了:</Typography>
-          <img src={imageUrl} alt="Uploaded file" width="400px" />
         </Box>
       )}
     </div>

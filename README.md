@@ -229,40 +229,38 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
 - URL: /result/:userId
   - Empty userId will return all results.
 - Parameters
-  - limit?: number - The maximum number of results to return.(Default is 10)
+  - limit?: number - The maximum number of results to return.(Default is 50)
   - offset?: number - The number of results to skip before starting to collect the result set.
-  - onlyPast?: boolean - If true, only past results will be returned.
-  - onlyFuture?: boolean - If true, only future results will be returned.
-    - Example1: /result/:userId?limit=30&offset=0&onlyPast
-    - Example2: /result/:userId?onlyFuture
 - Method: GET
 - Response
   ```json
   {
       "successResults": [
           {
-              "userId": "FZ5KQ4sv0wZCow0MdwniPbyeBvVv",
-              "goalId": "9AQYNhnEA3DyjNKSCU6U",
-              "postId": "6bUz6SOUn62SJhrWn1Y6",
-              "goalText": "英語の勉強する",
-              "postText": "英語の勉強したよ^^",
+              "userId": "Vlx6GCtq90ag3lxgh0pcCKGp5ba0",
+              "goalId": "DESiyiEIHFDpuCjo08Si",
+              "postId": "5KffB5x2SykU6lY9sHGB",
+              "goalText": "数学の勉強する",
+              "postText": "数学の勉強したよ^^",
               "storedId": "ointtq9NT5TPgEnKS4tb",
-              "deadline": "2024-12-31T23:59:59.000Z",
-              "submittedAt": "2024-12-28T23:59:59.000Z"
+              "deadline": "2025-01-31T23:59:59.000Z",
+              "submittedAt": "2024-12-30T23:59:59.000Z"
           }
       ],
-      "failedOrPendingResults": [
+      "failedResults": [
           {
-              "goalId": "0qVTLfKJ80m50XD5HAOI",
-              "userId": "FZ5KQ4sv0wZCow0MdwniPbyeBvVv",
-              "deadline": "2024-12-31T23:59:59.000Z",
-              "text": "国語の勉強する"
-          },
+              "goalId": "cl2wtpf5RufkCL2N8s98",
+              "userId": "Vlx6GCtq90ag3lxgh0pcCKGp5ba0",
+              "deadline": "2024-10-30T23:59:59.000Z",
+              "text": "ちょいと前のやつ"
+          }
+      ],
+      "pendingResults": [
           {
-              "goalId": "3HAGWZHFg9GOJYV2sib5",
-              "userId": "FZ5KQ4sv0wZCow0MdwniPbyeBvVv",
-              "deadline": "2024-12-31T23:59:59.000Z",
-              "text": "数学の勉強する"
+              "goalId": "2CA5Q7JygkXSHUmJZ8B7",
+              "userId": "Vlx6GCtq90ag3lxgh0pcCKGp5ba0",
+              "deadline": "2024-12-09T23:59:59.000Z",
+              "text": "まだまだ先だよ"
           }
       ]
   }

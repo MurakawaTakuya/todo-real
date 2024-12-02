@@ -5,7 +5,7 @@ import { User } from "./types";
 const router = express.Router();
 const db = admin.firestore();
 
-// GET: 全てのユーザーデータを取得(アカウント機能を作成したら廃止)
+// GET: 全てのユーザーデータを取得
 router.get("/", async (req: Request, res: Response) => {
   try {
     const userSnapshot = await db.collection("user").get();

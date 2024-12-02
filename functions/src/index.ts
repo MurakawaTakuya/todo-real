@@ -1,6 +1,6 @@
 import cors from "cors";
 import express from "express";
-import rateLimit from "express-rate-limit";
+import { rateLimit } from "express-rate-limit";
 import admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
 import { onRequest } from "firebase-functions/v2/https";

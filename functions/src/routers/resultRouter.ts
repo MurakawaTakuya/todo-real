@@ -5,25 +5,10 @@ import { GoalWithId, SuccessResult } from "./types";
 const router = express.Router();
 const db = admin.firestore();
 
-const getResults = async (
-  limit: number,
-  offset: number,
-  userId?: string,
-  onlyPast?: boolean, // 過去の結果のみ取得
-  onlyFuture?: boolean // 未来の結果のみ取得
-) => {
+const getResults = async (limit: number, offset: number, userId?: string) => {
   let goalQuery = db.collection("goal").limit(limit).offset(offset);
   if (userId) {
     goalQuery = goalQuery.where("userId", "==", userId);
-  }
-  // TODO: 日本時間に合っているか確認
-  if (onlyPast) {
-    console.log("onlyPast");
-    goalQuery = goalQuery.where("deadline", "<", new Date());
-  }
-  if (onlyFuture) {
-    console.log("onlyFuture");
-    goalQuery = goalQuery.where("deadline", ">", new Date());
   }
   const goalSnapshot = await goalQuery.get();
 
@@ -38,7 +23,7 @@ const getResults = async (
   }) as GoalWithId[];
 
   if (!goals || goals.length === 0) {
-    return { successResults: [], failedOrPendingResults: [] };
+    return { successResults: [], failedResults: [], pendingResults: [] };
   }
 
   const postSnapshot = await db
@@ -51,7 +36,8 @@ const getResults = async (
     .get();
 
   const successResults: SuccessResult[] = [];
-  const failedOrPendingResults: GoalWithId[] = [];
+  const failedResults: GoalWithId[] = [];
+  const pendingResults: GoalWithId[] = [];
   goals.forEach((goal) => {
     const post = postSnapshot.docs.find(
       (doc) => doc.data().goalId === goal.goalId
@@ -60,7 +46,7 @@ const getResults = async (
       const postData = post.data();
       const submittedAt = postData.submittedAt.toDate();
       if (submittedAt > goal.deadline) {
-        failedOrPendingResults.push(goal);
+        failedResults.push(goal);
       } else {
         successResults.push({
           userId: goal.userId,
@@ -73,23 +59,23 @@ const getResults = async (
           submittedAt: submittedAt,
         });
       }
+    } else if (goal.deadline < new Date()) {
+      // TODO: 日本時間に合ってるか確認
+      failedResults.push(goal);
     } else {
-      failedOrPendingResults.push(goal);
+      pendingResults.push(goal);
     }
   });
 
-  return { successResults, failedOrPendingResults };
+  return { successResults, failedResults, pendingResults };
 };
 
 // GET: 全ての目標または特定のユーザーの目標に対する結果を取得
 router.get("/:userId?", async (req: Request, res: Response) => {
   const userId = req.params.userId;
 
-  const limit = req.query.limit ? Number(req.query.limit) : 10; // 取得数
+  const limit = req.query.limit ? Number(req.query.limit) : 50; // 取得数
   const offset = req.query.offset ? Number(req.query.offset) : 0; // 開始位置
-  const onlyPast = req.query.onlyPast !== undefined; // 過去の結果のみ取得
-  const onlyFuture = req.query.onlyFuture !== undefined; // 未来の結果のみ取得
-  console.log(onlyPast, onlyFuture);
   if (offset < 0) {
     res.status(400).json({ message: "Offset must be a positive number" });
   }
@@ -98,13 +84,7 @@ router.get("/:userId?", async (req: Request, res: Response) => {
   }
 
   try {
-    const results = await getResults(
-      limit,
-      offset,
-      userId,
-      onlyPast,
-      onlyFuture
-    );
+    const results = await getResults(limit, offset, userId);
     res.json(results);
   } catch (error) {
     console.error(error);

@@ -1,5 +1,9 @@
 "use client";
 import { auth } from "@/app/firebase";
+import {
+  requestPermission,
+  revokePermission,
+} from "@/utils/CloudMessaging/notificationController";
 import { createUser } from "@/utils/createUserAuth";
 import { loginUser } from "@/utils/loginUserAuth";
 import { signInAsGuest } from "@/utils/signInAnonymously";
@@ -121,6 +125,14 @@ export default function UserForm() {
             {user ? (
               <>
                 <Typography>ログイン中: {user.name}</Typography>
+                <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+                  <Button variant="contained" onClick={requestPermission}>
+                    通知を受信
+                  </Button>
+                  <Button variant="contained" onClick={revokePermission}>
+                    通知を解除
+                  </Button>
+                </Box>
                 <RoundedButton variant="contained" onClick={handleLogout}>
                   ログアウト
                 </RoundedButton>

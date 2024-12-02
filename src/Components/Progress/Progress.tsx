@@ -19,6 +19,12 @@ interface ProgressProps {
   pendingResults?: GoalWithId[];
 }
 
+const successPostIndicatorStyle = {
+  "& > div": {
+    placeSelf: "start",
+  },
+};
+
 export default function Progress({
   successResults = [],
   failedResults = [],
@@ -54,7 +60,7 @@ export default function Progress({
 
 const successStep = (result: SuccessResult) => {
   return (
-    <StepperBlock key={result.goalId} resultType="success">
+    <StepperBlock key={result.goalId}>
       <Step
         completed
         indicator={
@@ -63,17 +69,26 @@ const successStep = (result: SuccessResult) => {
           </StepIndicator>
         }
       >
-        <GoalCard deadline={result.deadline} goalText={result.goalText} />
+        <GoalCard
+          deadline={result.deadline}
+          goalText={result.goalText}
+          resultType="success"
+        />
       </Step>
       <Step
         completed
+        sx={successPostIndicatorStyle}
         indicator={
           <StepIndicator variant="solid" color="success">
             <CheckRoundedIcon />
           </StepIndicator>
         }
       >
-        <Card variant="soft" size="sm">
+        <Card
+          variant="outlined"
+          size="sm"
+          sx={{ borderColor: "#008d32", width: "93%" }}
+        >
           {result.storedId && (
             <CardOverflow>
               <AspectRatio ratio="2">
@@ -100,7 +115,7 @@ const successStep = (result: SuccessResult) => {
 
 const failedStep = (result: GoalWithId) => {
   return (
-    <StepperBlock key={result.goalId} resultType="failed">
+    <StepperBlock key={result.goalId}>
       <Step
         indicator={
           <StepIndicator variant="solid" color="danger">
@@ -108,7 +123,11 @@ const failedStep = (result: GoalWithId) => {
           </StepIndicator>
         }
       >
-        <GoalCard deadline={result.deadline} goalText={result.text} />
+        <GoalCard
+          deadline={result.deadline}
+          goalText={result.text}
+          resultType="failed"
+        />
       </Step>
     </StepperBlock>
   );
@@ -116,7 +135,7 @@ const failedStep = (result: GoalWithId) => {
 
 const pendingStep = (result: GoalWithId) => {
   return (
-    <StepperBlock key={result.goalId} resultType="pending">
+    <StepperBlock key={result.goalId}>
       <Step
         active
         indicator={
@@ -125,34 +144,19 @@ const pendingStep = (result: GoalWithId) => {
           </StepIndicator>
         }
       >
-        <GoalCard deadline={result.deadline} goalText={result.text} />
+        <GoalCard
+          deadline={result.deadline}
+          goalText={result.text}
+          resultType="pending"
+        />
       </Step>
     </StepperBlock>
   );
 };
 
-const StepperBlock = ({
-  children,
-  resultType,
-}: {
-  children: ReactNode;
-  resultType?: "success" | "failed" | "pending";
-}) => {
+const StepperBlock = ({ children }: { children: ReactNode }) => {
   return (
-    <Card
-      variant="outlined"
-      sx={{
-        width: "88%",
-        margin: "10px auto",
-        borderColor:
-          resultType == "success"
-            ? "#00cb48"
-            : resultType == "failed"
-            ? "#ff3f3f"
-            : "#2f74ff",
-      }}
-      size="sm"
-    >
+    <Card variant="soft" size="sm">
       <Stepper
         orientation="vertical"
         sx={(theme) => ({
@@ -192,12 +196,27 @@ const StepperBlock = ({
 const GoalCard = ({
   deadline,
   goalText,
+  resultType,
 }: {
   deadline: string;
   goalText: string;
+  resultType?: "success" | "failed" | "pending";
 }) => {
   return (
-    <Card variant="soft" size="sm">
+    <Card
+      variant="outlined"
+      size="sm"
+      sx={{
+        width: "93%",
+        margin: "2px auto",
+        borderColor:
+          resultType == "success"
+            ? "#008d32"
+            : resultType == "failed"
+            ? "#bb0000"
+            : "#003fbe",
+      }}
+    >
       <CardContent>
         <Typography level="body-sm">{formatStringToDate(deadline)}</Typography>
         <Typography level="body-lg">{goalText}</Typography>

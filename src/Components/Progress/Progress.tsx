@@ -1,3 +1,4 @@
+import { functionsEndpoint } from "@/app/firebase";
 import { GoalWithId, SuccessResult } from "@/types/types";
 import { formatStringToDate } from "@/utils/DateFormatter";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
@@ -11,7 +12,8 @@ import Step, { stepClasses } from "@mui/joy/Step";
 import StepIndicator, { stepIndicatorClasses } from "@mui/joy/StepIndicator";
 import Stepper from "@mui/joy/Stepper";
 import Typography, { typographyClasses } from "@mui/joy/Typography";
-import { ReactNode } from "react";
+import { Divider } from "@mui/material";
+import { ReactNode, useEffect, useState } from "react";
 
 interface ProgressProps {
   successResults?: SuccessResult[];
@@ -30,9 +32,31 @@ export default function Progress({
   failedResults = [],
   pendingResults = [],
 }: ProgressProps) {
-  console.log("successResults:", successResults);
-  console.log("failedResults:", failedResults);
-  console.log("pendingResults:", pendingResults);
+  const [userNames, setUserNames] = useState<Record<string, string>>({}); // userId: userName
+
+  const fetchUserName = async (userId: string) => {
+    if (userNames[userId]) return; // 既に取得済みの場合はキャッシュのように再利用
+    setUserNames((prev) => ({ ...prev, [userId]: "Loading..." }));
+    try {
+      const response = await fetch(`${functionsEndpoint}/user/id/${userId}`);
+      const data = await response.json();
+      setUserNames((prev) => ({ ...prev, [userId]: data.name }));
+    } catch (error) {
+      console.error("Failed to fetch user name:", error);
+      setUserNames((prev) => ({ ...prev, [userId]: "Unknown user" }));
+    }
+  };
+
+  useEffect(() => {
+    const allUserIds = [
+      ...successResults.map((result) => result.userId),
+      ...failedResults.map((result) => result.userId),
+      ...pendingResults.map((result) => result.userId),
+    ];
+    // 同じuserIdに対して1回だけ取得し、キャッシュする
+    const uniqueUserIds = Array.from(new Set(allUserIds));
+    uniqueUserIds.forEach((userId) => fetchUserName(userId));
+  }, [successResults, failedResults, pendingResults, fetchUserName]);
 
   const allResults = [
     ...successResults.map((result) => ({ ...result, type: "success" })),
@@ -48,19 +72,22 @@ export default function Progress({
   return (
     <>
       {allResults.map((result) => {
+        const userName = userNames[result.userId] || "Loading...";
         if (result.type === "success")
-          return successStep(result as SuccessResult);
-        if (result.type === "failed") return failedStep(result as GoalWithId);
-        if (result.type === "pending") return pendingStep(result as GoalWithId);
+          return successStep(result as SuccessResult, userName);
+        if (result.type === "failed")
+          return failedStep(result as GoalWithId, userName);
+        if (result.type === "pending")
+          return pendingStep(result as GoalWithId, userName);
         return null;
       })}
     </>
   );
 }
 
-const successStep = (result: SuccessResult) => {
+const successStep = (result: SuccessResult, userName: string) => {
   return (
-    <StepperBlock key={result.goalId}>
+    <StepperBlock key={result.goalId} userName={userName}>
       <Step
         completed
         indicator={
@@ -87,7 +114,7 @@ const successStep = (result: SuccessResult) => {
         <Card
           variant="outlined"
           size="sm"
-          sx={{ borderColor: "#008d32", width: "93%" }}
+          sx={{ borderColor: "#008c328a", width: "93%" }}
         >
           {result.storedId && (
             <CardOverflow>
@@ -105,6 +132,7 @@ const successStep = (result: SuccessResult) => {
             <Typography level="body-sm">
               {formatStringToDate(result.submittedAt)}
             </Typography>
+            <Divider />
             <Typography level="title-md">{result.postText}</Typography>
           </CardContent>
         </Card>
@@ -113,9 +141,9 @@ const successStep = (result: SuccessResult) => {
   );
 };
 
-const failedStep = (result: GoalWithId) => {
+const failedStep = (result: GoalWithId, userName: string) => {
   return (
-    <StepperBlock key={result.goalId}>
+    <StepperBlock key={result.goalId} userName={userName}>
       <Step
         indicator={
           <StepIndicator variant="solid" color="danger">
@@ -133,9 +161,9 @@ const failedStep = (result: GoalWithId) => {
   );
 };
 
-const pendingStep = (result: GoalWithId) => {
+const pendingStep = (result: GoalWithId, userName: string) => {
   return (
-    <StepperBlock key={result.goalId}>
+    <StepperBlock key={result.goalId} userName={userName}>
       <Step
         active
         indicator={
@@ -154,9 +182,58 @@ const pendingStep = (result: GoalWithId) => {
   );
 };
 
-const StepperBlock = ({ children }: { children: ReactNode }) => {
+const GoalCard = ({
+  deadline,
+  goalText,
+  resultType,
+}: {
+  deadline: string;
+  goalText: string;
+  resultType?: "success" | "failed" | "pending";
+}) => {
   return (
-    <Card variant="soft" size="sm">
+    <Card
+      variant="outlined"
+      size="sm"
+      sx={{
+        width: "93%",
+        borderColor:
+          resultType == "success"
+            ? "#008c328a"
+            : resultType == "failed"
+            ? "#a2000082"
+            : "#0045cf80",
+      }}
+    >
+      <CardContent>
+        <Typography level="body-sm">{formatStringToDate(deadline)}</Typography>
+        <Divider />
+        <Typography level="body-lg">{goalText}</Typography>
+      </CardContent>
+    </Card>
+  );
+};
+
+const StepperBlock = ({
+  children,
+  userName = "test user",
+}: {
+  children: ReactNode;
+  userName: string;
+}) => {
+  return (
+    <Card
+      variant="soft"
+      size="sm"
+      sx={{
+        width: "90%",
+        margin: "10px auto",
+        padding: "13px",
+        borderRadius: "8px",
+      }}
+    >
+      <Typography level="title-lg">{userName}</Typography>
+      <Divider />
       <Stepper
         orientation="vertical"
         sx={(theme) => ({
@@ -189,38 +266,6 @@ const StepperBlock = ({ children }: { children: ReactNode }) => {
       >
         {children}
       </Stepper>
-    </Card>
-  );
-};
-
-const GoalCard = ({
-  deadline,
-  goalText,
-  resultType,
-}: {
-  deadline: string;
-  goalText: string;
-  resultType?: "success" | "failed" | "pending";
-}) => {
-  return (
-    <Card
-      variant="outlined"
-      size="sm"
-      sx={{
-        width: "93%",
-        margin: "2px auto",
-        borderColor:
-          resultType == "success"
-            ? "#008d32"
-            : resultType == "failed"
-            ? "#bb0000"
-            : "#003fbe",
-      }}
-    >
-      <CardContent>
-        <Typography level="body-sm">{formatStringToDate(deadline)}</Typography>
-        <Typography level="body-lg">{goalText}</Typography>
-      </CardContent>
     </Card>
   );
 };

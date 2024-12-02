@@ -97,11 +97,9 @@ export default function PostForm() {
 
       {progress !== 100 && <LinearProgressWithLabel value={progress} />}
 
-      {/* 一旦仮で表示 */}
       {imageUrl && (
         <Box mt={2}>
           <Typography variant="body1">アップロード完了:</Typography>
-          <img src={imageUrl} alt="Uploaded file" width="400px" />
         </Box>
       )}
     </div>

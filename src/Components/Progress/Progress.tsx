@@ -20,24 +20,39 @@ interface ProgressProps {
 }
 
 export default function Progress({
-  successResults,
-  failedResults,
-  pendingResults,
+  successResults = [],
+  failedResults = [],
+  pendingResults = [],
 }: ProgressProps) {
   console.log("successResults:", successResults);
   console.log("failedResults:", failedResults);
   console.log("pendingResults:", pendingResults);
 
+  const allResults = [
+    ...successResults.map((result) => ({ ...result, type: "success" })),
+    ...failedResults.map((result) => ({ ...result, type: "failed" })),
+    ...pendingResults.map((result) => ({ ...result, type: "pending" })),
+  ];
+
+  // 最新のものを上に表示
+  allResults.sort(
+    (a, b) => new Date(b.deadline).getTime() - new Date(a.deadline).getTime()
+  );
+
   return (
     <>
-      {successResults && successResults.map((result) => successStep(result))}
-      {failedResults && failedResults.map((result) => failedStep(result))}
-      {pendingResults && pendingResults.map((result) => pendingStep(result))}
+      {allResults.map((result) => {
+        if (result.type === "success")
+          return successStep(result as SuccessResult);
+        if (result.type === "failed") return failedStep(result as GoalWithId);
+        if (result.type === "pending") return pendingStep(result as GoalWithId);
+        return null;
+      })}
     </>
   );
 }
 
-function successStep(result: SuccessResult) {
+const successStep = (result: SuccessResult) => {
   return (
     <StepperBlock key={result.goalId} resultType="success">
       <Step
@@ -81,9 +96,9 @@ function successStep(result: SuccessResult) {
       </Step>
     </StepperBlock>
   );
-}
+};
 
-function failedStep(result: GoalWithId) {
+const failedStep = (result: GoalWithId) => {
   return (
     <StepperBlock key={result.goalId} resultType="failed">
       <Step
@@ -97,9 +112,9 @@ function failedStep(result: GoalWithId) {
       </Step>
     </StepperBlock>
   );
-}
+};
 
-function pendingStep(result: GoalWithId) {
+const pendingStep = (result: GoalWithId) => {
   return (
     <StepperBlock key={result.goalId} resultType="pending">
       <Step
@@ -114,15 +129,15 @@ function pendingStep(result: GoalWithId) {
       </Step>
     </StepperBlock>
   );
-}
+};
 
-function StepperBlock({
+const StepperBlock = ({
   children,
   resultType,
 }: {
   children: ReactNode;
   resultType?: "success" | "failed" | "pending";
-}) {
+}) => {
   return (
     <Card
       variant="outlined"
@@ -172,15 +187,15 @@ function StepperBlock({
       </Stepper>
     </Card>
   );
-}
+};
 
-function GoalCard({
+const GoalCard = ({
   deadline,
   goalText,
 }: {
   deadline: string;
   goalText: string;
-}) {
+}) => {
   return (
     <Card variant="soft" size="sm">
       <CardContent>
@@ -189,4 +204,4 @@ function GoalCard({
       </CardContent>
     </Card>
   );
-}
+};

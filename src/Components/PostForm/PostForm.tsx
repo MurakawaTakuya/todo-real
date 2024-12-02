@@ -44,9 +44,9 @@ export default function PostForm() {
 
         const postData: Post = {
           userId: user ? user.uid : "",
-          storedId: url, // トークン管理ができるまではurlをそのまま管理
+          storedId: url, // TODO: トークン管理ができるまではurlをそのまま管理
           text: text,
-          goalId: "temp", // authenticatorが準備できるまで仮で設定
+          goalId: "temp", // TODO: 実際のgoalIdを入れる
           submittedAt: new Date(),
         };
 

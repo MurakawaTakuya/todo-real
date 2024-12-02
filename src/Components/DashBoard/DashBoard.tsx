@@ -9,6 +9,7 @@ import Progress from "./Progress";
 export default function DashBoard() {
   const [successResults, setSuccessResults] = useState<SuccessResult[]>([]);
   const [failedResults, setFailedResults] = useState<GoalWithId[]>([]);
+  const [pendingResults, setPendingResults] = useState<GoalWithId[]>([]); // テスト用
   const [noResult, setNoResult] = useState<boolean>(false);
 
   useEffect(() => {
@@ -28,7 +29,8 @@ export default function DashBoard() {
         } else {
           console.log(data);
           setSuccessResults(data.successResults);
-          setFailedResults(data.failedOrPendingResults);
+          setFailedResults(data.failedResults);
+          setPendingResults(data.pendingResults); // テスト用
         }
       })
       .catch((error) => {
@@ -49,6 +51,7 @@ export default function DashBoard() {
           <Progress
             successResults={successResults}
             failedResults={failedResults}
+            pendingResults={pendingResults}
           />
         </div>
       )}

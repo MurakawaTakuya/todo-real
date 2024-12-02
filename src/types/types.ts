@@ -12,17 +12,18 @@ export interface Post {
   storedId: string;
   text: string;
   goalId: string;
-  submittedAt: Date;
+  submittedAt: Date | string;
 }
 
 export interface Goal {
   userId: string;
-  deadline: Date;
+  deadline: Date | string;
   text: string;
 }
 
 export interface GoalWithId extends Goal {
   goalId: string;
+  deadline: string;
 }
 
 export interface SuccessResult {
@@ -32,6 +33,8 @@ export interface SuccessResult {
   goalText: string;
   postText: string;
   storedId: string;
-  deadline: Date;
-  submittedAt: Date;
+  deadline: string;
+  submittedAt: string;
+  // dealineとsubmittedAtはAPIから取得するとString型になる
+  // Date型で使用したい場合はsrc\utils\DateFormatter.tsで変換
 }

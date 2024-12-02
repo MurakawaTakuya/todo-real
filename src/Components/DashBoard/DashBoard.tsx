@@ -2,8 +2,8 @@
 import { functionsEndpoint } from "@/app/firebase";
 import { GoalWithId, SuccessResult } from "@/types/types";
 import { useEffect, useState } from "react";
+import Progress from "../Progress/Progress";
 import styles from "./DashBoard.module.scss";
-import Progress from "./Progress";
 
 // 投稿を取得してPostCardに渡す
 export default function DashBoard() {

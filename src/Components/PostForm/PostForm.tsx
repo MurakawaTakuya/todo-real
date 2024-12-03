@@ -86,7 +86,11 @@ export default function PostForm() {
         placeholder="投稿内容を入力して下さい"
       />
 
-      <input type="file" onChange={handleImageChange} />
+      <input
+        type="file"
+        accept=".jpg,.jpeg,.png,.webp"
+        onChange={handleImageChange}
+      />
 
       <button
         onClick={handleUpload}

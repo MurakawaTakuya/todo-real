@@ -1,5 +1,5 @@
 "use client";
-import { functionsEndpoint } from "@/app/firebase";
+import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 import { Post } from "@/types/types";
 import { uploadImage } from "@/utils/Uploader";
 import { useUser } from "@/utils/UserContext";
@@ -54,6 +54,7 @@ export default function PostForm() {
           const response = await fetch(`${functionsEndpoint}/post/`, {
             method: "POST",
             headers: {
+              "X-Firebase-AppCheck": appCheckToken,
               "Content-Type": "application/json",
             },
             body: JSON.stringify(postData),

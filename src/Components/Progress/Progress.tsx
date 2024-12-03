@@ -1,5 +1,5 @@
-import { functionsEndpoint } from "@/app/firebase";
 import { GoalWithId, SuccessResult } from "@/types/types";
+import { fetchUserById } from "@/utils/API/fetchUser";
 import { formatStringToDate } from "@/utils/DateFormatter";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
@@ -50,9 +50,8 @@ export default function Progress({
     if (userNames[userId]) return; // 既に取得済みの場合はキャッシュのように再利用
     setUserNames((prev) => ({ ...prev, [userId]: "Loading..." }));
     try {
-      const response = await fetch(`${functionsEndpoint}/user/id/${userId}`);
-      const data = await response.json();
-      setUserNames((prev) => ({ ...prev, [userId]: data.name }));
+      const userData = await fetchUserById(userId);
+      setUserNames((prev) => ({ ...prev, [userId]: userData.name }));
     } catch (error) {
       console.error("Failed to fetch user name:", error);
       setUserNames((prev) => ({ ...prev, [userId]: "Unknown user" }));

@@ -18,10 +18,40 @@ import resultRouter from "./routers/resultRouter";
 import userRouer from "./routers/userRouter";
 
 const app = express();
-app.use(cors({ origin: true }));
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+
+// App Checkのトークンを検証
+const verifyAppCheckToken = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const appCheckToken = req.get("X-Firebase-AppCheck");
+
+  if (!appCheckToken) {
+    res
+      .status(400)
+      .send({ message: "Authentication error: App Check token is missing." });
+  }
+
+  try {
+    const decodedToken = await admin
+      .appCheck()
+      .verifyToken(appCheckToken as string);
+    console.log("Verified App Check Token:", decodedToken);
+    next();
+  } catch (error) {
+    console.error("Invalid App Check token:", error);
+    res.status(401).send("Invalid App Check token.");
+  }
+};
+
+// Postmanを使うためにCloud FunctionsのApp Checkは開発環境では使用しない
+if (process.env.NODE_ENV === "production") {
+  app.use(verifyAppCheckToken);
+}
 
 // 10分間で最大300回に制限
 app.use(

@@ -1,6 +1,6 @@
 "use client";
-import { functionsEndpoint } from "@/app/firebase";
 import { GoalWithId, SuccessResult } from "@/types/types";
+import { fetchResult } from "@/utils/API/fetchResult";
 import { useEffect, useState } from "react";
 import Progress from "../Progress/Progress";
 import styles from "./DashBoard.module.scss";
@@ -12,13 +12,7 @@ export default function DashBoard() {
   const [noResult, setNoResult] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch(`${functionsEndpoint}/result/`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
+    fetchResult()
       .then((data) => {
         if (
           data.successResults.length === 0 &&

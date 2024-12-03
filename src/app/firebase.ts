@@ -30,20 +30,18 @@ export const storage = getStorage(app);
 export const auth = getAuth(app);
 let messaging: Messaging | null = null;
 let analytics: Analytics | null = null;
-let appCheckToken: string = "";
+let appCheckToken = "";
 
 // クライアントサイドでのみ実行する初期化
 if (typeof window !== "undefined") {
   messaging = getMessaging(app);
   analytics = getAnalytics(app);
 
-  console.log("process.env.IS_STATING:", process.env.IS_STATING);
   // 開発環境とステージング環境でApp Checkのデバッグトークンを有効にする
-  // TODO: テスト環境もこれ
   if (
     typeof window !== "undefined" &&
     (process.env.NODE_ENV === "development" ||
-      process.env.IS_STATING === "true")
+      process.env.NEXT_PUBLIC_IS_STAGING === "true")
   ) {
     (
       window as unknown as { FIREBASE_APPCHECK_DEBUG_TOKEN: boolean }

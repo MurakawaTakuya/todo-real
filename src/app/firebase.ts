@@ -1,3 +1,4 @@
+import { Analytics, getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import {
   browserLocalPersistence,
@@ -26,10 +27,12 @@ export const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
 let messaging: Messaging | null = null;
+let analytics: Analytics | null = null;
 if (typeof window !== "undefined") {
   messaging = getMessaging(app);
+  analytics = getAnalytics(app);
 }
-export { messaging };
+export { analytics, messaging };
 export const googleProvider = new GoogleAuthProvider();
 
 // ブラウザを閉じてもログイン状態を維持

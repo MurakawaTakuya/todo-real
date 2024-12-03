@@ -1,15 +1,11 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
+import { User } from "./types";
 
 const router = express.Router();
 const db = admin.firestore();
 
-interface User {
-  name: string;
-  streak: number;
-}
-
-// GET: 全てのユーザーデータを取得(アカウント機能を作成したら廃止)
+// GET: 全てのユーザーデータを取得
 router.get("/", async (req: Request, res: Response) => {
   try {
     const userSnapshot = await db.collection("user").get();
@@ -25,7 +21,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     return res.json(userData);
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching user data", error });
+    return res.status(500).json({ message: "Error fetching user data" });
   }
 });
 
@@ -44,7 +40,7 @@ router.get("/id/:userId", async (req: Request, res: Response) => {
     }
     return res.json({ uid: userDoc.id, ...userDoc.data() });
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching user data", error });
+    return res.status(500).json({ message: "Error fetching user data" });
   }
 });
 
@@ -69,7 +65,7 @@ router.get("/name/:userName", async (req: Request, res: Response) => {
 
     return res.json(userData[0]);
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching user data", error });
+    return res.status(500).json({ message: "Error fetching user data" });
   }
 });
 
@@ -82,24 +78,14 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     ({ name, uid, streak = 0 } = req.body);
   } catch (error) {
-    return res.status(400).json({ message: "Invalid request body", error });
+    return res.status(400).json({ message: "Invalid request body" });
   }
 
   if (!name || !uid) {
     return res.status(400).json({ message: "name and uid are required" });
   }
 
-  // 既に同じ名前のuserが存在する場合はエラーを返す
-  // const userSnapshot = await getUserFromName(name);
-
-  // if (!userSnapshot.empty) {
-  //   return res.status(409).json({
-  //     message: `A user with the same user name '${name}' already exists`,
-  //   });
-  // }
-
   try {
-    // userIdをドキュメント名として使用してデータを保存
     await db.collection("user").doc(uid).set({
       name: name,
       streak: streak,
@@ -107,7 +93,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     return res.status(201).json({ message: "User created successfully", uid });
   } catch (error) {
-    return res.status(500).json({ message: "Error creating user", error });
+    return res.status(500).json({ message: "Error creating user" });
   }
 });
 
@@ -130,7 +116,7 @@ router.put("/:userId", async (req: Request, res: Response) => {
     await db.collection("user").doc(userId).update(updateData);
     return res.json({ message: "User updated successfully", userId });
   } catch (error) {
-    return res.status(500).json({ message: "Error updating user", error });
+    return res.status(500).json({ message: "Error updating user" });
   }
 });
 
@@ -146,7 +132,7 @@ router.delete("/:userId", async (req: Request, res: Response) => {
     await db.collection("user").doc(userId).delete();
     return res.json({ message: "User deleted successfully", userId });
   } catch (error) {
-    return res.status(500).json({ message: "Error deleting user", error });
+    return res.status(500).json({ message: "Error deleting user" });
   }
 });
 

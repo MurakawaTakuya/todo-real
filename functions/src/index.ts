@@ -1,6 +1,6 @@
 import cors from "cors";
 import express from "express";
-import rateLimit from "express-rate-limit";
+import { rateLimit } from "express-rate-limit";
 import admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
 import { onRequest } from "firebase-functions/v2/https";
@@ -11,6 +11,11 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
   storageBucket: "todo-real-c28fa.appspot.com",
 });
+
+import goalRouter from "./routers/goalRouter";
+import postRouter from "./routers/postRouter";
+import resultRouter from "./routers/resultRouter";
+import userRouer from "./routers/userRouter";
 
 const app = express();
 app.use(cors({ origin: true }));
@@ -33,14 +38,11 @@ app.use(
   })
 );
 
-import goalRouter from "./routers/goalRouter";
-import postRouter from "./routers/postRouter";
-import userRouer from "./routers/userRouter";
 app.use("/user", userRouer);
 app.use("/goal", goalRouter);
 app.use("/post", postRouter);
+app.use("/result", resultRouter);
 
-// Cloud Functionsにデプロイする関数
 const region = "asia-northeast1";
 
 export const helloWorld = onRequest({ region: region }, (req, res) => {

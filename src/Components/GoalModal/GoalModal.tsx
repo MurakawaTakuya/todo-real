@@ -1,6 +1,7 @@
 "use client";
 
 import { functionsEndpoint } from "@/app/firebase";
+import { Goal } from "@/types/types";
 import { useUser } from "@/utils/UserContext";
 import { Add } from "@mui/icons-material";
 import {
@@ -23,17 +24,19 @@ export default function GoalModal() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    const postData: Goal = {
+      userId: user ? user.uid : "",
+      text: text,
+      deadline: new Date(dueDate),
+    };
+
     try {
       const response = await fetch(`${functionsEndpoint}/goal/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          userId: user ? user.uid : "",
-          text: text,
-          deadline: dueDate,
-        }),
+        body: JSON.stringify(postData),
       });
 
       if (!response.ok) {

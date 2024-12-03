@@ -46,7 +46,7 @@ const RoundedButton = styled(Button)(({ theme }) => ({
   padding: theme.spacing(1.5, 4),
 }));
 
-export default function UserForm() {
+export default function Account() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -149,7 +149,7 @@ export default function UserForm() {
                     />
                     <TextField
                       label="Password"
-                      type="password"
+                      type="new-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       fullWidth
@@ -178,7 +178,7 @@ export default function UserForm() {
                     />
                     <TextField
                       label="Password"
-                      type="password"
+                      type="current-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       fullWidth

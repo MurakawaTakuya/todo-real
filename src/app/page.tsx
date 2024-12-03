@@ -1,8 +1,7 @@
 "use client";
-
+import DashBoard from "@/Components/DashBoard/DashBoard";
 import GoalModal from "@/Components/GoalModal/GoalModal";
 import PostForm from "@/Components/PostForm/PostForm";
-import Posts from "@/Components/Posts/Posts";
 import {
   requestPermission,
   revokePermission,
@@ -12,7 +11,7 @@ import { Button } from "@mui/material";
 export default function Top() {
   return (
     <>
-      <Posts />
+      <DashBoard />
       <PostForm />
       <GoalModal />
       <Button variant="contained" onClick={requestPermission}>

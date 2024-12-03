@@ -12,6 +12,20 @@ export const uploadImage = (
     return;
   }
 
+  // ファイルサイズの上限を設定
+  const maxSize = 3; // MB
+  const fileSizeMB = file.size / (1024 * 1024);
+  if (fileSizeMB > maxSize) {
+    onError(`ファイルサイズが大きすぎます。最大サイズは${maxSize}MBです。`);
+    return;
+  }
+
+  // 画像ファイルのみアップロード可能
+  if (!file.type.startsWith("image/")) {
+    onError("画像ファイルのみアップロードできます。");
+    return;
+  }
+
   // cryptoモジュールを使用してユニークなIDを生成
   const uniqueId = crypto.randomUUID();
   const storageRef = ref(storage, `post/${uniqueId}`);

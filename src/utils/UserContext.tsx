@@ -1,6 +1,7 @@
 "use client";
 import { auth } from "@/app/firebase";
 import { LoginType, UserData } from "@/types/types";
+import { fetchUserById } from "@/utils/API/fetchUser";
 import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
 import {
   createContext,
@@ -9,7 +10,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { fetchUserAPI } from "./fetchUserAPI";
 
 interface UserContextValue {
   user: UserData | null | undefined;
@@ -85,7 +85,7 @@ export const UserProvider = ({ children }: Props) => {
         }
 
         try {
-          const userData = await fetchUserAPI(firebaseUser.uid);
+          const userData = await fetchUserById(firebaseUser.uid);
           // ユーザーデータを作成する前にfetchしようとして"User not found"になるので、postした場所でsetさせている
           // "User not found"ではない(= 初回ログイン直後ではない)場合のみsetする
           if (userData.uid) {

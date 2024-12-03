@@ -1,6 +1,5 @@
 "use client";
-
-import { functionsEndpoint } from "@/app/firebase";
+import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 import { Goal } from "@/types/types";
 import { useUser } from "@/utils/UserContext";
 import { Add } from "@mui/icons-material";
@@ -34,6 +33,7 @@ export default function GoalModal() {
       const response = await fetch(`${functionsEndpoint}/goal/`, {
         method: "POST",
         headers: {
+          "X-Firebase-AppCheck": appCheckToken,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(postData),

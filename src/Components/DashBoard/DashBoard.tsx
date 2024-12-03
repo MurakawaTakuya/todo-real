@@ -9,11 +9,10 @@ import styles from "./DashBoard.module.scss";
 export default function DashBoard() {
   const [successResults, setSuccessResults] = useState<SuccessResult[]>([]);
   const [failedResults, setFailedResults] = useState<GoalWithId[]>([]);
-  const [pendingResults, setPendingResults] = useState<GoalWithId[]>([]); // テスト用
   const [noResult, setNoResult] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch(`${functionsEndpoint}/result/?onlyPast`)
+    fetch(`${functionsEndpoint}/result/`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -30,7 +29,6 @@ export default function DashBoard() {
           console.log(data);
           setSuccessResults(data.successResults);
           setFailedResults(data.failedResults);
-          setPendingResults(data.pendingResults); // テスト用
         }
       })
       .catch((error) => {
@@ -51,7 +49,6 @@ export default function DashBoard() {
           <Progress
             successResults={successResults}
             failedResults={failedResults}
-            pendingResults={pendingResults}
           />
         </div>
       )}

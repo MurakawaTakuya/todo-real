@@ -27,6 +27,18 @@ const successPostIndicatorStyle = {
   },
 };
 
+const outerBorderColors = {
+  success: "#008c328a",
+  failed: "#a2000082",
+  pending: "#0045cf80",
+};
+
+const innerBorderColors = {
+  success: "#0034125e",
+  failed: "#6205055c",
+  pending: "#00206059",
+};
+
 export default function Progress({
   successResults = [],
   failedResults = [],
@@ -87,7 +99,7 @@ export default function Progress({
 
 const successStep = (result: SuccessResult, userName: string) => {
   return (
-    <StepperBlock key={result.goalId} userName={userName}>
+    <StepperBlock key={result.goalId} userName={userName} resultType="success">
       <Step
         completed
         indicator={
@@ -114,7 +126,7 @@ const successStep = (result: SuccessResult, userName: string) => {
         <Card
           variant="outlined"
           size="sm"
-          sx={{ borderColor: "#008c328a", width: "93%" }}
+          sx={{ borderColor: innerBorderColors.success, width: "93%" }}
         >
           {result.storedId && (
             <CardOverflow>
@@ -143,7 +155,7 @@ const successStep = (result: SuccessResult, userName: string) => {
 
 const failedStep = (result: GoalWithId, userName: string) => {
   return (
-    <StepperBlock key={result.goalId} userName={userName}>
+    <StepperBlock key={result.goalId} userName={userName} resultType="failed">
       <Step
         indicator={
           <StepIndicator variant="solid" color="danger">
@@ -163,7 +175,7 @@ const failedStep = (result: GoalWithId, userName: string) => {
 
 const pendingStep = (result: GoalWithId, userName: string) => {
   return (
-    <StepperBlock key={result.goalId} userName={userName}>
+    <StepperBlock key={result.goalId} userName={userName} resultType="pending">
       <Step
         active
         indicator={
@@ -199,10 +211,10 @@ const GoalCard = ({
         width: "93%",
         borderColor:
           resultType == "success"
-            ? "#008c328a"
+            ? innerBorderColors.success
             : resultType == "failed"
-            ? "#a2000082"
-            : "#0045cf80",
+            ? innerBorderColors.failed
+            : innerBorderColors.pending,
       }}
     >
       <CardContent>
@@ -216,20 +228,31 @@ const GoalCard = ({
 
 const StepperBlock = ({
   children,
-  userName = "test user",
+  userName = "Unknown user",
+  resultType,
 }: {
   children: ReactNode;
   userName: string;
+  resultType?: "success" | "failed" | "pending";
 }) => {
   return (
     <Card
       variant="soft"
       size="sm"
       sx={{
-        width: "90%",
+        width: "87%",
         margin: "10px auto",
         padding: "13px",
         borderRadius: "8px",
+        border: "1px solid",
+        borderColor:
+          resultType == "success"
+            ? outerBorderColors.success
+            : resultType == "failed"
+            ? outerBorderColors.failed
+            : outerBorderColors.pending,
+        boxShadow: "1px 1px 8px #d9d9d96b",
+        gap: "6px",
       }}
     >
       <Typography level="title-lg">{userName}</Typography>

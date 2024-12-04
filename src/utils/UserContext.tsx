@@ -101,6 +101,7 @@ export const UserProvider = ({ children }: Props) => {
   }, []);
 
   console.log(
+    "UserData:",
     user === undefined
       ? "ローディング中"
       : user === null

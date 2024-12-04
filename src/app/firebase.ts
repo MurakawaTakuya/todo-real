@@ -51,7 +51,7 @@ if (typeof window !== "undefined") {
   // App Checkの設定
   const appCheck = initializeAppCheck(app, {
     provider: new ReCaptchaV3Provider(
-      process.env.NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITEKEY || ""
+      process.env.NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITEKEY as string
     ),
     isTokenAutoRefreshEnabled: true,
   });

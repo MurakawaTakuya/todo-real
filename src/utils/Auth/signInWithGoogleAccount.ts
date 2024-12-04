@@ -1,7 +1,7 @@
 import { auth, googleProvider } from "@/app/firebase";
+import { createUserAPI } from "@/utils/API/createUserAPI";
+import { updateUser } from "@/utils/UserContext";
 import { getAdditionalUserInfo, signInWithPopup } from "firebase/auth";
-import { createUserAPI } from "./createUserAPI";
-import { updateUser } from "./UserContext";
 
 /**
  * Googleアカウントでログインする

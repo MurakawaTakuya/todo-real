@@ -20,5 +20,6 @@ export const createUserAPI = async (name: string, uid: string) => {
   if (!response.ok) {
     new Error("Network response was not ok");
   }
-  console.log("Successfully created user");
+  const data = await response.json();
+  console.log("Success:", data);
 };

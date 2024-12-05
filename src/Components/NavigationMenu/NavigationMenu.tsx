@@ -1,5 +1,4 @@
 "use client";
-import { useUser } from "@/utils/UserContext";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import Person from "@mui/icons-material/Person";
@@ -25,7 +24,6 @@ export default function NavigationMenu() {
     : 2;
   const [index, setIndex] = useState(defaultIndex);
   const colors = ["success", "primary", "warning"] as const;
-  const { user } = useUser();
 
   useEffect(() => {
     if (document.readyState === "complete") {
@@ -42,10 +40,13 @@ export default function NavigationMenu() {
         borderTopLeftRadius: "12px",
         borderTopRightRadius: "12px",
         bgcolor: `${"var(--colors-index)"}.500`,
-        position: "sticky",
+        position: "fixed",
         bottom: "30px",
+        width: "100%",
+        maxWidth: "600px",
+        zIndex: 100,
       }}
-      style={{ "--colors-index": colors[index] } as any}
+      style={{ "--colors-index": colors[index] } as React.CSSProperties}
     >
       <Tabs
         size="lg"
@@ -55,7 +56,7 @@ export default function NavigationMenu() {
         sx={(theme) => ({
           p: 1,
           borderRadius: 16,
-          maxWidth: 500,
+          maxWidth: "93%",
           mx: "auto",
           boxShadow: theme.shadow.sm,
           "--joy-shadowChannel": theme.vars.palette[colors[index]].darkChannel,
@@ -80,8 +81,8 @@ export default function NavigationMenu() {
           <Tab
             disableIndicator
             orientation="vertical"
+            sx={{ margin: "0 3px", padding: "8px 0 !important" }}
             {...(index === 0 && { color: colors[0] })}
-            disabled={!user}
           >
             <ListItemDecorator>
               <FormatListBulletedIcon />
@@ -91,8 +92,8 @@ export default function NavigationMenu() {
           <Tab
             disableIndicator
             orientation="vertical"
+            sx={{ margin: "0 3px", padding: "8px 0 !important" }}
             {...(index === 1 && { color: colors[1] })}
-            disabled={!user}
           >
             <ListItemDecorator>
               <HomeRoundedIcon />
@@ -102,6 +103,7 @@ export default function NavigationMenu() {
           <Tab
             disableIndicator
             orientation="vertical"
+            sx={{ margin: "0 3px", padding: "8px 0 !important" }}
             {...(index === 2 && { color: colors[2] })}
           >
             <ListItemDecorator>

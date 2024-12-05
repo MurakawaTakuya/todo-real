@@ -1,4 +1,5 @@
 "use client";
+import { useUser } from "@/utils/UserContext";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import Person from "@mui/icons-material/Person";
@@ -7,17 +8,37 @@ import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import Tab, { tabClasses } from "@mui/joy/Tab";
 import TabList from "@mui/joy/TabList";
 import Tabs from "@mui/joy/Tabs";
-import { useState } from "react";
+import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function NavigationMenu() {
-  const [index, setIndex] = useState(0);
+  const paths = [
+    ["/mycontent", "/mycontent/"],
+    ["/"],
+    ["/account", "/account/"],
+  ];
+  const pathname = window.location.pathname;
+  const defaultIndex = paths[0].some((path) => path === pathname)
+    ? 0
+    : paths[1].some((path) => path === pathname)
+    ? 1
+    : 2;
+  const [index, setIndex] = useState(defaultIndex);
   const colors = ["success", "primary", "warning"] as const;
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (document.readyState === "complete") {
+      if (!paths[index].some((path) => path === pathname)) {
+        redirect(paths[index][0]);
+      }
+    }
+  }, [index]);
+
   return (
     <Box
       sx={{
         flexGrow: 1,
-        // m: -3,
-        // p: 4,
         borderTopLeftRadius: "12px",
         borderTopRightRadius: "12px",
         bgcolor: `${"var(--colors-index)"}.500`,
@@ -60,6 +81,7 @@ export default function NavigationMenu() {
             disableIndicator
             orientation="vertical"
             {...(index === 0 && { color: colors[0] })}
+            disabled={!user}
           >
             <ListItemDecorator>
               <FormatListBulletedIcon />
@@ -70,6 +92,7 @@ export default function NavigationMenu() {
             disableIndicator
             orientation="vertical"
             {...(index === 1 && { color: colors[1] })}
+            disabled={!user}
           >
             <ListItemDecorator>
               <HomeRoundedIcon />

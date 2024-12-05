@@ -26,7 +26,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   width: "100%",
   padding: theme.spacing(4),
   gap: theme.spacing(2),
-  margin: "auto",
+  margin: "0 auto",
   boxShadow:
     "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
   borderRadius: "20px",
@@ -96,7 +96,7 @@ export default function Account() {
         direction="column"
         justifyContent="center"
         alignItems="center"
-        sx={{ height: "100vh", padding: 2 }}
+        sx={{ padding: 2 }}
       >
         <Card variant="outlined">
           <Typography variant="h4" textAlign="center">

@@ -24,7 +24,7 @@ export default function GoalModal() {
     event.preventDefault();
 
     const postData: Goal = {
-      userId: user ? user.uid : "",
+      userId: user?.uid as string,
       text: text,
       deadline: new Date(dueDate),
     };
@@ -95,7 +95,7 @@ export default function GoalModal() {
           aria-describedby="create-goal-description"
         >
           <DialogTitle>目標を作成</DialogTitle>
-          <DialogContent>自分の目標を入力してください.</DialogContent>
+          <DialogContent>目標を入力してください</DialogContent>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2} sx={{ mt: 2 }}>
               <Input

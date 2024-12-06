@@ -47,11 +47,8 @@ export default function PostModal({ goalId }: { goalId: string }) {
       (percent) => setProgress(percent),
       (errorMsg) => setError(errorMsg),
       async (url, hash) => {
-        console.log("Image is saved at:", url);
-        console.log("Generated storage path hash:", hash);
-
         const postData: Post = {
-          userId: user ? user.uid : "",
+          userId: user?.uid as string,
           storedId: url,
           text: text,
           goalId: goalId,
@@ -72,14 +69,13 @@ export default function PostModal({ goalId }: { goalId: string }) {
             throw new Error("データの送信に失敗しました");
           }
 
-          setProgress(100); // アップロード完了の進捗を表示
+          setProgress(100);
           const data = await response.json();
           console.log("Post created:", data);
 
-          // 投稿作成後にモーダルを閉じる
+          setImage(null);
+          setText("");
           setOpen(false);
-          setText(""); // 入力フィールドをリセット
-          setImage(null); // 画像をリセット
         } catch (err) {
           setError("データの送信に失敗しました");
           console.error(err);
@@ -110,7 +106,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
         onClick={() => setOpen(true)}
         disabled={!user || user?.loginType === "Guest"}
       >
-        Create Post
+        写真を撮って完了する
       </Button>
 
       <Modal
@@ -123,17 +119,16 @@ export default function PostModal({ goalId }: { goalId: string }) {
           aria-labelledby="create-post-title"
           aria-describedby="create-post-description"
         >
-          <DialogTitle>投稿を作成</DialogTitle>
-          <DialogContent>投稿内容と画像を入力してください。</DialogContent>
+          <DialogTitle>完了投稿を作成</DialogTitle>
+          <DialogContent>投稿コメントと画像を入れてください</DialogContent>
           <form onSubmit={(e) => e.preventDefault()}>
             <Stack spacing={2} sx={{ mt: 2 }}>
-              <Typography variant="h6">投稿内容を入力</Typography>
               {error && <Typography color="error">{error}</Typography>}
               <Input
                 type="text"
                 value={text}
                 onChange={handleTextChange}
-                placeholder="投稿内容を入力して下さい"
+                placeholder="投稿コメントを入力して下さい"
                 required
               />
               <input type="file" onChange={handleImageChange} />
@@ -153,7 +148,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
                   disabled={!user || user?.loginType === "Guest"}
                   onClick={handleUpload}
                 >
-                  Create Post
+                  投稿
                 </Button>
               </Stack>
             </Stack>

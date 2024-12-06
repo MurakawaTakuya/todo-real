@@ -57,23 +57,28 @@ export default function Notification() {
   return (
     <>
       <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-        <Button
-          variant="contained"
-          onClick={handleEnableNotification}
-          disabled={notificationTokenGenerating || isNotificationActive}
-          startIcon={
-            notificationTokenGenerating ? <CircularProgress size={20} /> : null
-          }
-        >
-          通知を受信
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleDisableNotification}
-          disabled={!isNotificationActive}
-        >
-          通知を解除
-        </Button>
+        {isNotificationActive ? (
+          <Button
+            variant="contained"
+            onClick={handleDisableNotification}
+            disabled={!isNotificationActive}
+          >
+            通知を解除
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            onClick={handleEnableNotification}
+            disabled={notificationTokenGenerating || isNotificationActive}
+            startIcon={
+              notificationTokenGenerating ? (
+                <CircularProgress size={20} />
+              ) : null
+            }
+          >
+            通知を受信
+          </Button>
+        )}
       </Box>
       <CssBaseline enableColorScheme />
       <Snackbar

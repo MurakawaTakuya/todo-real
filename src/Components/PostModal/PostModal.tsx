@@ -46,7 +46,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
       image,
       (percent) => setProgress(percent),
       (errorMsg) => setError(errorMsg),
-      async (url, hash) => {
+      async (url) => {
         const postData: Post = {
           userId: user?.uid as string,
           storedId: url,

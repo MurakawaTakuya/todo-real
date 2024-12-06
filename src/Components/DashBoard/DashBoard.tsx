@@ -9,7 +9,6 @@ import styles from "./DashBoard.module.scss";
 export default function DashBoard() {
   const [successResults, setSuccessResults] = useState<SuccessResult[]>([]);
   const [failedResults, setFailedResults] = useState<GoalWithId[]>([]);
-  const [pendingResults, setPendingResults] = useState<GoalWithId[]>([]);
   const [noResult, setNoResult] = useState<boolean>(false);
 
   useEffect(() => {
@@ -17,15 +16,13 @@ export default function DashBoard() {
       .then((data) => {
         if (
           data.successResults.length === 0 &&
-          data.failedResults.length === 0 &&
-          data.pendingResults.length === 0
+          data.failedResults.length === 0
         ) {
           setNoResult(true);
         } else {
           console.log(data);
           setSuccessResults(data.successResults);
           setFailedResults(data.failedResults);
-          setPendingResults(data.pendingResults);
         }
       })
       .catch((error) => {
@@ -46,7 +43,6 @@ export default function DashBoard() {
           <Progress
             successResults={successResults}
             failedResults={failedResults}
-            pendingResults={pendingResults}
           />
         </div>
       )}

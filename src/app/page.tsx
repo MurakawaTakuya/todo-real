@@ -11,7 +11,7 @@ import { Button } from "@mui/material";
 export default function Top() {
   return (
     <>
-      <DashBoard />
+      <DashBoard pending={false} />
       <PostForm />
       <GoalModal />
       <Button variant="contained" onClick={requestPermission}>

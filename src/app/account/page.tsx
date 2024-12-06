@@ -13,7 +13,7 @@ import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MuiCard from "@mui/material/Card";
-import CircularProgress from "@mui/material/CircularProgress"; // ローディング用のインジケーターをインポート
+import CircularProgress from "@mui/material/CircularProgress";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import Snackbar from "@mui/material/Snackbar";
@@ -102,9 +102,8 @@ export default function UserForm() {
     if (newMode) setFormMode(newMode);
   };
 
-  // メッセージを表示する関数
   const handleShowNotification = (message: string) => {
-    setNotificationMessage(message); // メッセージを設定
+    setNotificationMessage(message);
   };
 
   // ページ読み込み時に Service Worker 状態を確認
@@ -165,7 +164,7 @@ export default function UserForm() {
                     }}
                     disabled={
                       notificationTokenGenerating || isNotificationActive
-                    } // 通知状態に基づく
+                    }
                     startIcon={
                       notificationTokenGenerating ? (
                         <CircularProgress size={20} />
@@ -182,7 +181,7 @@ export default function UserForm() {
                       handleShowNotification("通知を解除しました");
                       setIsNotificationActive(false); // 通知状態を無効化
                     }}
-                    disabled={!isNotificationActive} // 通知状態に基づく
+                    disabled={!isNotificationActive}
                   >
                     通知を解除
                   </Button>

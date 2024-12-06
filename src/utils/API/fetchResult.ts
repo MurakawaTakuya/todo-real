@@ -4,11 +4,13 @@ import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 /**
  * Cloud FunctionsのAPIを呼び出して、結果の一覧を取得する
  *
- * @para
+ * @param {string} uid
  * @return {*}
  */
-export const fetchResult = async () => {
-  const response = await fetch(`${functionsEndpoint}/result/`, {
+export const fetchResult = async ({
+  userId = "",
+}: { userId?: string } = {}) => {
+  const response = await fetch(`${functionsEndpoint}/result/${userId}`, {
     method: "GET",
     headers: {
       "X-Firebase-AppCheck": appCheckToken,

@@ -52,7 +52,6 @@ export default function Account() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formMode, setFormMode] = useState<"register" | "login">("register");
-  const [newName, setNewName] = useState("");
   const [open, setOpen] = useState(false); // 追加
 
   const { user } = useUser();
@@ -138,6 +137,42 @@ export default function Account() {
                     <NameUpdate open={open} setOpen={setOpen} />
                   </>
                 )}
+              </>
+            ) : formMode === "register" ? (
+              <>
+                <Typography>新規登録</Typography>
+                <form onSubmit={handleRegisterSubmit}>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                  >
+                    <TextField
+                      label="Username"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      fullWidth
+                      required
+                    />
+                    <TextField
+                      label="Email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      fullWidth
+                      required
+                    />
+                    <TextField
+                      label="Password"
+                      type="new-password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      fullWidth
+                      required
+                    />
+                    <RoundedButton type="submit" variant="contained" fullWidth>
+                      アカウント作成
+                    </RoundedButton>
+                  </Box>
+                </form>
               </>
             ) : (
               <>

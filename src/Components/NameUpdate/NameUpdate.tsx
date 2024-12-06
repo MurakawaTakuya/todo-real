@@ -40,7 +40,7 @@ export default function NameUpdate({
     }
   };
   return (
-    <Modal open={open} onClose={() => setOpen(false)}>
+    <Modal open={open} onClose={() => setOpen(false)} keepMounted disablePortal>
       <ModalDialog
         aria-labelledby="update-name-title"
         aria-describedby="update-name-description"

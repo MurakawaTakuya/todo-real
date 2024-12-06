@@ -104,10 +104,7 @@ export default function UserForm() {
 
   // メッセージを表示する関数
   const handleShowNotification = (message: string) => {
-    setNotificationMessage(message);
-    setTimeout(() => {
-      setNotificationMessage(null);
-    }, 3000);
+    setNotificationMessage(message); // メッセージを設定
   };
 
   // ページ読み込み時に Service Worker 状態を確認
@@ -192,7 +189,8 @@ export default function UserForm() {
                   <Snackbar
                     open={!!notificationMessage}
                     anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                    autoHideDuration={3000}
+                    autoHideDuration={3000} // 3秒で自動的に非表示
+                    onClose={() => setNotificationMessage(null)} // 非表示時にメッセージをリセット
                   >
                     <Alert severity="info">{notificationMessage}</Alert>
                   </Snackbar>

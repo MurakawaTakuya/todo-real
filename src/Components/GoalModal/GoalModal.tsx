@@ -1,6 +1,6 @@
 "use client";
-
-import { functionsEndpoint } from "@/app/firebase";
+import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { Goal } from "@/types/types";
 import { useUser } from "@/utils/UserContext";
 import { Add } from "@mui/icons-material";
 import {
@@ -23,17 +23,20 @@ export default function GoalModal() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    const postData: Goal = {
+      userId: user?.uid as string,
+      text: text,
+      deadline: new Date(dueDate),
+    };
+
     try {
       const response = await fetch(`${functionsEndpoint}/goal/`, {
         method: "POST",
         headers: {
+          "X-Firebase-AppCheck": appCheckToken,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          userId: user ? user.uid : "",
-          text: text,
-          deadline: dueDate,
-        }),
+        body: JSON.stringify(postData),
       });
 
       if (!response.ok) {
@@ -92,7 +95,7 @@ export default function GoalModal() {
           aria-describedby="create-goal-description"
         >
           <DialogTitle>目標を作成</DialogTitle>
-          <DialogContent>自分の目標を入力してください.</DialogContent>
+          <DialogContent>目標を入力してください</DialogContent>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2} sx={{ mt: 2 }}>
               <Input

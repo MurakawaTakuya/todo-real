@@ -1,4 +1,4 @@
-import { functionsEndpoint } from "@/app/firebase";
+import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 import { UserData } from "@/types/types";
 
 /**
@@ -7,10 +7,11 @@ import { UserData } from "@/types/types";
  * @param {string} uid
  * @return {*}  {Promise<UserData>}
  */
-export const fetchUserAPI = async (uid: string): Promise<UserData> => {
+export const fetchUserById = async (uid: string): Promise<UserData> => {
   const response = await fetch(`${functionsEndpoint}/user/id/${uid}`, {
     method: "GET",
     headers: {
+      "X-Firebase-AppCheck": appCheckToken,
       "Content-Type": "application/json",
     },
   });

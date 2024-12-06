@@ -1,36 +1,35 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
+import { Goal } from "./types";
 
 const router = express.Router();
 const db = admin.firestore();
 
-interface Goal {
-  userId: string;
-  deadline: Date;
-  text: string;
-}
-
 // GET: 全ての目標を取得
-router.route("/").get(async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
     const goalSnapshot = await db.collection("goal").get();
     if (goalSnapshot.empty) {
       return res.status(404).json({ message: "No goals found" });
     }
 
-    const goals = goalSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const goals = goalSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        deadline: new Date(data.deadline._seconds * 1000),
+      };
+    });
 
     return res.json(goals);
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching goals", error });
+    return res.status(500).json({ message: "Error fetching goals" });
   }
 });
 
 // GET: userIdから目標を取得
-router.route("/:userId").get(async (req: Request, res: Response) => {
+router.get("/:userId", async (req: Request, res: Response) => {
   const userId = req.params.userId;
 
   if (!userId) {
@@ -47,20 +46,24 @@ router.route("/:userId").get(async (req: Request, res: Response) => {
       return res.status(404).json({ message: "No goals found for this user" });
     }
 
-    const goals = goalSnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const goals = goalSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        deadline: new Date(data.deadline._seconds * 1000),
+      };
+    });
 
     return res.json(goals);
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching goals", error });
+    return res.status(500).json({ message: "Error fetching goals" });
   }
 });
 
 // POST: 新しい目標を作成
-router.route("/").post(async (req: Request, res: Response) => {
-  const goalId = db.collection("goal").doc().id; // FirebaseのドキュメントIDを生成
+router.post("/", async (req: Request, res: Response) => {
+  const goalId = db.collection("goal").doc().id;
 
   let userId: Goal["userId"];
   let deadline: Goal["deadline"];
@@ -69,7 +72,7 @@ router.route("/").post(async (req: Request, res: Response) => {
   try {
     ({ userId, deadline, text } = req.body as Goal);
   } catch (error) {
-    return res.status(400).json({ message: "Invalid request body", error });
+    return res.status(400).json({ message: "Invalid request body" });
   }
 
   if (!userId || !deadline || !text) {
@@ -79,7 +82,6 @@ router.route("/").post(async (req: Request, res: Response) => {
   }
 
   try {
-    // goalId をドキュメント名として使用してデータを保存
     await db
       .collection("goal")
       .doc(goalId)
@@ -93,7 +95,52 @@ router.route("/").post(async (req: Request, res: Response) => {
       .status(201)
       .json({ message: "Goal created successfully", goalId });
   } catch (error) {
-    return res.status(500).json({ message: "Error creating goal", error });
+    return res.status(500).json({ message: "Error creating goal" });
+  }
+});
+
+// PUT: 目標を更新
+router.put("/:goalId", async (req: Request, res: Response) => {
+  const goalId = req.params.goalId;
+  const { userId, deadline, text }: Partial<Goal> = req.body;
+
+  if (!userId && !deadline && !text) {
+    return res.status(400).json({
+      message: "At least one of userId, deadline, or text is required",
+    });
+  }
+
+  const updateData: Partial<Omit<Goal, "deadline">> & {
+    deadline?: admin.firestore.Timestamp;
+  } = {};
+  if (userId) updateData.userId = userId;
+  if (deadline)
+    updateData.deadline = admin.firestore.Timestamp.fromDate(
+      new Date(deadline)
+    );
+  if (text) updateData.text = text;
+
+  try {
+    await db.collection("goal").doc(goalId).update(updateData);
+    return res.json({ message: "Goal updated successfully", goalId });
+  } catch (error) {
+    return res.status(500).json({ message: "Error updating goal" });
+  }
+});
+
+// DELETE: 目標を削除
+router.delete("/:goalId", async (req: Request, res: Response) => {
+  const goalId = req.params.goalId;
+
+  if (!goalId) {
+    return res.status(400).json({ message: "Goal ID is required" });
+  }
+
+  try {
+    await db.collection("goal").doc(goalId).delete();
+    return res.json({ message: "Goal deleted successfully", goalId });
+  } catch (error) {
+    return res.status(500).json({ message: "Error deleting goal" });
   }
 });
 

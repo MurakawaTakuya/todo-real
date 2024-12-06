@@ -1,4 +1,4 @@
-import { functionsEndpoint } from "@/app/firebase";
+import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、ユーザー情報をFirestoreに登録する
@@ -11,6 +11,7 @@ export const createUserAPI = async (name: string, uid: string) => {
   const response = await fetch(`${functionsEndpoint}/user/`, {
     method: "POST",
     headers: {
+      "X-Firebase-AppCheck": appCheckToken,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ uid, name }),
@@ -19,7 +20,6 @@ export const createUserAPI = async (name: string, uid: string) => {
   if (!response.ok) {
     new Error("Network response was not ok");
   }
-  console.log("Successfully created user");
-  // const data = await response.json();
-  // console.log("Success:", data);
+  const data = await response.json();
+  console.log("Success:", data);
 };

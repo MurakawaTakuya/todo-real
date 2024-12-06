@@ -45,8 +45,9 @@ export function requestPermission(
           console.error("An error occurred while retrieving token. ", err);
         })
         .finally(() => {
-          if (setNotificationTokenGenerating)
+          if (setNotificationTokenGenerating) {
             setNotificationTokenGenerating(false);
+          }
         });
     } else {
       console.log("Unable to get permission to notify.");

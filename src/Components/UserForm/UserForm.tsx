@@ -1,9 +1,9 @@
 "use client";
 import { auth } from "@/app/firebase";
-import { createUser } from "@/utils/createUserAuth";
-import { loginUser } from "@/utils/loginUserAuth";
-import { signInAsGuest } from "@/utils/signInAnonymously";
-import { signInWithGoogleAccount } from "@/utils/signInWithGoogleAccount";
+import { createUser } from "@/utils/Auth/createUserAuth";
+import { loginUser } from "@/utils/Auth/loginUserAuth";
+import { signInAsGuest } from "@/utils/Auth/signInAnonymously";
+import { signInWithGoogleAccount } from "@/utils/Auth/signInWithGoogleAccount";
 import { useUser } from "@/utils/UserContext";
 import { signOut } from "firebase/auth";
 import React, { useState } from "react";

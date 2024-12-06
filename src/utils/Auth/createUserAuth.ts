@@ -1,7 +1,7 @@
 import { auth } from "@/app/firebase";
+import { createUserAPI } from "@/utils/API/createUserAPI";
+import { updateUser } from "@/utils/UserContext";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { createUserAPI } from "./createUserAPI";
-import { updateUser } from "./UserContext";
 
 /**
  * Firebase Authenticationでユーザーを作成し、生成されたuidをドキュメントIDとしてFirestoreにユーザー情報を登録する

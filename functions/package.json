@@ -17,7 +17,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@types/multer": "^1.4.12",
-    "express": "^4.21.1",
+    "express": "^4.21.2",
     "express-rate-limit": "^7.4.1",
     "firebase-admin": "^12.7.0",
     "firebase-functions": "^6.1.0",

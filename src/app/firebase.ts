@@ -1,4 +1,10 @@
+import { Analytics, getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
+import {
+  getToken,
+  initializeAppCheck,
+  ReCaptchaV3Provider,
+} from "firebase/app-check";
 import {
   browserLocalPersistence,
   connectAuthEmulator,
@@ -9,8 +15,6 @@ import {
 import { getMessaging, Messaging } from "firebase/messaging";
 import { connectStorageEmulator, getStorage } from "firebase/storage";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -21,15 +25,46 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-console.log("firebaseConfig initialized");
 export const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
 let messaging: Messaging | null = null;
+let analytics: Analytics | null = null;
+let appCheckToken = "";
+
+// クライアントサイドでのみ実行する初期化
 if (typeof window !== "undefined") {
   messaging = getMessaging(app);
+  analytics = getAnalytics(app);
+
+  // 開発環境とステージング環境でApp Checkのデバッグトークンを有効にする
+  if (
+    typeof window !== "undefined" &&
+    (process.env.NODE_ENV === "development" ||
+      process.env.NEXT_PUBLIC_IS_STAGING === "true")
+  ) {
+    (
+      window as unknown as { FIREBASE_APPCHECK_DEBUG_TOKEN: boolean }
+    ).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    console.log("App Check Debug Token Enabled");
+  }
+  // App Checkの設定
+  const appCheck = initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider(
+      process.env.NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITEKEY as string
+    ),
+    isTokenAutoRefreshEnabled: true,
+  });
+  getToken(appCheck)
+    .then((token) => {
+      console.log("App Check: Success");
+      appCheckToken = token.token;
+    })
+    .catch((error) => {
+      console.log("App Check error:", error.message);
+    });
 }
-export { messaging };
+
 export const googleProvider = new GoogleAuthProvider();
 
 // ブラウザを閉じてもログイン状態を維持
@@ -43,7 +78,7 @@ setPersistence(auth, browserLocalPersistence)
 
 // エミュレータの設定
 let functionsEndpoint = "";
-if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "false") {
+if (process.env.NODE_ENV === "production") {
   console.log("Storage: Production");
   console.log("Authentication: Production");
   functionsEndpoint = "https://firestore-okdtj725ta-an.a.run.app";
@@ -58,4 +93,5 @@ if (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "false") {
   console.log("Functions: Emulator");
 }
 
-export { functionsEndpoint };
+export { analytics, appCheckToken, functionsEndpoint, messaging };
+console.log("firebaseConfig initialized");

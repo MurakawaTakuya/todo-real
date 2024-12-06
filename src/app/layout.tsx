@@ -1,4 +1,6 @@
 import Header from "@/Components/Header/Header";
+import NavigationMenu from "@/Components/NavigationMenu/NavigationMenu";
+import { TopPage } from "@/Components/TopPage/TopPage";
 import "@/styles/globals.scss";
 import "@/utils/CloudMessaging/getNotification";
 import { UserProvider } from "@/utils/UserContext";
@@ -24,9 +26,12 @@ export default function RootLayout({
     <html lang="ja">
       <head></head>
       <body>
+        <Header />
         <UserProvider>
-          <Header />
-          <main>{children}</main>
+          <TopPage>
+            {children}
+            <NavigationMenu />
+          </TopPage>
         </UserProvider>
       </body>
     </html>

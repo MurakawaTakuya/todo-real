@@ -1,10 +1,10 @@
 "use client";
 import { auth } from "@/app/firebase";
 import Notification from "@/Components/Notification/Notification";
-import { createUser } from "@/utils/createUserAuth";
-import { loginUser } from "@/utils/loginUserAuth";
-import { signInAsGuest } from "@/utils/signInAnonymously";
-import { signInWithGoogleAccount } from "@/utils/signInWithGoogleAccount";
+import { createUser } from "@/utils/Auth/createUserAuth";
+import { loginUser } from "@/utils/Auth/loginUserAuth";
+import { signInAsGuest } from "@/utils/Auth/signInAnonymously";
+import { signInWithGoogleAccount } from "@/utils/Auth/signInWithGoogleAccount";
 import { useUser } from "@/utils/UserContext";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -27,7 +27,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   width: "100%",
   padding: theme.spacing(4),
   gap: theme.spacing(2),
-  margin: "auto",
+  margin: "0 auto",
   boxShadow:
     "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
   borderRadius: "20px",
@@ -47,7 +47,7 @@ const RoundedButton = styled(Button)(({ theme }) => ({
   padding: theme.spacing(1.5, 4),
 }));
 
-export default function UserForm() {
+export default function Account() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -97,7 +97,7 @@ export default function UserForm() {
         direction="column"
         justifyContent="center"
         alignItems="center"
-        sx={{ height: "100vh", padding: 2 }}
+        sx={{ padding: 2 }}
       >
         <Card variant="outlined">
           <Typography variant="h4" textAlign="center">
@@ -151,7 +151,7 @@ export default function UserForm() {
                     />
                     <TextField
                       label="Password"
-                      type="password"
+                      type="new-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       fullWidth
@@ -180,7 +180,7 @@ export default function UserForm() {
                     />
                     <TextField
                       label="Password"
-                      type="password"
+                      type="current-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       fullWidth

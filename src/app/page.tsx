@@ -1,15 +1,11 @@
 "use client";
-
+import DashBoard from "@/Components/DashBoard/DashBoard";
 import GoalModal from "@/Components/GoalModal/GoalModal";
-import PostForm from "@/Components/PostForm/PostForm";
-import Posts from "@/Components/Posts/Posts";
 
 export default function Top() {
   return (
     <>
-      <Posts />
-      asdf
-      <PostForm />
+      <DashBoard />
       <GoalModal />
     </>
   );

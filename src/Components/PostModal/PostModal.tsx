@@ -4,7 +4,7 @@ import { Post } from "@/types/types";
 import { uploadImage } from "@/utils/Uploader";
 import { useUser } from "@/utils/UserContext";
 import { Add } from "@mui/icons-material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import SendIcon from "@mui/icons-material/Send";
 import {
   DialogContent,
@@ -28,6 +28,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
   const [image, setImage] = useState<File | null>(null);
   const [error, setError] = useState<string>("");
   const [progress, setProgress] = useState<number>(100);
+  const [fileName, setFileName] = useState<string>("");
   const { user } = useUser();
 
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -38,6 +39,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
     const selectedFile = event.target.files?.[0];
     setImage(selectedFile || null);
     setError("");
+    setFileName(selectedFile ? selectedFile.name : "");
   };
 
   const handleUpload = () => {
@@ -113,6 +115,15 @@ export default function PostModal({ goalId }: { goalId: string }) {
     width: 1,
   });
 
+  const FileName = styled("span")({
+    display: "inline-block",
+    maxWidth: "200px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    verticalAlign: "bottom",
+  });
+
   return (
     <>
       <JoyButton
@@ -146,17 +157,18 @@ export default function PostModal({ goalId }: { goalId: string }) {
                 value={text}
                 onChange={handleTextChange}
                 placeholder="投稿コメントを入力して下さい"
-                required
               />
               <MuiButton
                 component="label"
                 role={undefined}
                 variant="contained"
                 tabIndex={-1}
-                startIcon={<CloudUploadIcon />}
-                sx={{ margin: "20px auto 0 !important" }}
+                startIcon={<AddAPhotoIcon />}
+                sx={{ margin: "20px auto 0 !important", height: "40px" }}
               >
-                画像をアップロード
+                <FileName>
+                  {fileName ? fileName : "画像をアップロード"}
+                </FileName>
                 <VisuallyHiddenInput
                   type="file"
                   onChange={handleImageChange}

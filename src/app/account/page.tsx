@@ -1,5 +1,6 @@
 "use client";
 import { auth } from "@/app/firebase";
+import NameUpdate from "@/Components/NameUpdate/NameUpdate"; // 追加
 import { createUser } from "@/utils/Auth/createUserAuth";
 import { loginUser } from "@/utils/Auth/loginUserAuth";
 import { signInAsGuest } from "@/utils/Auth/signInAnonymously";
@@ -51,6 +52,7 @@ export default function Account() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formMode, setFormMode] = useState<"register" | "login">("register");
+  const [open, setOpen] = useState(false); // 追加
 
   const { user } = useUser();
 
@@ -124,6 +126,17 @@ export default function Account() {
                 <RoundedButton variant="contained" onClick={handleLogout}>
                   ログアウト
                 </RoundedButton>
+                {user?.loginType !== "Guest" && (
+                  <>
+                    <RoundedButton
+                      variant="contained"
+                      onClick={() => setOpen(true)}
+                    >
+                      名前を変更
+                    </RoundedButton>
+                    <NameUpdate open={open} setOpen={setOpen} />
+                  </>
+                )}
               </>
             ) : formMode === "register" ? (
               <>

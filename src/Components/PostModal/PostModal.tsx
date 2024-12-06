@@ -4,18 +4,22 @@ import { Post } from "@/types/types";
 import { uploadImage } from "@/utils/Uploader";
 import { useUser } from "@/utils/UserContext";
 import { Add } from "@mui/icons-material";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import SendIcon from "@mui/icons-material/Send";
 import {
-  Button,
   DialogContent,
   DialogTitle,
   Input,
+  Button as JoyButton,
   Modal,
   ModalDialog,
   Stack,
 } from "@mui/joy";
 import Box from "@mui/material/Box";
+import MuiButton from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
+import { styled } from "@mui/material/styles";
 import React, { ChangeEvent, useState } from "react";
 
 export default function PostModal({ goalId }: { goalId: string }) {
@@ -24,6 +28,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
   const [image, setImage] = useState<File | null>(null);
   const [error, setError] = useState<string>("");
   const [progress, setProgress] = useState<number>(100);
+  const [fileName, setFileName] = useState<string>("");
   const { user } = useUser();
 
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +39,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
     const selectedFile = event.target.files?.[0];
     setImage(selectedFile || null);
     setError("");
+    setFileName(selectedFile ? selectedFile.name : "");
   };
 
   const handleUpload = () => {
@@ -97,9 +103,30 @@ export default function PostModal({ goalId }: { goalId: string }) {
     console.error("Failed to disable Joy UI error");
   }
 
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
+
+  const FileName = styled("span")({
+    display: "inline-block",
+    maxWidth: "200px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    verticalAlign: "bottom",
+  });
+
   return (
     <>
-      <Button
+      <JoyButton
         variant="outlined"
         color="primary"
         startDecorator={<Add />}
@@ -107,7 +134,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
         disabled={!user || user?.loginType === "Guest"}
       >
         写真を撮って完了する
-      </Button>
+      </JoyButton>
 
       <Modal
         open={open}
@@ -118,6 +145,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
         <ModalDialog
           aria-labelledby="create-post-title"
           aria-describedby="create-post-description"
+          sx={{ width: "90%", maxWidth: 400 }}
         >
           <DialogTitle>完了投稿を作成</DialogTitle>
           <DialogContent>投稿コメントと画像を入れてください</DialogContent>
@@ -129,27 +157,43 @@ export default function PostModal({ goalId }: { goalId: string }) {
                 value={text}
                 onChange={handleTextChange}
                 placeholder="投稿コメントを入力して下さい"
-                required
               />
-              <input type="file" onChange={handleImageChange} />
+              <MuiButton
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<AddAPhotoIcon />}
+                sx={{ margin: "20px auto 0 !important", height: "40px" }}
+              >
+                <FileName>
+                  {fileName ? fileName : "画像をアップロード"}
+                </FileName>
+                <VisuallyHiddenInput
+                  type="file"
+                  onChange={handleImageChange}
+                  multiple
+                />
+              </MuiButton>
               {progress !== 100 && <LinearProgressWithLabel value={progress} />}
               <Stack direction="row" spacing={1} justifyContent="flex-end">
-                <Button
+                <JoyButton
                   variant="plain"
                   color="neutral"
                   onClick={() => setOpen(false)}
                 >
                   Cancel
-                </Button>
-                <Button
+                </JoyButton>
+                <JoyButton
                   type="submit"
                   variant="solid"
                   color="primary"
                   disabled={!user || user?.loginType === "Guest"}
+                  endDecorator={<SendIcon />}
                   onClick={handleUpload}
                 >
                   投稿
-                </Button>
+                </JoyButton>
               </Stack>
             </Stack>
           </form>

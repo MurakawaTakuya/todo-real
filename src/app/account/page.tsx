@@ -1,17 +1,11 @@
 "use client";
-import { appCheckToken, auth, functionsEndpoint } from "@/app/firebase"; //appCheckTokenを追加
+import { auth } from "@/app/firebase";
+import NameUpdate from "@/Components/NameUpdate/NameUpdate"; // 追加
 import { createUser } from "@/utils/Auth/createUserAuth";
 import { loginUser } from "@/utils/Auth/loginUserAuth";
 import { signInAsGuest } from "@/utils/Auth/signInAnonymously";
 import { signInWithGoogleAccount } from "@/utils/Auth/signInWithGoogleAccount";
 import { useUser } from "@/utils/UserContext";
-import {
-  DialogContent,
-  DialogTitle,
-  Input,
-  Modal,
-  ModalDialog,
-} from "@mui/joy"; // 追加
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MuiCard from "@mui/material/Card";
@@ -98,26 +92,6 @@ export default function Account() {
     if (newMode) setFormMode(newMode);
   };
 
-  const handleNameUpdate = async (event: React.FormEvent) => {
-    event.preventDefault();
-    const response = await fetch(`${functionsEndpoint}/user/${user?.uid}`, {
-      method: "PUT",
-      headers: {
-        "X-Firebase-AppCheck": appCheckToken,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name: newName }), // 名前を編集
-    });
-
-    if (!response.ok) {
-      console.error("Failed to update name");
-    } else {
-      console.log("Name updated successfully");
-      setNewName("");
-      setOpen(false);
-    }
-  };
-
   return (
     <>
       <CssBaseline enableColorScheme />
@@ -153,58 +127,17 @@ export default function Account() {
                 <RoundedButton variant="contained" onClick={handleLogout}>
                   ログアウト
                 </RoundedButton>
-                <RoundedButton
-                  variant="contained"
-                  onClick={() => setOpen(true)}
-                >
-                  名前を変更
-                </RoundedButton>
-                <Modal
-                  open={open}
-                  onClose={() => setOpen(false)}
-                  keepMounted
-                  disablePortal
-                >
-                  <ModalDialog
-                    aria-labelledby="update-name-title"
-                    aria-describedby="update-name-description"
-                  >
-                    <DialogTitle id="update-name-title">名前を変更</DialogTitle>
-                    <DialogContent id="update-name-description">
-                      新しい名前を入力してください.
-                    </DialogContent>
-                    <form onSubmit={handleNameUpdate}>
-                      <Stack spacing={2} sx={{ mt: 2 }}>
-                        <Input
-                          placeholder="New Name"
-                          value={newName}
-                          onChange={(e) => setNewName(e.target.value)}
-                          required
-                        />
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          justifyContent="flex-end"
-                        >
-                          <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={() => setOpen(false)}
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                          >
-                            Update Name
-                          </Button>
-                        </Stack>
-                      </Stack>
-                    </form>
-                  </ModalDialog>
-                </Modal>
+                {user?.loginType !== "Guest" && (
+                  <>
+                    <RoundedButton
+                      variant="contained"
+                      onClick={() => setOpen(true)}
+                    >
+                      名前を変更
+                    </RoundedButton>
+                    <NameUpdate open={open} setOpen={setOpen} />
+                  </>
+                )}
               </>
             ) : (
               <>

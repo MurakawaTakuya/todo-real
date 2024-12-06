@@ -9,11 +9,14 @@ import { loginUser } from "@/utils/loginUserAuth";
 import { signInAsGuest } from "@/utils/signInAnonymously";
 import { signInWithGoogleAccount } from "@/utils/signInWithGoogleAccount";
 import { useUser } from "@/utils/UserContext";
+import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import MuiCard from "@mui/material/Card";
+import CircularProgress from "@mui/material/CircularProgress"; // ローディング用のインジケーターをインポート
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
+import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
@@ -21,7 +24,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
 import { signOut } from "firebase/auth";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -55,6 +58,12 @@ export default function UserForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formMode, setFormMode] = useState<"register" | "login">("register");
+  const [notificationTokenGenerating, setNotificationTokenGenerating] =
+    useState(false);
+  const [notificationMessage, setNotificationMessage] = useState<string | null>(
+    null
+  );
+  const [isNotificationActive, setIsNotificationActive] = useState(false);
 
   const { user } = useUser();
 
@@ -93,6 +102,27 @@ export default function UserForm() {
     if (newMode) setFormMode(newMode);
   };
 
+  // メッセージを表示する関数
+  const handleShowNotification = (message: string) => {
+    setNotificationMessage(message);
+    setTimeout(() => {
+      setNotificationMessage(null);
+    }, 3000);
+  };
+
+  // ページ読み込み時に Service Worker 状態を確認
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.ready
+        .then((registration) => {
+          setIsNotificationActive(!!registration.active); // active が存在するかで判定
+        })
+        .catch((error) => {
+          console.error("Error checking ServiceWorker status:", error);
+        });
+    }
+  }, []);
+
   return (
     <>
       <CssBaseline enableColorScheme />
@@ -126,12 +156,46 @@ export default function UserForm() {
               <>
                 <Typography>ログイン中: {user.name}</Typography>
                 <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-                  <Button variant="contained" onClick={requestPermission}>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setNotificationTokenGenerating(true);
+                      requestPermission(() => {
+                        setNotificationTokenGenerating(false);
+                        handleShowNotification("通知を受信しました");
+                        setIsNotificationActive(true); // 通知状態を有効化
+                      });
+                    }}
+                    disabled={
+                      notificationTokenGenerating || isNotificationActive
+                    } // 通知状態に基づく
+                    startIcon={
+                      notificationTokenGenerating ? (
+                        <CircularProgress size={20} />
+                      ) : null
+                    }
+                  >
                     通知を受信
                   </Button>
-                  <Button variant="contained" onClick={revokePermission}>
+
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      revokePermission();
+                      handleShowNotification("通知を解除しました");
+                      setIsNotificationActive(false); // 通知状態を無効化
+                    }}
+                    disabled={!isNotificationActive} // 通知状態に基づく
+                  >
                     通知を解除
                   </Button>
+                  <Snackbar
+                    open={!!notificationMessage}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    autoHideDuration={3000}
+                  >
+                    <Alert severity="info">{notificationMessage}</Alert>
+                  </Snackbar>
                 </Box>
                 <RoundedButton variant="contained" onClick={handleLogout}>
                   ログアウト

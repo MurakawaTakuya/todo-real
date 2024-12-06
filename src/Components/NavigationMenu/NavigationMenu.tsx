@@ -55,7 +55,7 @@ export default function NavigationMenu() {
         onChange={(event, value) => setIndex(value as number)}
         sx={(theme) => ({
           p: 1,
-          borderRadius: 16,
+          borderRadius: 13,
           maxWidth: "93%",
           mx: "auto",
           boxShadow: theme.shadow.sm,

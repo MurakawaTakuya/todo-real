@@ -1,7 +1,6 @@
 "use client";
 import DashBoard from "@/Components/DashBoard/DashBoard";
 import GoalModal from "@/Components/GoalModal/GoalModal";
-import PostForm from "@/Components/PostForm/PostForm";
 import {
   requestPermission,
   revokePermission,
@@ -12,7 +11,6 @@ export default function Top() {
   return (
     <>
       <DashBoard />
-      <PostForm />
       <GoalModal />
       <Button variant="contained" onClick={requestPermission}>
         通知を受信

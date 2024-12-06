@@ -14,6 +14,7 @@ import Stepper from "@mui/joy/Stepper";
 import Typography, { typographyClasses } from "@mui/joy/Typography";
 import { Divider } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
+import PostModal from "../PostModal/PostModal";
 
 interface ProgressProps {
   successResults?: SuccessResult[];
@@ -188,6 +189,7 @@ const pendingStep = (result: GoalWithId, userName: string) => {
           goalText={result.text}
           resultType="pending"
         />
+        <PostModal goalId={result.goalId} />
       </Step>
     </StepperBlock>
   );

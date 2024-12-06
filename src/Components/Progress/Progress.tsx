@@ -141,7 +141,7 @@ const successStep = (result: SuccessResult, userName: string) => {
           )}
           <CardContent>
             <Typography level="body-sm">
-              {formatStringToDate(result.submittedAt)}
+              {formatStringToDate(result.submittedAt)}に完了
             </Typography>
             <Divider />
             <Typography level="title-md">{result.postText}</Typography>
@@ -217,7 +217,9 @@ const GoalCard = ({
       }}
     >
       <CardContent>
-        <Typography level="body-sm">{formatStringToDate(deadline)}</Typography>
+        <Typography level="body-sm">
+          {formatStringToDate(deadline)}までに
+        </Typography>
         <Divider />
         <Typography level="body-lg">{goalText}</Typography>
       </CardContent>

@@ -1,5 +1,6 @@
 "use client";
 import { auth } from "@/app/firebase";
+import Notification from "@/Components/Notification/Notification";
 import { createUser } from "@/utils/Auth/createUserAuth";
 import { loginUser } from "@/utils/Auth/loginUserAuth";
 import { signInAsGuest } from "@/utils/Auth/signInAnonymously";
@@ -121,6 +122,7 @@ export default function Account() {
             {user ? (
               <>
                 <Typography>ログイン中: {user.name}</Typography>
+                {user.loginType !== "Guest" && <Notification />}
                 <RoundedButton variant="contained" onClick={handleLogout}>
                   ログアウト
                 </RoundedButton>

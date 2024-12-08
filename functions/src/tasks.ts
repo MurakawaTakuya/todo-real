@@ -30,25 +30,25 @@ export const createTasksOnGoalCreate = onDocumentCreated(
       return;
     }
 
-    const goalData = event.data.data();
-    const marginTime = 2;
-    // 期限のmarginTime分前にタスクを設定
-    const deadline = new Date(
-      goalData.deadline.toDate().getTime() - marginTime * 60 * 1000
-    );
-
-    const postData = {
-      message: {
-        token:
-          "fd4ptLB2gtB723MpYwCn_l:APA91bGKC_dl7HI2bQm-6igwifY6SNd6K3OUUy1GAz2RFNyp8qVfx5Z9_P9k16UcswEiHDgA7Sh4IDHyN-TOYsktmqOidc247y4UFv42Bm2lJVQ0UUbX_js", // 通知を送信する端末のトークン
-        notification: {
-          title: `${marginTime}分以内に目標を完了し写真をアップロードしましょう!`,
-          body: "ここにやることのテキストhogehogehogehogehogehogehogehogehogehogehogehogehogehogehogehoge",
-        },
-      },
-    };
-
     try {
+      const goalData = event.data.data();
+      const marginTime = 2;
+      // 期限のmarginTime分前にタスクを設定
+      const deadline = new Date(
+        goalData.deadline.toDate().getTime() - marginTime * 60 * 1000
+      );
+      const goalId = event.params.goalId;
+      const fcmToken = await getUserFcmToken(goalData.userId);
+      const postData = {
+        message: {
+          token: fcmToken, // 通知を受信する端末のトークン
+          notification: {
+            title: `${marginTime}分以内に目標を完了し写真をアップロードしましょう!`,
+            body: goalData.text,
+          },
+        },
+      };
+      const queuePath = tasksClient.queuePath(projectId, region, queue);
       const auth = new GoogleAuth({
         scopes: ["https://www.googleapis.com/auth/cloud-platform"],
       });
@@ -138,3 +138,19 @@ export const deleteTasksOnPostCreate = onDocumentCreated(
     }
   }
 );
+
+const getUserFcmToken = async (userId: string) => {
+  const userData = await admin
+    .firestore()
+    .collection("user")
+    .doc(userId)
+    .get()
+    .then((doc) => doc.data());
+  if (!userData) {
+    throw new Error(`No user data found for userId:, ${userId}`);
+  }
+  if (!userData.fcmToken) {
+    throw new Error(`No FCM token found for userId:, ${userId}`);
+  }
+  return userData.fcmToken;
+};

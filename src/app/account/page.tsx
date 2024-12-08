@@ -1,6 +1,6 @@
 "use client";
 import { auth } from "@/app/firebase";
-import NameUpdate from "@/Components/NameUpdate/NameUpdate"; // 追加
+import NameUpdate from "@/Components/NameUpdate/NameUpdate";
 import { createUser } from "@/utils/Auth/createUserAuth";
 import { loginUser } from "@/utils/Auth/loginUserAuth";
 import { signInAsGuest } from "@/utils/Auth/signInAnonymously";
@@ -52,7 +52,7 @@ export default function Account() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formMode, setFormMode] = useState<"register" | "login">("register");
-  const [open, setOpen] = useState(false); // 追加
+  const [open, setOpen] = useState(false);
 
   const { user } = useUser();
 

@@ -45,7 +45,7 @@ export default function NameUpdate({
         aria-labelledby="update-name-title"
         aria-describedby="update-name-description"
       >
-        <DialogTitle id="update-name-title">名前を変更</DialogTitle>{" "}
+        <DialogTitle id="update-name-title">名前を変更</DialogTitle>
         <DialogContent id="update-name-description">
           新しい名前を入力してください.
         </DialogContent>

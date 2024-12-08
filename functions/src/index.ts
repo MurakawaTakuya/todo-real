@@ -91,4 +91,7 @@ export const firestore = onRequest({ region: region }, async (req, res) => {
   app(req, res);
 });
 
-export { sendNotification } from "./tasks";
+export {
+  createTasksOnGoalCreate,
+  deleteTasksOnGoalDelete,
+} from "./tasks";

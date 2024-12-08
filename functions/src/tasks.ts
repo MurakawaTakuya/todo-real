@@ -1,26 +1,29 @@
-// TODO: productionだけにする
-// TODO: goal削除時にタスクも削除する
-// TODO: post作成時にタスクも削除する
-// TODO: goalのuserIdのfcmTokenを取得して通知を送る
 import { CloudTasksClient } from "@google-cloud/tasks";
+import * as admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
-import { onDocumentCreated } from "firebase-functions/v2/firestore";
+import {
+  onDocumentCreated,
+  onDocumentDeleted,
+} from "firebase-functions/v2/firestore";
 import { GoogleAuth } from "google-auth-library";
 
+const tasksClient = new CloudTasksClient();
+const projectId = process.env.GCP_PROJECT_ID;
 const region = "asia-northeast1";
+const queue = "deadline-notification-queue";
 
-export const sendNotification = onDocumentCreated(
+export const createTasksOnGoalCreate = onDocumentCreated(
   { region: region, document: "goal/{goalId}" },
   async (event) => {
-    const tasksClient = new CloudTasksClient();
-    const queue = "deadline-notification-queue";
-    const projectId = process.env.GCP_PROJECT_ID;
+    // production以外はスキップ(Cloud Tasksがエミュレーターで実行できないため)
+    if (process.env.NODE_ENV !== "production") {
+      return;
+    }
+
     if (!projectId) {
       logger.info("GCP_PROJECT_ID is not defined.");
       return;
     }
-    const location = "asia-northeast1";
-    const queuePath = tasksClient.queuePath(projectId, location, queue);
 
     if (!event.data) {
       logger.info("No data found in event.");
@@ -54,6 +57,7 @@ export const sendNotification = onDocumentCreated(
       await tasksClient.createTask({
         parent: queuePath,
         task: {
+          name: `${queuePath}/tasks/${goalId}`, // タスクの名前をgoalIdに設定
           httpRequest: {
             httpMethod: "POST",
             url: `https://fcm.googleapis.com//v1/projects/${projectId}/messages:send`,
@@ -69,6 +73,35 @@ export const sendNotification = onDocumentCreated(
       logger.info("Task scheduled");
     } catch (error) {
       logger.info("Error scheduling task:", error);
+    }
+  }
+);
+
+export const deleteTasksOnGoalDelete = onDocumentDeleted(
+  { region: region, document: "goal/{goalId}" },
+  async (event) => {
+    if (process.env.NODE_ENV !== "production") {
+      return;
+    }
+
+    if (!projectId) {
+      logger.info("GCP_PROJECT_ID is not defined.");
+      return;
+    }
+
+    if (!event.data) {
+      logger.info("No data found in event.");
+      return;
+    }
+
+    try {
+      const goalId = event.params.goalId;
+      const queuePath = tasksClient.queuePath(projectId, region, queue);
+      const taskName = `${queuePath}/tasks/${goalId}`; // goalIdが名前になっているタスクを削除
+      await tasksClient.deleteTask({ name: taskName });
+      logger.info("Task deleted for goalId:", goalId);
+    } catch (error) {
+      logger.info("Error deleting task:", error);
     }
   }
 );

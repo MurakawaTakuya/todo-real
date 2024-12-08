@@ -94,4 +94,5 @@ export const firestore = onRequest({ region: region }, async (req, res) => {
 export {
   createTasksOnGoalCreate,
   deleteTasksOnGoalDelete,
+  deleteTasksOnPostCreate,
 } from "./tasks";

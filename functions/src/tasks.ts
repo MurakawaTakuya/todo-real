@@ -70,7 +70,7 @@ export const createTasksOnGoalCreate = onDocumentCreated(
           scheduleTime: { seconds: Math.floor(deadline.getTime() / 1000) },
         },
       });
-      logger.info("Task scheduled");
+      logger.info("Task created for goalId:", goalId);
     } catch (error) {
       logger.info("Error scheduling task:", error);
     }
@@ -96,6 +96,39 @@ export const deleteTasksOnGoalDelete = onDocumentDeleted(
 
     try {
       const goalId = event.params.goalId;
+      const queuePath = tasksClient.queuePath(projectId, region, queue);
+      const taskName = `${queuePath}/tasks/${goalId}`; // goalIdが名前になっているタスクを削除
+      await tasksClient.deleteTask({ name: taskName });
+      logger.info("Task deleted for goalId:", goalId);
+    } catch (error) {
+      logger.info("Error deleting task:", error);
+    }
+  }
+);
+
+export const deleteTasksOnPostCreate = onDocumentCreated(
+  {
+    region: region,
+    document: "post/{postId}",
+  },
+  async (event) => {
+    if (process.env.NODE_ENV !== "production") {
+      return;
+    }
+
+    if (!projectId) {
+      logger.info("GCP_PROJECT_ID is not defined.");
+      return;
+    }
+
+    if (!event.data) {
+      logger.info("No data found in event.");
+      return;
+    }
+
+    try {
+      const postData = event.data.data();
+      const goalId = postData.goalId;
       const queuePath = tasksClient.queuePath(projectId, region, queue);
       const taskName = `${queuePath}/tasks/${goalId}`; // goalIdが名前になっているタスクを削除
       await tasksClient.deleteTask({ name: taskName });

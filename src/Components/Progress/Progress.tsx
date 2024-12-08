@@ -45,7 +45,7 @@ export default function Progress({
   failedResults = [],
   pendingResults = [],
 }: ProgressProps) {
-  const [userNames, setUserNames] = useState<Record<string, string>>({}); // userId: userName
+  const [userNames, setUserNames] = useState<Record<string, string>>({}); // <userId, userName>
 
   const fetchUserName = async (userId: string) => {
     if (userNames[userId]) return; // 既に取得済みの場合はキャッシュのように再利用

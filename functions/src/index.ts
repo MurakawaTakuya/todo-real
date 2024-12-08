@@ -18,6 +18,7 @@ import resultRouter from "./routers/resultRouter";
 import userRouer from "./routers/userRouter";
 
 const app = express();
+app.set("trust proxy", 1);
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
@@ -50,7 +51,14 @@ const verifyAppCheckToken = async (
 
 // Postmanを使うためにCloud FunctionsのApp Checkは開発環境では使用しない
 if (process.env.NODE_ENV === "production") {
-  app.use(verifyAppCheckToken);
+  app.use((req, res, next) => {
+    // /sendNotificationと/receiveTestは別の認証を使用するのでApp Checkを使用しない
+    if (req.path !== "/sendNotification" && req.path !== "/receiveTest") {
+      verifyAppCheckToken(req, res, next);
+    } else {
+      next();
+    }
+  });
 }
 
 // 10分間で最大300回に制限
@@ -83,3 +91,9 @@ export const helloWorld = onRequest({ region: region }, (req, res) => {
 export const firestore = onRequest({ region: region }, async (req, res) => {
   app(req, res);
 });
+
+export {
+  createTasksOnGoalCreate,
+  deleteTasksOnGoalDelete,
+  deleteTasksOnPostCreate,
+} from "./tasks";

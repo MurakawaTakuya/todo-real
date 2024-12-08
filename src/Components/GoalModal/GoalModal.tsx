@@ -3,6 +3,7 @@ import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 import { Goal } from "@/types/types";
 import { useUser } from "@/utils/UserContext";
 import { Add } from "@mui/icons-material";
+import SendIcon from "@mui/icons-material/Send";
 import {
   Button,
   DialogContent,
@@ -24,7 +25,7 @@ export default function GoalModal() {
     event.preventDefault();
 
     const postData: Goal = {
-      userId: user ? user.uid : "",
+      userId: user?.uid as string,
       text: text,
       deadline: new Date(dueDate),
     };
@@ -93,9 +94,10 @@ export default function GoalModal() {
         <ModalDialog
           aria-labelledby="create-goal-title"
           aria-describedby="create-goal-description"
+          sx={{ width: "90%", maxWidth: 400 }}
         >
           <DialogTitle>目標を作成</DialogTitle>
-          <DialogContent>自分の目標を入力してください.</DialogContent>
+          <DialogContent>達成したい内容と期限を入力してください</DialogContent>
           <form onSubmit={handleSubmit}>
             <Stack spacing={2} sx={{ mt: 2 }}>
               <Input
@@ -123,6 +125,7 @@ export default function GoalModal() {
                   variant="solid"
                   color="primary"
                   disabled={!user || user?.loginType === "Guest"}
+                  endDecorator={<SendIcon />}
                 >
                   Create Goal
                 </Button>

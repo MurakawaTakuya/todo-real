@@ -1,5 +1,6 @@
 "use client";
 import { useUser } from "@/utils/UserContext";
+import CircularProgress from "@mui/joy/CircularProgress";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
@@ -15,7 +16,18 @@ export const TopPage = ({ children }: TopPageProps) => {
   return (
     <>
       {user === undefined ? (
-        <>ローディングぐるぐるしてるつもり</>
+        <CircularProgress
+          color="primary"
+          variant="soft"
+          size="lg"
+          value={30}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        />
       ) : (
         <main>{children}</main>
       )}

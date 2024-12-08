@@ -3,7 +3,9 @@ import { messaging } from "@/app/firebase";
 import { getToken } from "firebase/messaging";
 
 // 通知を受信する
-export function requestPermission() {
+export function requestPermission(
+  setNotificationTokenGenerating?: (value: boolean) => void
+) {
   if (typeof window === "undefined") {
     return;
   }
@@ -31,12 +33,8 @@ export function requestPermission() {
         })
         .then((currentToken) => {
           if (currentToken) {
-            // ここでサーバーにトークンを送信したり、UIを更新
             console.log("currentToken:", currentToken);
-            // ここでクリップボードにコピー
-            navigator.clipboard.writeText(currentToken);
           } else {
-            // ここでパーミッションリクエストUIを表示
             console.log(
               "No registration token available. Request permission to generate one."
             );
@@ -44,9 +42,15 @@ export function requestPermission() {
         })
         .catch((err) => {
           console.error("An error occurred while retrieving token. ", err);
+        })
+        .finally(() => {
+          if (setNotificationTokenGenerating) {
+            setNotificationTokenGenerating(false);
+          }
         });
     } else {
       console.log("Unable to get permission to notify.");
+      if (setNotificationTokenGenerating) setNotificationTokenGenerating(false);
     }
   });
 }
@@ -64,7 +68,16 @@ export function revokePermission() {
     .then((subscription) => {
       if (subscription) {
         // サブスクリプションが存在する場合に解除
-        return subscription.unsubscribe();
+        return subscription
+          .unsubscribe()
+          .then(() => {
+            return navigator.serviceWorker.getRegistration();
+          })
+          .then((registration) => {
+            if (registration) {
+              return registration.unregister();
+            }
+          });
       } else {
         console.log("No subscription found.");
       }

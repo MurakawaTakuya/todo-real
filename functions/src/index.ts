@@ -83,3 +83,46 @@ export const helloWorld = onRequest({ region: region }, (req, res) => {
 export const firestore = onRequest({ region: region }, async (req, res) => {
   app(req, res);
 });
+
+import { CloudTasksClient } from "@google-cloud/tasks";
+const tasksClient = new CloudTasksClient();
+const queue = "deadline-notification-queue";
+const location = "asia-northeast1";
+export const sendNotification = onRequest(
+  { region: region },
+  async (req, res) => {
+    logger.info("Sending notification...");
+
+    // 今から1分後
+    const scheduleTime = new Date(Date.now() + 10 * 1000);
+
+    try {
+      await tasksClient.createTask({
+        parent: tasksClient.queuePath("todo-real-c28fa", location, queue),
+        task: {
+          httpRequest: {
+            httpMethod: "POST",
+            url: "https://asia-northeast1-todo-real-c28fa.cloudfunctions.net/receiveTest",
+            headers: { "Content-Type": "application/json" },
+            body: Buffer.from(JSON.stringify({ taskId: 12345 })).toString(
+              "base64"
+            ),
+          },
+          scheduleTime: { seconds: Math.floor(scheduleTime.getTime() / 1000) },
+        },
+      });
+      logger.info("Task scheduled");
+      res.send("Notification sent!");
+    } catch (error) {
+      logger.info("Error scheduling task:", error);
+      res.status(500).send("Error scheduling task");
+    }
+  }
+);
+
+export const receiveTest = onRequest({ region: region }, (req, res) => {
+  logger.info("Test received!");
+  res.send("Test received!");
+});
+
+// export { setScheduledNotification } from "./tasks";

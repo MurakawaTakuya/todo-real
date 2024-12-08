@@ -34,7 +34,6 @@ export function requestPermission(
         .then((currentToken) => {
           if (currentToken) {
             console.log("currentToken:", currentToken);
-            navigator.clipboard.writeText(currentToken);
           } else {
             console.log(
               "No registration token available. Request permission to generate one."

@@ -3,6 +3,7 @@ export interface UserData {
   name: string;
   streak: number;
   loginType: LoginType;
+  isMailVerified: boolean;
 }
 
 export type LoginType = "Mail" | "Google" | "Guest" | "None";

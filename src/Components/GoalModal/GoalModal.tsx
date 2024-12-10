@@ -80,7 +80,7 @@ export default function GoalModal() {
         color="primary"
         startDecorator={<Add />}
         onClick={() => setOpen(true)}
-        disabled={!user || user?.loginType === "Guest"}
+        disabled={!user || user?.loginType === "Guest" || !user?.isMailVerified}
       >
         Create Goal
       </Button>
@@ -124,7 +124,11 @@ export default function GoalModal() {
                   type="submit"
                   variant="solid"
                   color="primary"
-                  disabled={!user || user?.loginType === "Guest"}
+                  disabled={
+                    !user ||
+                    user?.loginType === "Guest" ||
+                    !user?.isMailVerified
+                  }
                   endDecorator={<SendIcon />}
                 >
                   Create Goal

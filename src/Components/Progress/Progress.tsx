@@ -1,6 +1,7 @@
-import { GoalWithId, SuccessResult } from "@/types/types";
+import { GoalWithId, SuccessResult, UserData } from "@/types/types";
 import { fetchUserById } from "@/utils/API/fetchUser";
 import { formatStringToDate } from "@/utils/DateFormatter";
+import { useUser } from "@/utils/UserContext";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import CloseIcon from "@mui/icons-material/Close";
@@ -46,6 +47,7 @@ export default function Progress({
   pendingResults = [],
 }: ProgressProps) {
   const [userNames, setUserNames] = useState<Record<string, string>>({}); // <userId, userName>
+  const { user } = useUser();
 
   const fetchUserName = async (userId: string) => {
     if (userNames[userId]) return; // 既に取得済みの場合はキャッシュのように再利用
@@ -90,7 +92,7 @@ export default function Progress({
         if (result.type === "failed")
           return failedStep(result as GoalWithId, userName);
         if (result.type === "pending")
-          return pendingStep(result as GoalWithId, userName);
+          return pendingStep(result as GoalWithId, userName, user as UserData);
         return null;
       })}
     </>
@@ -173,7 +175,7 @@ const failedStep = (result: GoalWithId, userName: string) => {
   );
 };
 
-const pendingStep = (result: GoalWithId, userName: string) => {
+const pendingStep = (result: GoalWithId, userName: string, user: UserData) => {
   return (
     <StepperBlock key={result.goalId} userName={userName} resultType="pending">
       <Step
@@ -189,7 +191,8 @@ const pendingStep = (result: GoalWithId, userName: string) => {
           goalText={result.text}
           resultType="pending"
         />
-        <PostModal goalId={result.goalId} />
+        {/* 自分の作成した目標の場合のみ投稿可能にする */}
+        {result.userId === user?.uid && <PostModal goalId={result.goalId} />}
       </Step>
     </StepperBlock>
   );

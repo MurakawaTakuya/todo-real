@@ -7,7 +7,7 @@ import { appCheckToken, functionsEndpoint } from "@/app/firebase";
  * @param {string} name
  * @param {string} uid
  */
-export const createUserAPI = async (name: string, uid: string) => {
+export const createUser = async (name: string, uid: string) => {
   const response = await fetch(`${functionsEndpoint}/user/`, {
     method: "POST",
     headers: {

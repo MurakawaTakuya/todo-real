@@ -125,6 +125,13 @@ export default function Account() {
               <>
                 <Typography>ログイン中: {user.name}</Typography>
                 {user.loginType !== "Guest" && <Notification />}
+                {!user.isMailVerified && (
+                  <Typography color="error">
+                    メールに届いた認証リンクを確認してください。
+                    <br />
+                    認証が完了するまで閲覧以外の機能は制限されます。
+                  </Typography>
+                )}
                 <RoundedButton variant="contained" onClick={handleLogout}>
                   ログアウト
                 </RoundedButton>

@@ -1,7 +1,10 @@
 import { auth } from "@/app/firebase";
 import { createUser } from "@/utils/API/createUser";
 import { updateUser } from "@/utils/UserContext";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 
 /**
  * Firebase Authenticationでユーザーを作成し、生成されたuidをドキュメントIDとしてFirestoreにユーザー情報を登録する
@@ -28,7 +31,16 @@ export const signUpWithMail = (
         name: name,
         streak: 0,
         loginType: "Mail",
+        isMailVerified: user.emailVerified,
       });
+
+      // メール確認リンクを送信
+      try {
+        await sendEmailVerification(user);
+        console.log("確認メールを送信しました。");
+      } catch (verificationError) {
+        console.error("確認メールの送信に失敗しました:", verificationError);
+      }
       console.log(user);
     })
     .catch((error) => {

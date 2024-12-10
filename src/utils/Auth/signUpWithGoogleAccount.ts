@@ -20,6 +20,7 @@ export const signUpWithGoogleAccount = async () => {
         name: result.user.displayName ?? "no name",
         streak: 0,
         loginType: "Google",
+        isMailVerified: result.user.emailVerified,
       });
     }
 

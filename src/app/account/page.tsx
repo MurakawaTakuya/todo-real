@@ -2,10 +2,10 @@
 import { auth } from "@/app/firebase";
 import NameUpdate from "@/Components/NameUpdate/NameUpdate";
 import Notification from "@/Components/Notification/Notification";
-import { createUser } from "@/utils/Auth/createUserAuth";
-import { loginUser } from "@/utils/Auth/loginUserAuth";
 import { signInAsGuest } from "@/utils/Auth/signInAnonymously";
-import { signInWithGoogleAccount } from "@/utils/Auth/signInWithGoogleAccount";
+import { signInWithMail } from "@/utils/Auth/signInWithMail";
+import { signUpWithGoogleAccount } from "@/utils/Auth/signUpWithGoogleAccount";
+import { signUpWithMail } from "@/utils/Auth/signUpWithMail";
 import { useUser } from "@/utils/UserContext";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -59,16 +59,16 @@ export default function Account() {
 
   const handleRegisterSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    await createUser(email, password, name);
+    await signUpWithMail(email, password, name);
   };
 
   const handleLoginSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    await loginUser(email, password);
+    await signInWithMail(email, password);
   };
 
   const handleGoogleLogin = async () => {
-    await signInWithGoogleAccount();
+    await signUpWithGoogleAccount();
   };
 
   const handleGuestLogin = async () => {

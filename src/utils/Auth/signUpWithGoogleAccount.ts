@@ -1,5 +1,5 @@
 import { auth, googleProvider } from "@/app/firebase";
-import { createUserAPI } from "@/utils/API/createUserAPI";
+import { createUser } from "@/utils/API/createUser";
 import { updateUser } from "@/utils/UserContext";
 import { getAdditionalUserInfo, signInWithPopup } from "firebase/auth";
 
@@ -7,17 +7,14 @@ import { getAdditionalUserInfo, signInWithPopup } from "firebase/auth";
  * Googleアカウントでログインする
  *
  */
-export const signInWithGoogleAccount = async () => {
+export const signUpWithGoogleAccount = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
 
     // 初めての時だけユーザー情報を登録する
     if (getAdditionalUserInfo(result)?.isNewUser) {
       // uidとdocument IDを一致させる
-      await createUserAPI(
-        result.user.displayName ?? "no name",
-        result.user.uid
-      );
+      await createUser(result.user.displayName ?? "no name", result.user.uid);
       updateUser({
         uid: result.user.uid,
         name: result.user.displayName ?? "no name",

@@ -1,5 +1,5 @@
 import { auth } from "@/app/firebase";
-import { createUserAPI } from "@/utils/API/createUserAPI";
+import { createUser } from "@/utils/API/createUser";
 import { updateUser } from "@/utils/UserContext";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -10,7 +10,11 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
  * @param {string} password
  * @param {string} name
  */
-export const createUser = (email: string, password: string, name: string) => {
+export const signUpWithMail = (
+  email: string,
+  password: string,
+  name: string
+) => {
   // メールは初回ログインの時のみ成功する、2回目以降はエラーになるので、ログインを使う
   createUserWithEmailAndPassword(auth, email, password)
     .then(async (userCredential) => {
@@ -18,7 +22,7 @@ export const createUser = (email: string, password: string, name: string) => {
       const user = userCredential.user;
 
       // uidとdocument IDを一致させる
-      await createUserAPI(name, user.uid);
+      await createUser(name, user.uid);
       updateUser({
         uid: user.uid,
         name: name,

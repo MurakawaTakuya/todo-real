@@ -131,7 +131,6 @@ export default function PostModal({ goalId }: { goalId: string }) {
         color="primary"
         startDecorator={<Add />}
         onClick={() => setOpen(true)}
-        disabled={!user || user?.loginType === "Guest"}
       >
         写真を撮って完了する
       </JoyButton>
@@ -188,7 +187,6 @@ export default function PostModal({ goalId }: { goalId: string }) {
                   type="submit"
                   variant="solid"
                   color="primary"
-                  disabled={!user || user?.loginType === "Guest"}
                   endDecorator={<SendIcon />}
                   onClick={handleUpload}
                 >

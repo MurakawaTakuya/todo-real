@@ -1,5 +1,5 @@
 "use client";
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { appCheckToken, auth, functionsEndpoint } from "@/app/firebase";
 import { useUser } from "@/utils/UserContext";
 import {
   DialogContent,
@@ -10,6 +10,7 @@ import {
 } from "@mui/joy";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import { updateProfile } from "firebase/auth";
 import React, { useState } from "react";
 
 export default function NameUpdate({
@@ -23,6 +24,7 @@ export default function NameUpdate({
   const { user } = useUser();
   const handleNameUpdate = async (event: React.FormEvent) => {
     event.preventDefault();
+
     const response = await fetch(`${functionsEndpoint}/user/${user?.uid}`, {
       method: "PUT",
       headers: {
@@ -31,6 +33,15 @@ export default function NameUpdate({
       },
       body: JSON.stringify({ name: newName }),
     });
+
+    // Firebase Authentication の displayName を更新
+    if (auth.currentUser) {
+      await updateProfile(auth.currentUser, { displayName: newName });
+      console.log("Firebase displayName updated successfully");
+    } else {
+      console.error("Failed to update displayName: No authenticated user");
+    }
+
     if (!response.ok) {
       console.error("Failed to update name");
     } else {

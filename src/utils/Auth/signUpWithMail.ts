@@ -4,6 +4,7 @@ import { updateUser } from "@/utils/UserContext";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
 
 /**
@@ -23,6 +24,14 @@ export const signUpWithMail = (
     .then(async (userCredential) => {
       // Signed up
       const user = userCredential.user;
+
+      // Firebase AuthのdisplayNameを設定
+      try {
+        await updateProfile(user, { displayName: name });
+        console.log("ユーザー名を設定しました:", name);
+      } catch (profileUpdateError) {
+        console.error("プロファイル更新に失敗しました:", profileUpdateError);
+      }
 
       // uidとdocument IDを一致させる
       await createUser(name, user.uid);

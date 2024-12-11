@@ -14,10 +14,14 @@ router.get("/", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "No users found" });
     }
 
-    const userData = userSnapshot.docs.map((doc) => ({
-      uid: doc.id,
-      ...doc.data(),
-    }));
+    const userData: User[] = userSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        userId: doc.id,
+        name: data.name,
+        streak: data.streak,
+      };
+    });
 
     return res.json(userData);
   } catch (error) {
@@ -35,10 +39,20 @@ router.get("/id/:userId", async (req: Request, res: Response) => {
 
   try {
     const userDoc = await getUserFromId(userId);
+
     if (!userDoc.exists) {
       return res.status(404).json({ message: "User not found" });
     }
-    return res.json({ uid: userDoc.id, ...userDoc.data() });
+
+    const data = userDoc.data();
+
+    const userData: User & { userId: string } = {
+      userId: userDoc.id,
+      name: data?.name || "",
+      streak: data?.streak || 0,
+    };
+
+    return res.json(userData);
   } catch (error) {
     return res.status(500).json({ message: "Error fetching user data" });
   }
@@ -54,16 +68,21 @@ router.get("/name/:userName", async (req: Request, res: Response) => {
 
   try {
     const userSnapshot = await getUserFromName(userName);
+
     if (userSnapshot.empty) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const userData = userSnapshot.docs.map((doc) => ({
-      uid: doc.id,
-      ...doc.data(),
-    }));
+    const userData: User[] = userSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        userId: doc.id,
+        name: data.name,
+        streak: data.streak,
+      };
+    });
 
-    return res.json(userData[0]);
+    return res.json(userData);
   } catch (error) {
     return res.status(500).json({ message: "Error fetching user data" });
   }
@@ -71,12 +90,13 @@ router.get("/name/:userName", async (req: Request, res: Response) => {
 
 // POST: 新しいユーザーを登録
 router.post("/", async (req: Request, res: Response) => {
-  let name: User["name"];
   let uid: string;
+  let name: User["name"];
   let streak: User["streak"];
+  let fcmToken: User["fcmToken"];
 
   try {
-    ({ name, uid, streak = 0 } = req.body);
+    ({ name, uid, streak = 0, fcmToken = "" } = req.body);
   } catch (error) {
     return res.status(400).json({ message: "Invalid request body" });
   }
@@ -89,6 +109,7 @@ router.post("/", async (req: Request, res: Response) => {
     await db.collection("user").doc(uid).set({
       name: name,
       streak: streak,
+      fcmToken: fcmToken,
     });
 
     return res.status(201).json({ message: "User created successfully", uid });
@@ -100,17 +121,24 @@ router.post("/", async (req: Request, res: Response) => {
 // PUT: ユーザー情報を更新
 router.put("/:userId", async (req: Request, res: Response) => {
   const userId = req.params.userId;
-  const { name, streak }: Partial<User> = req.body;
+  const { name, streak, fcmToken }: Partial<User> = req.body;
 
-  if (!name && streak === undefined) {
-    return res
-      .status(400)
-      .json({ message: "At least one of name or streak is required" });
+  if (!name && !streak && !fcmToken) {
+    return res.status(400).json({
+      message: "At least one of name, streak, or fcmToken is required",
+    });
   }
 
   const updateData: Partial<User> = {};
-  if (name) updateData.name = name;
-  if (streak !== undefined) updateData.streak = streak;
+  if (!name) {
+    updateData.name = name;
+  }
+  if (!streak) {
+    updateData.streak = streak;
+  }
+  if (fcmToken !== undefined) {
+    updateData.fcmToken = fcmToken;
+  }
 
   try {
     await db.collection("user").doc(userId).update(updateData);

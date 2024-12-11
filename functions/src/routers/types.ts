@@ -1,6 +1,7 @@
 export interface User {
   name: string;
   streak: number;
+  fcmToken?: string;
 }
 
 export interface Goal {

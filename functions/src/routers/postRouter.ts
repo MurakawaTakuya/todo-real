@@ -9,22 +9,25 @@ const db = admin.firestore();
 router.get("/", async (req: Request, res: Response) => {
   try {
     const postSnapshot = await db.collection("post").get();
+
     if (postSnapshot.empty) {
       return res.status(404).json({ message: "No posts found" });
     }
 
-    const posts = postSnapshot.docs.map((doc) => {
+    const postData: Post[] = postSnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
-        id: doc.id,
-        ...data,
+        postId: doc.id,
+        userId: data.userId,
+        storedId: data.storedId,
+        text: data.text,
+        goalId: data.goalId,
         submittedAt: new Date(data.submittedAt._seconds * 1000),
       };
     });
 
-    return res.json(posts);
+    return res.json(postData);
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ message: "Error fetching posts" });
   }
 });
@@ -49,8 +52,11 @@ router.get("/:userId", async (req: Request, res: Response) => {
     const posts = postSnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
-        id: doc.id,
-        ...data,
+        postId: doc.id,
+        userId: data.userId,
+        storedId: data.storedId,
+        text: data.text,
+        goalId: data.goalId,
         submittedAt: new Date(data.submittedAt._seconds * 1000),
       };
     });
@@ -82,6 +88,7 @@ router.post("/", async (req: Request, res: Response) => {
       message: "userId, storedId, text, goalId, and submittedAt are required",
     });
   }
+
   if (!text) {
     text = "";
   }
@@ -110,16 +117,24 @@ router.put("/:postId", async (req: Request, res: Response) => {
   const { userId, storedId, text, goalId }: Partial<Post> = req.body;
 
   if (!userId && !storedId && !text && !goalId) {
-    return res
-      .status(400)
-      .json({ message: "At least one field is required to update" });
+    return res.status(400).json({
+      message: "At least one of userId, storedId, text, or goalId is required",
+    });
   }
 
   const updateData: Partial<Post> = {};
-  if (userId) updateData.userId = userId;
-  if (storedId) updateData.storedId = storedId;
-  if (text) updateData.text = text;
-  if (goalId) updateData.goalId = goalId;
+  if (userId) {
+    updateData.userId = userId;
+  }
+  if (storedId) {
+    updateData.storedId = storedId;
+  }
+  if (text) {
+    updateData.text = text;
+  }
+  if (goalId) {
+    updateData.goalId = goalId;
+  }
 
   try {
     await db.collection("post").doc(postId).update(updateData);

@@ -8,7 +8,7 @@ import {
 } from "firebase/auth";
 
 /**
- * Firebase Authenticationでユーザーを作成し、生成されたuidをドキュメントIDとしてFirestoreにユーザー情報を登録する
+ * Firebase Authenticationでユーザーを作成し、生成されたuserIdをドキュメントIDとしてFirestoreにユーザー情報を登録する
  *
  * @param {string} email
  * @param {string} password
@@ -33,10 +33,10 @@ export const signUpWithMail = (
         console.error("プロファイル更新に失敗しました:", profileUpdateError);
       }
 
-      // uidとdocument IDを一致させる
+      // userIdとdocument IDを一致させる
       await createUser(name, user.uid);
       updateUser({
-        uid: user.uid,
+        userId: user.uid,
         name: name,
         streak: 0,
         loginType: "Mail",

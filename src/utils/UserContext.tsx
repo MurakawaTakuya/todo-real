@@ -75,7 +75,7 @@ export const UserProvider = ({ children }: Props) => {
         // ゲスト以外のログインの場合はユーザーデータを取得しuseContextで保持
         if (loginType === "Guest") {
           const guestData: UserData = {
-            uid: firebaseUser.uid,
+            userId: firebaseUser.uid,
             name: "Guest",
             streak: 0,
             loginType: "Guest",
@@ -89,7 +89,7 @@ export const UserProvider = ({ children }: Props) => {
           const userData = await fetchUserById(firebaseUser.uid);
           // ユーザーデータを作成する前にfetchしようとして"User not found"になるので、postした場所でsetさせている
           // "User not found"ではない(= 初回ログイン直後ではない)場合のみsetする
-          if (userData.uid) {
+          if (userData.userId) {
             setUser({
               ...userData,
               loginType,

@@ -90,29 +90,31 @@ router.get("/name/:userName", async (req: Request, res: Response) => {
 
 // POST: 新しいユーザーを登録
 router.post("/", async (req: Request, res: Response) => {
-  let uid: string;
+  let userId: string;
   let name: User["name"];
   let streak: User["streak"];
   let fcmToken: User["fcmToken"];
 
   try {
-    ({ name, uid, streak = 0, fcmToken = "" } = req.body);
+    ({ name, userId, streak = 0, fcmToken = "" } = req.body);
   } catch (error) {
     return res.status(400).json({ message: "Invalid request body" });
   }
 
-  if (!name || !uid) {
-    return res.status(400).json({ message: "name and uid are required" });
+  if (!name || !userId) {
+    return res.status(400).json({ message: "name and userId are required" });
   }
 
   try {
-    await db.collection("user").doc(uid).set({
+    await db.collection("user").doc(userId).set({
       name: name,
       streak: streak,
       fcmToken: fcmToken,
     });
 
-    return res.status(201).json({ message: "User created successfully", uid });
+    return res
+      .status(201)
+      .json({ message: "User created successfully", userId });
   } catch (error) {
     return res.status(500).json({ message: "Error creating user" });
   }

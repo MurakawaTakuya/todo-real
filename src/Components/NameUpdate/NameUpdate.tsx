@@ -25,7 +25,7 @@ export default function NameUpdate({
   const handleNameUpdate = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const response = await fetch(`${functionsEndpoint}/user/${user?.uid}`, {
+    const response = await fetch(`${functionsEndpoint}/user/${user?.userId}`, {
       method: "PUT",
       headers: {
         "X-Firebase-AppCheck": appCheckToken,

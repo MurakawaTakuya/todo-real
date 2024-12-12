@@ -192,7 +192,7 @@ const pendingStep = (result: GoalWithId, userName: string, user: UserData) => {
           resultType="pending"
         />
         {/* 自分の作成した目標の場合のみ投稿可能にする */}
-        {result.userId === user?.uid && <PostModal goalId={result.goalId} />}
+        {result.userId === user?.userId && <PostModal goalId={result.goalId} />}
       </Step>
     </StepperBlock>
   );

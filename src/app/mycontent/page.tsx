@@ -40,9 +40,9 @@ export default function MyContent() {
       </div>
 
       {value == "pending" ? (
-        <DashBoard userId={user?.uid} success={false} failed={false} />
+        <DashBoard userId={user?.userId} success={false} failed={false} />
       ) : (
-        <DashBoard userId={user?.uid} pending={false} />
+        <DashBoard userId={user?.userId} pending={false} />
       )}
     </>
   );

@@ -1,9 +1,11 @@
 "use client";
 import { auth } from "@/app/firebase";
-import { createUser } from "@/utils/Auth/createUserAuth";
-import { loginUser } from "@/utils/Auth/loginUserAuth";
+import NameUpdate from "@/Components/NameUpdate/NameUpdate";
+import Notification from "@/Components/Notification/Notification";
 import { signInAsGuest } from "@/utils/Auth/signInAnonymously";
-import { signInWithGoogleAccount } from "@/utils/Auth/signInWithGoogleAccount";
+import { signInWithMail } from "@/utils/Auth/signInWithMail";
+import { signUpWithGoogleAccount } from "@/utils/Auth/signUpWithGoogleAccount";
+import { signUpWithMail } from "@/utils/Auth/signUpWithMail";
 import { useUser } from "@/utils/UserContext";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -51,21 +53,22 @@ export default function Account() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formMode, setFormMode] = useState<"register" | "login">("register");
+  const [open, setOpen] = useState(false);
 
   const { user } = useUser();
 
   const handleRegisterSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    await createUser(email, password, name);
+    await signUpWithMail(email, password, name);
   };
 
   const handleLoginSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    await loginUser(email, password);
+    await signInWithMail(email, password);
   };
 
   const handleGoogleLogin = async () => {
-    await signInWithGoogleAccount();
+    await signUpWithGoogleAccount();
   };
 
   const handleGuestLogin = async () => {
@@ -121,93 +124,137 @@ export default function Account() {
             {user ? (
               <>
                 <Typography>ログイン中: {user.name}</Typography>
+
+                {/* ゲストの場合は通知機能を利用しない */}
+                {user.loginType !== "Guest" && <Notification />}
+
+                {/* メール認証が完了していない場合に表示 */}
+                {!user.isMailVerified && (
+                  <Typography color="error">
+                    メールに届いた認証リンクを確認してください。
+                    <br />
+                    認証が完了するまで閲覧以外の機能は制限されます。
+                  </Typography>
+                )}
+
                 <RoundedButton variant="contained" onClick={handleLogout}>
                   ログアウト
                 </RoundedButton>
-              </>
-            ) : formMode === "register" ? (
-              <>
-                <Typography>新規登録</Typography>
-                <form onSubmit={handleRegisterSubmit}>
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-                  >
-                    <TextField
-                      label="Username"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      fullWidth
-                      required
-                    />
-                    <TextField
-                      label="Email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      fullWidth
-                      required
-                    />
-                    <TextField
-                      label="Password"
-                      type="new-password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      fullWidth
-                      required
-                    />
-                    <RoundedButton type="submit" variant="contained" fullWidth>
-                      アカウント作成
+
+                {/* ゲストの場合は名前を変更しない */}
+                {user.loginType !== "Guest" && (
+                  <>
+                    <RoundedButton
+                      variant="contained"
+                      onClick={() => setOpen(true)}
+                    >
+                      名前を変更
                     </RoundedButton>
-                  </Box>
-                </form>
+                    <NameUpdate open={open} setOpen={setOpen} />
+                  </>
+                )}
               </>
             ) : (
               <>
-                <Typography>ログイン</Typography>
-                <form onSubmit={handleLoginSubmit}>
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                {formMode === "register" ? (
+                  <>
+                    <Typography>新規登録</Typography>
+                    <form onSubmit={handleRegisterSubmit}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 2,
+                        }}
+                      >
+                        <TextField
+                          label="Username"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          fullWidth
+                          required
+                        />
+                        <TextField
+                          label="Email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          fullWidth
+                          required
+                        />
+                        <TextField
+                          label="Password"
+                          type="new-password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          fullWidth
+                          required
+                        />
+                        <RoundedButton
+                          type="submit"
+                          variant="contained"
+                          fullWidth
+                        >
+                          アカウント作成
+                        </RoundedButton>
+                      </Box>
+                    </form>
+                  </>
+                ) : (
+                  <>
+                    <Typography>ログイン</Typography>
+                    <form onSubmit={handleLoginSubmit}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 2,
+                        }}
+                      >
+                        <TextField
+                          label="Email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          fullWidth
+                          required
+                        />
+                        <TextField
+                          label="Password"
+                          type="current-password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          fullWidth
+                          required
+                        />
+                        <RoundedButton
+                          type="submit"
+                          variant="contained"
+                          fullWidth
+                        >
+                          ログイン
+                        </RoundedButton>
+                      </Box>
+                    </form>
+                  </>
+                )}
+                <>
+                  <Divider>または</Divider>
+                  <RoundedButton
+                    fullWidth
+                    variant="outlined"
+                    onClick={handleGoogleLogin}
                   >
-                    <TextField
-                      label="Email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      fullWidth
-                      required
-                    />
-                    <TextField
-                      label="Password"
-                      type="current-password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      fullWidth
-                      required
-                    />
-                    <RoundedButton type="submit" variant="contained" fullWidth>
-                      ログイン
-                    </RoundedButton>
-                  </Box>
-                </form>
-              </>
-            )}
-            {!user && (
-              <>
-                <Divider>または</Divider>
-                <RoundedButton
-                  fullWidth
-                  variant="outlined"
-                  onClick={handleGoogleLogin}
-                >
-                  Googleでログイン
-                </RoundedButton>
-                <RoundedButton
-                  fullWidth
-                  variant="outlined"
-                  onClick={handleGuestLogin}
-                >
-                  ゲストログイン
-                </RoundedButton>
+                    Googleでログイン
+                  </RoundedButton>
+                  <RoundedButton
+                    fullWidth
+                    variant="outlined"
+                    onClick={handleGuestLogin}
+                  >
+                    ゲストログイン
+                  </RoundedButton>
+                </>
               </>
             )}
           </Box>

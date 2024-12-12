@@ -79,6 +79,7 @@ export const UserProvider = ({ children }: Props) => {
             name: "Guest",
             streak: 0,
             loginType: "Guest",
+            isMailVerified: true,
           };
           setUser(guestData);
           return;
@@ -89,7 +90,11 @@ export const UserProvider = ({ children }: Props) => {
           // ユーザーデータを作成する前にfetchしようとして"User not found"になるので、postした場所でsetさせている
           // "User not found"ではない(= 初回ログイン直後ではない)場合のみsetする
           if (userData.uid) {
-            setUser({ ...userData, loginType });
+            setUser({
+              ...userData,
+              loginType,
+              isMailVerified: firebaseUser.emailVerified,
+            });
           }
         } catch (error) {
           console.error("ユーザーデータの取得に失敗しました:", error);

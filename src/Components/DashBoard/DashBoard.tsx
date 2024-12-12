@@ -22,8 +22,6 @@ export default function DashBoard({
   const [pendingResults, setPendingResults] = useState<GoalWithId[]>([]);
   const [noResult, setNoResult] = useState<boolean>(false);
 
-  console.log(success, failed, pending);
-
   useEffect(() => {
     fetchResult({ userId })
       .then((data) => {

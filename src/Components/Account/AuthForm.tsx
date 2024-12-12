@@ -3,7 +3,6 @@ import { signInWithMail } from "@/utils/Auth/signInWithMail";
 import { signUpWithGoogleAccount } from "@/utils/Auth/signUpWithGoogleAccount";
 import { signUpWithMail } from "@/utils/Auth/signUpWithMail";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -11,17 +10,13 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import React, { useState } from "react";
+import { RoundedButton } from "./LoggedInView";
 
 const CenteredToggleButtonGroup = styled(ToggleButtonGroup)({
   display: "flex",
   justifyContent: "center",
   marginBottom: "16px",
 });
-
-const RoundedButton = styled(Button)(({ theme }) => ({
-  borderRadius: "50px",
-  padding: theme.spacing(1.5, 4),
-}));
 
 export default function AuthForm() {
   const [name, setName] = useState("");

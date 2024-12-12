@@ -7,18 +7,13 @@ import {
   Input,
   Modal,
   ModalDialog,
-  styled,
 } from "@mui/joy";
 import JoyButton from "@mui/joy/Button";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { updateProfile } from "firebase/auth";
 import React, { useState } from "react";
-
-const RoundedButton = styled(Button)(({ theme }) => ({
-  borderRadius: "50px",
-  padding: theme.spacing(1.5, 4),
-}));
+import { RoundedButton } from "../Account/LoggedInView";
 
 export default function NameUpdate() {
   const { user } = useUser();
@@ -70,7 +65,7 @@ export default function NameUpdate() {
 
   return (
     <>
-      <RoundedButton variant="contained" onClick={() => setOpen(true)}>
+      <RoundedButton variant="outlined" onClick={() => setOpen(true)}>
         名前を変更
       </RoundedButton>
 

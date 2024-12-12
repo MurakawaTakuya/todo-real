@@ -1,15 +1,15 @@
 import { auth } from "@/app/firebase";
 import NameUpdate from "@/Components/NameUpdate/NameUpdate";
-import Notification from "@/Components/Notification/Notification";
+import NotificationButton from "@/Components/NotificationButton/NotificationButton";
 import { useUser } from "@/utils/UserContext";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { signOut } from "firebase/auth";
 
-const RoundedButton = styled(Button)(({ theme }) => ({
-  borderRadius: "50px",
-  padding: theme.spacing(1.5, 4),
+export const RoundedButton = styled(Button)(({ theme }) => ({
+  borderRadius: "30px",
+  padding: theme.spacing(1.5, 3),
 }));
 
 export default function LoggedInView() {
@@ -34,11 +34,10 @@ export default function LoggedInView() {
       {user.loginType === "Guest" ? (
         <>ゲストとしてログイン中</>
       ) : (
-        <Typography>ログイン中: {user.name}</Typography>
+        <Typography sx={{ textAlign: "center" }}>
+          ログイン中: {user.name}
+        </Typography>
       )}
-
-      {/* ゲストかメール未認証の場合は通知機能を利用しない */}
-      {user.loginType !== "Guest" && user.isMailVerified && <Notification />}
 
       {!user.isMailVerified && (
         <Typography color="error">
@@ -56,7 +55,12 @@ export default function LoggedInView() {
       )}
 
       {/* ゲストかメール未認証の場合は名前を変更できないようにする */}
-      {user.loginType !== "Guest" && user.isMailVerified && <NameUpdate />}
+      {user.loginType !== "Guest" && user.isMailVerified && (
+        <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+          <NameUpdate />
+          <NotificationButton />
+        </div>
+      )}
 
       <RoundedButton variant="contained" onClick={handleLogout}>
         ログアウト

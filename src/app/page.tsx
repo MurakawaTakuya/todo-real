@@ -5,7 +5,7 @@ import GoalModal from "@/Components/GoalModal/GoalModal";
 export default function Top() {
   return (
     <>
-      <DashBoard />
+      <DashBoard pending={false} />
       <GoalModal />
     </>
   );

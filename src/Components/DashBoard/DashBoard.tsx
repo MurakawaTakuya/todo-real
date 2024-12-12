@@ -6,24 +6,36 @@ import Progress from "../Progress/Progress";
 import styles from "./DashBoard.module.scss";
 
 // 投稿を取得してPostCardに渡す
-export default function DashBoard() {
+export default function DashBoard({
+  userId = "",
+  success = true,
+  failed = true,
+  pending = true,
+}: {
+  userId?: string;
+  success?: boolean;
+  failed?: boolean;
+  pending?: boolean;
+} = {}) {
   const [successResults, setSuccessResults] = useState<SuccessResult[]>([]);
   const [failedResults, setFailedResults] = useState<GoalWithId[]>([]);
+  const [pendingResults, setPendingResults] = useState<GoalWithId[]>([]);
   const [noResult, setNoResult] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchResult()
+    fetchResult({ userId })
       .then((data) => {
+        console.log(data);
         if (
           data.successResults.length === 0 &&
-          data.failedResults.length === 0
+          data.failedResults.length === 0 &&
+          data.pendingResults.length === 0
         ) {
           setNoResult(true);
-        } else {
-          console.log(data);
-          setSuccessResults(data.successResults);
-          setFailedResults(data.failedResults);
         }
+        setSuccessResults(data.successResults);
+        setFailedResults(data.failedResults);
+        setPendingResults(data.pendingResults);
       })
       .catch((error) => {
         if (error instanceof Response && error.status === 404) {
@@ -41,8 +53,9 @@ export default function DashBoard() {
       ) : (
         <div className={styles.postsContainer}>
           <Progress
-            successResults={successResults}
-            failedResults={failedResults}
+            successResults={success ? successResults : []}
+            failedResults={failed ? failedResults : []}
+            pendingResults={pending ? pendingResults : []}
           />
         </div>
       )}

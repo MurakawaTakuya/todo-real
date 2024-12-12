@@ -5,10 +5,8 @@ import { useUser } from "@/utils/UserContext";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import CloseIcon from "@mui/icons-material/Close";
-import AspectRatio from "@mui/joy/AspectRatio";
 import Card from "@mui/joy/Card";
 import CardContent from "@mui/joy/CardContent";
-import CardOverflow from "@mui/joy/CardOverflow";
 import Step, { stepClasses } from "@mui/joy/Step";
 import StepIndicator, { stepIndicatorClasses } from "@mui/joy/StepIndicator";
 import Stepper from "@mui/joy/Stepper";
@@ -103,10 +101,11 @@ const successStep = (result: SuccessResult, userName: string) => {
   return (
     <StepperBlock key={result.goalId} userName={userName} resultType="success">
       <Step
+        active
         completed
         indicator={
-          <StepIndicator variant="solid" color="success">
-            <CheckRoundedIcon />
+          <StepIndicator variant="solid" color="primary">
+            <AppRegistrationRoundedIcon />
           </StepIndicator>
         }
       >
@@ -128,26 +127,39 @@ const successStep = (result: SuccessResult, userName: string) => {
         <Card
           variant="outlined"
           size="sm"
-          sx={{ borderColor: innerBorderColors.success, width: "93%" }}
+          sx={{
+            borderColor: innerBorderColors.success,
+            width: "100%",
+            padding: 0,
+            gap: 0,
+          }}
         >
           {result.storedId && (
-            <CardOverflow>
-              <AspectRatio ratio="2">
-                <img
-                  src={result.storedId}
-                  srcSet={result.storedId}
-                  loading="lazy"
-                  alt=""
-                />
-              </AspectRatio>
-            </CardOverflow>
+            <img
+              src={result.storedId}
+              srcSet={result.storedId}
+              style={{
+                objectFit: "contain",
+                maxWidth: "100%",
+                maxHeight: "70vh",
+                borderRadius: "6px 6px 0 0",
+              }}
+              loading="lazy"
+              alt=""
+            />
           )}
-          <CardContent>
+          <CardContent
+            sx={{ padding: "10px", borderTop: "thin solid #cdcdcd" }}
+          >
             <Typography level="body-sm">
               {formatStringToDate(result.submittedAt)}に完了
             </Typography>
-            <Divider />
-            <Typography level="title-md">{result.postText}</Typography>
+            {result.postText && (
+              <>
+                <Divider />
+                <Typography level="title-md">{result.postText}</Typography>
+              </>
+            )}
           </CardContent>
         </Card>
       </Step>
@@ -266,7 +278,8 @@ const StepperBlock = ({
       <Stepper
         orientation="vertical"
         sx={(theme) => ({
-          "--Stepper-verticalGap": "2.5rem",
+          gap: "0px",
+          "--Stepper-verticalGap": "30px",
           "--StepIndicator-size": "2.5rem",
           "--Step-gap": "1rem",
           "--Step-connectorInset": "0.5rem",
@@ -276,10 +289,20 @@ const StepperBlock = ({
           [`& .${stepClasses.completed}`]: {
             "&::after": { bgcolor: "success.solidBg" },
           },
+          // copletedとactive両方の場合
+          [`& .${stepClasses.completed}.${stepClasses.active}`]: {
+            [`& .${stepIndicatorClasses.root}`]: {
+              border: "4px solid #fff",
+              boxShadow: `0 0 0 1px ${theme.vars.palette.primary[500]}`,
+            },
+            "&::after": {
+              bgcolor: "success.solidBg",
+              marginTop: "-50px",
+            },
+          },
           [`& .${stepClasses.active}`]: {
             [`& .${stepIndicatorClasses.root}`]: {
-              border: "4px solid",
-              borderColor: "#fff",
+              border: "4px solid #fff",
               boxShadow: `0 0 0 1px ${theme.vars.palette.primary[500]}`,
             },
           },

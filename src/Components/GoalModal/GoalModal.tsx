@@ -86,6 +86,7 @@ export default function GoalModal() {
           bottom: "90px",
           width: "100%",
           maxWidth: "600px",
+          zIndex: 1000,
         }}
       >
         <Fab

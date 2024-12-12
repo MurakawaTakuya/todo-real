@@ -25,7 +25,7 @@ export default function GoalModal() {
     event.preventDefault();
 
     const postData: Goal = {
-      userId: user?.uid as string,
+      userId: user?.userId as string,
       text: text,
       deadline: new Date(dueDate),
     };

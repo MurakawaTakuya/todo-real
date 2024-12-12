@@ -54,7 +54,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
       (errorMsg) => setError(errorMsg),
       async (url) => {
         const postData: Post = {
-          userId: user?.uid as string,
+          userId: user?.userId as string,
           storedId: url,
           text: text,
           goalId: goalId,

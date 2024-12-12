@@ -4,11 +4,11 @@ import { UserData } from "@/types/types";
 /**
  * Cloud FunctionsのAPIを呼び出して、ユーザー情報をFirestoreから取得する
  *
- * @param {string} uid
+ * @param {string} userId
  * @return {*}  {Promise<UserData>}
  */
-export const fetchUserById = async (uid: string): Promise<UserData> => {
-  const response = await fetch(`${functionsEndpoint}/user/id/${uid}`, {
+export const fetchUserById = async (userId: string): Promise<UserData> => {
+  const response = await fetch(`${functionsEndpoint}/user/id/${userId}`, {
     method: "GET",
     headers: {
       "X-Firebase-AppCheck": appCheckToken,

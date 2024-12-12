@@ -149,8 +149,11 @@ const getUserFcmToken = async (userId: string) => {
   if (!userData) {
     throw new Error(`No user data found for userId:, ${userId}`);
   }
-  if (!userData.fcmToken) {
+  if (!userData.fcmToke) {
     throw new Error(`No FCM token found for userId:, ${userId}`);
+  }
+  if (userData.fcmToken === "") {
+    throw new Error(`FCM token is not stored for userId:, ${userId}`);
   }
   return userData.fcmToken;
 };

@@ -9,20 +9,22 @@ const db = admin.firestore();
 router.get("/", async (req: Request, res: Response) => {
   try {
     const goalSnapshot = await db.collection("goal").get();
+
     if (goalSnapshot.empty) {
       return res.status(404).json({ message: "No goals found" });
     }
 
-    const goals = goalSnapshot.docs.map((doc) => {
+    const goalData: Goal[] = goalSnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
-        id: doc.id,
-        ...data,
+        goalId: doc.id,
         deadline: new Date(data.deadline._seconds * 1000),
+        userId: data.userId,
+        text: data.text,
       };
     });
 
-    return res.json(goals);
+    return res.json(goalData);
   } catch (error) {
     return res.status(500).json({ message: "Error fetching goals" });
   }
@@ -46,12 +48,13 @@ router.get("/:userId", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "No goals found for this user" });
     }
 
-    const goals = goalSnapshot.docs.map((doc) => {
+    const goals: Goal[] = goalSnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
-        id: doc.id,
-        ...data,
+        goalId: doc.id,
+        userId: data.userId,
         deadline: new Date(data.deadline._seconds * 1000),
+        text: data.text,
       };
     });
 
@@ -113,12 +116,17 @@ router.put("/:goalId", async (req: Request, res: Response) => {
   const updateData: Partial<Omit<Goal, "deadline">> & {
     deadline?: admin.firestore.Timestamp;
   } = {};
-  if (userId) updateData.userId = userId;
-  if (deadline)
+  if (userId) {
+    updateData.userId = userId;
+  }
+  if (deadline) {
     updateData.deadline = admin.firestore.Timestamp.fromDate(
       new Date(deadline)
     );
-  if (text) updateData.text = text;
+  }
+  if (text) {
+    updateData.text = text;
+  }
 
   try {
     await db.collection("goal").doc(goalId).update(updateData);

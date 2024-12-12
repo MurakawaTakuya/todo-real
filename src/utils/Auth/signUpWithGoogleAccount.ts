@@ -16,7 +16,7 @@ export const signUpWithGoogleAccount = async () => {
       // uidとdocument IDを一致させる
       await createUser(result.user.displayName ?? "no name", result.user.uid);
       updateUser({
-        uid: result.user.uid,
+        userId: result.user.uid,
         name: result.user.displayName ?? "no name",
         streak: 0,
         loginType: "Google",

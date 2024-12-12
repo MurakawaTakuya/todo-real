@@ -1,5 +1,5 @@
 export interface UserData {
-  uid: string;
+  userId: string;
   name: string;
   streak: number;
   loginType: LoginType;

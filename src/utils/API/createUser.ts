@@ -2,19 +2,19 @@ import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、ユーザー情報をFirestoreに登録する
- * Authenticationのuidと/userのdocument IDは同じにする
+ * AuthenticationのuserIdと/userのdocument IDは同じにする
  *
  * @param {string} name
- * @param {string} uid
+ * @param {string} userId
  */
-export const createUser = async (name: string, uid: string) => {
+export const createUser = async (name: string, userId: string) => {
   const response = await fetch(`${functionsEndpoint}/user/`, {
     method: "POST",
     headers: {
       "X-Firebase-AppCheck": appCheckToken,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ uid, name }),
+    body: JSON.stringify({ userId, name }),
   });
 
   if (!response.ok) {

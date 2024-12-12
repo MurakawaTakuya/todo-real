@@ -132,10 +132,10 @@ router.put("/:userId", async (req: Request, res: Response) => {
   }
 
   const updateData: Partial<User> = {};
-  if (!name) {
+  if (name) {
     updateData.name = name;
   }
-  if (!streak) {
+  if (streak) {
     updateData.streak = streak;
   }
   if (fcmToken !== undefined) {

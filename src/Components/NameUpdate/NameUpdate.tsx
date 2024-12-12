@@ -7,21 +7,24 @@ import {
   Input,
   Modal,
   ModalDialog,
+  styled,
 } from "@mui/joy";
+import JoyButton from "@mui/joy/Button";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { updateProfile } from "firebase/auth";
 import React, { useState } from "react";
 
-export default function NameUpdate({
-  open,
-  setOpen,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-}) {
-  const [newName, setNewName] = useState("");
+const RoundedButton = styled(Button)(({ theme }) => ({
+  borderRadius: "50px",
+  padding: theme.spacing(1.5, 4),
+}));
+
+export default function NameUpdate({}: {}) {
   const { user } = useUser();
+  const [newName, setNewName] = useState("");
+  const [open, setOpen] = useState(false);
+
   const handleNameUpdate = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -66,38 +69,49 @@ export default function NameUpdate({
   }
 
   return (
-    <Modal open={open} onClose={() => setOpen(false)} keepMounted disablePortal>
-      <ModalDialog
-        aria-labelledby="update-name-title"
-        aria-describedby="update-name-description"
+    <>
+      <RoundedButton variant="contained" onClick={() => setOpen(true)}>
+        名前を変更
+      </RoundedButton>
+
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        keepMounted
+        disablePortal
       >
-        <DialogTitle id="update-name-title">名前を変更</DialogTitle>
-        <DialogContent id="update-name-description">
-          新しい名前を入力してください.
-        </DialogContent>
-        <form onSubmit={handleNameUpdate}>
-          <Stack spacing={2} sx={{ mt: 2 }}>
-            <Input
-              placeholder="New Name"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              required
-            />
-            <Stack direction="row" spacing={1} justifyContent="flex-end">
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => setOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" variant="contained" color="primary">
-                Update Name
-              </Button>
+        <ModalDialog
+          aria-labelledby="update-name-title"
+          aria-describedby="update-name-description"
+        >
+          <DialogTitle id="update-name-title">名前を変更</DialogTitle>
+          <DialogContent id="update-name-description">
+            現在の名前: {user?.name}
+          </DialogContent>
+          <form onSubmit={handleNameUpdate}>
+            <Stack spacing={3} sx={{ mt: 2 }}>
+              <Input
+                placeholder="新しい名前"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                required
+              />
+              <Stack direction="row" spacing={1} justifyContent="flex-end">
+                <JoyButton
+                  variant="plain"
+                  color="neutral"
+                  onClick={() => setOpen(false)}
+                >
+                  キャンセル
+                </JoyButton>
+                <Button type="submit" variant="contained" color="primary">
+                  変更
+                </Button>
+              </Stack>
             </Stack>
-          </Stack>
-        </form>
-      </ModalDialog>
-    </Modal>
+          </form>
+        </ModalDialog>
+      </Modal>
+    </>
   );
 }

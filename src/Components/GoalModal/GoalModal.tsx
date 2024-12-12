@@ -2,7 +2,7 @@
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 import { Goal } from "@/types/types";
 import { useUser } from "@/utils/UserContext";
-import { Add } from "@mui/icons-material";
+import AddIcon from "@mui/icons-material/Add";
 import SendIcon from "@mui/icons-material/Send";
 import {
   Button,
@@ -13,6 +13,8 @@ import {
   ModalDialog,
   Stack,
 } from "@mui/joy";
+import Box from "@mui/material/Box";
+import Fab from "@mui/material/Fab";
 import React, { useState } from "react";
 
 export default function GoalModal() {
@@ -75,15 +77,30 @@ export default function GoalModal() {
 
   return (
     <>
-      <Button
-        variant="outlined"
-        color="primary"
-        startDecorator={<Add />}
-        onClick={() => setOpen(true)}
-        disabled={!user || user?.loginType === "Guest" || !user?.isMailVerified}
+      <Box
+        sx={{
+          "& > :not(style)": { m: 1 },
+          display: "flex",
+          flexDirection: "row-reverse",
+          position: "fixed",
+          bottom: "90px",
+          width: "100%",
+          maxWidth: "600px",
+        }}
       >
-        Create Goal
-      </Button>
+        <Fab
+          color="primary"
+          aria-label="add"
+          sx={{ marginRight: "20px !important" }}
+          // ゲストかメール認証が未完了のユーザーは使用不可
+          onClick={() => setOpen(true)}
+          disabled={
+            !user || user?.loginType === "Guest" || !user?.isMailVerified
+          }
+        >
+          <AddIcon />
+        </Fab>
+      </Box>
 
       <Modal
         open={open}

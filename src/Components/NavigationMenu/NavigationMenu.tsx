@@ -98,7 +98,7 @@ export default function NavigationMenu() {
             <ListItemDecorator>
               <HomeRoundedIcon />
             </ListItemDecorator>
-            Homes
+            Home
           </Tab>
           <Tab
             disableIndicator

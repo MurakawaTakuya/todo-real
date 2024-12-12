@@ -181,7 +181,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
                   color="neutral"
                   onClick={() => setOpen(false)}
                 >
-                  Cancel
+                  キャンセル
                 </JoyButton>
                 <JoyButton
                   type="submit"
@@ -209,15 +209,18 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
   value,
 }) => {
   return (
-    <Box display="flex" alignItems="center">
-      <Box width="100%" mr={1}>
-        <LinearProgress variant="determinate" value={value} />
+    <>
+      <Typography>アップロード中...</Typography>
+      <Box display="flex" alignItems="center" sx={{ margin: "0 !important" }}>
+        <Box width="100%" mr={1}>
+          <LinearProgress variant="determinate" value={value} />
+        </Box>
+        <Box minWidth={35}>
+          <Typography variant="body2" color="textSecondary">{`${Math.round(
+            value
+          )}%`}</Typography>
+        </Box>
       </Box>
-      <Box minWidth={35}>
-        <Typography variant="body2" color="textSecondary">{`${Math.round(
-          value
-        )}%`}</Typography>
-      </Box>
-    </Box>
+    </>
   );
 };

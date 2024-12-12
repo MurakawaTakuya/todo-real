@@ -135,7 +135,7 @@ export default function GoalModal() {
                   color="neutral"
                   onClick={() => setOpen(false)}
                 >
-                  Cancel
+                  キャンセル
                 </Button>
                 <Button
                   type="submit"
@@ -148,7 +148,7 @@ export default function GoalModal() {
                   }
                   endDecorator={<SendIcon />}
                 >
-                  Create Goal
+                  作成
                 </Button>
               </Stack>
             </Stack>

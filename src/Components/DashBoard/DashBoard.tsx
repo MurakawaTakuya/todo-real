@@ -49,7 +49,7 @@ export default function DashBoard({
   return (
     <>
       {noResult ? (
-        <p>目標や投稿が見つかりませんでした</p>
+        <h2 style={{ textAlign: "center" }}>+ボタンから目標を作成しよう!</h2>
       ) : (
         <div className={styles.postsContainer}>
           <Progress

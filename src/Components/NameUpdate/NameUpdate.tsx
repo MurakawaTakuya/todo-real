@@ -20,7 +20,7 @@ const RoundedButton = styled(Button)(({ theme }) => ({
   padding: theme.spacing(1.5, 4),
 }));
 
-export default function NameUpdate({}: {}) {
+export default function NameUpdate() {
   const { user } = useUser();
   const [newName, setNewName] = useState("");
   const [open, setOpen] = useState(false);

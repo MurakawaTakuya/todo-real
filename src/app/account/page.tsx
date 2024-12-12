@@ -42,13 +42,7 @@ export default function Account() {
             TODO-REAL
           </Typography>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            {user ? (
-              // ログイン中の場合
-              <LoggedInView />
-            ) : (
-              // ログインしていない場合
-              <AuthForm />
-            )}
+            {user ? <LoggedInView /> : <AuthForm />}
           </Box>
         </Card>
       </Stack>

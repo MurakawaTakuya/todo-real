@@ -76,7 +76,7 @@ export const UserProvider = ({ children }: Props) => {
         if (loginType === "Guest") {
           const guestData: UserData = {
             userId: firebaseUser.uid,
-            name: "Guest",
+            name: "Guest Login",
             streak: 0,
             loginType: "Guest",
             isMailVerified: true,

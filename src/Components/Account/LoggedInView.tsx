@@ -31,12 +31,15 @@ export default function LoggedInView() {
 
   return (
     <>
-      <Typography>ログイン中: {user.name}</Typography>
+      {user.loginType === "Guest" ? (
+        <>ゲストとしてログイン中</>
+      ) : (
+        <Typography>ログイン中: {user.name}</Typography>
+      )}
 
-      {/* ゲストの場合は通知機能を利用しない */}
-      {user.loginType !== "Guest" && <Notification />}
+      {/* ゲストかメール未認証の場合は通知機能を利用しない */}
+      {user.loginType !== "Guest" && user.isMailVerified && <Notification />}
 
-      {/* メール認証が完了していない場合に表示 */}
       {!user.isMailVerified && (
         <Typography color="error">
           メールに届いた認証リンクを確認してください。
@@ -45,12 +48,19 @@ export default function LoggedInView() {
         </Typography>
       )}
 
+      {user.loginType === "Guest" && (
+        <Typography color="error">
+          ゲストユーザーは閲覧以外の機能は制限されます。
+          全ての機能を利用するにはログインが必要です。
+        </Typography>
+      )}
+
+      {/* ゲストかメール未認証の場合は名前を変更できないようにする */}
+      {user.loginType !== "Guest" && user.isMailVerified && <NameUpdate />}
+
       <RoundedButton variant="contained" onClick={handleLogout}>
         ログアウト
       </RoundedButton>
-
-      {/* ゲストの場合は名前を変更しない */}
-      {user.loginType !== "Guest" && <NameUpdate />}
     </>
   );
 }

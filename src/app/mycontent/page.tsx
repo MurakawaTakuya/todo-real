@@ -1,5 +1,6 @@
 "use client";
 import DashBoard from "@/Components/DashBoard/DashBoard";
+import GoalModal from "@/Components/GoalModal/GoalModal";
 import { useUser } from "@/utils/UserContext";
 import { styled } from "@mui/material/styles";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -9,7 +10,7 @@ import { useState } from "react";
 const CenteredToggleButtonGroup = styled(ToggleButtonGroup)({
   display: "flex",
   justifyContent: "center",
-  marginBottom: "16px",
+  margin: "30px 0 5px",
 });
 
 export default function MyContent() {
@@ -34,16 +35,27 @@ export default function MyContent() {
           }}
           aria-label="Loading button group"
         >
-          <ToggleButton value="pending">未完了</ToggleButton>
-          <ToggleButton value="finished">完了済み</ToggleButton>
+          <ToggleButton value="pending" sx={{ minWidth: "130px" }}>
+            未完了
+          </ToggleButton>
+          <ToggleButton value="finished" sx={{ minWidth: "130px" }}>
+            完了済み・失敗
+          </ToggleButton>
         </CenteredToggleButtonGroup>
       </div>
 
-      {value == "pending" ? (
-        <DashBoard userId={user?.userId} success={false} failed={false} />
+      {value === "pending" ? (
+        <DashBoard
+          userId={user?.userId}
+          success={false}
+          failed={false}
+          orderBy="asc"
+        />
       ) : (
         <DashBoard userId={user?.userId} pending={false} />
       )}
+
+      <GoalModal />
     </>
   );
 }

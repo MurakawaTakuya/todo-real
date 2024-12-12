@@ -22,7 +22,6 @@ export const signUpWithMail = (
   // メールは初回ログインの時のみ成功する、2回目以降はエラーになるので、ログインを使う
   createUserWithEmailAndPassword(auth, email, password)
     .then(async (userCredential) => {
-      // Signed up
       const user = userCredential.user;
 
       // Firebase AuthのdisplayNameを設定

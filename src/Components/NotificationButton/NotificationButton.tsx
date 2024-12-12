@@ -3,15 +3,14 @@ import {
   requestPermission,
   revokePermission,
 } from "@/utils/CloudMessaging/notificationController";
+import { CssBaseline } from "@mui/material";
 import Alert from "@mui/material/Alert";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
-import CssBaseline from "@mui/material/CssBaseline";
 import Snackbar from "@mui/material/Snackbar";
 import { useEffect, useState } from "react";
+import { RoundedButton } from "../Account/LoggedInView";
 
-export default function Notification() {
+export default function NotificationButton() {
   const [notificationTokenGenerating, setNotificationTokenGenerating] =
     useState(false);
   const [notificationMessage, setNotificationMessage] = useState<string | null>(
@@ -56,34 +55,32 @@ export default function Notification() {
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-        {isNotificationActive ? (
-          <Button
-            variant="contained"
-            onClick={handleDisableNotification}
-            disabled={!isNotificationActive}
-          >
-            通知を解除
-          </Button>
-        ) : (
-          <Button
-            variant="contained"
-            onClick={handleEnableNotification}
-            disabled={notificationTokenGenerating || isNotificationActive}
-            startIcon={
-              notificationTokenGenerating ? (
-                <CircularProgress size={20} />
-              ) : null
-            }
-          >
-            通知を受信
-          </Button>
-        )}
-      </Box>
+      {isNotificationActive ? (
+        <RoundedButton
+          variant="outlined"
+          onClick={handleDisableNotification}
+          disabled={!isNotificationActive}
+        >
+          通知を解除
+        </RoundedButton>
+      ) : (
+        <RoundedButton
+          variant="outlined"
+          onClick={handleEnableNotification}
+          disabled={notificationTokenGenerating || isNotificationActive}
+          startIcon={
+            notificationTokenGenerating ? <CircularProgress size={20} /> : null
+          }
+        >
+          通知を受信
+        </RoundedButton>
+      )}
+
       <CssBaseline enableColorScheme />
+      {/* TODO: 他のページでポップアップを実装したらそれに合わせる */}
       <Snackbar
         open={!!notificationMessage}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         autoHideDuration={3000}
         onClose={() => setNotificationMessage(null)}
       >

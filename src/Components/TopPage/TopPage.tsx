@@ -4,11 +4,11 @@ import CircularProgress from "@mui/joy/CircularProgress";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
-interface TopPageProps {
+interface LoaderProps {
   children: ReactNode;
 }
 
-export const TopPage = ({ children }: TopPageProps) => {
+export const Loader = ({ children }: LoaderProps) => {
   const { user } = useUser();
   if (user === null && window.location.pathname !== "/account/") {
     redirect("/account");

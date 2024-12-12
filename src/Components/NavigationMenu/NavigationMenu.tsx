@@ -41,7 +41,7 @@ export default function NavigationMenu() {
         borderTopRightRadius: "12px",
         bgcolor: `${"var(--colors-index)"}.500`,
         position: "fixed",
-        bottom: "30px",
+        bottom: "8px",
         width: "100%",
         maxWidth: "600px",
         zIndex: 100,
@@ -98,7 +98,7 @@ export default function NavigationMenu() {
             <ListItemDecorator>
               <HomeRoundedIcon />
             </ListItemDecorator>
-            Homes
+            Home
           </Tab>
           <Tab
             disableIndicator

@@ -8,8 +8,6 @@ import { signInAnonymously } from "firebase/auth";
 export const signInAsGuest = async () => {
   try {
     await signInAnonymously(auth);
-    // const result = await signInAnonymously(auth);
-    // console.log("Guest login successful:", result.user);
     console.log("Guest login successful");
   } catch (error) {
     console.error("errorCode:", (error as Error)?.name);

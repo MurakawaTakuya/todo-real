@@ -95,12 +95,15 @@ export default function Progress({
     <>
       {allResults.map((result) => {
         const userName = userNames[result.userId] || "Loading...";
-        if (result.type === "success")
+        if (result.type === "success") {
           return successStep(result as SuccessResult, userName);
-        if (result.type === "failed")
+        }
+        if (result.type === "failed") {
           return failedStep(result as GoalWithId, userName);
-        if (result.type === "pending")
+        }
+        if (result.type === "pending") {
           return pendingStep(result as GoalWithId, userName, user as UserData);
+        }
         return null;
       })}
     </>

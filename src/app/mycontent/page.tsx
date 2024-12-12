@@ -10,7 +10,7 @@ import { useState } from "react";
 const CenteredToggleButtonGroup = styled(ToggleButtonGroup)({
   display: "flex",
   justifyContent: "center",
-  marginBottom: "16px",
+  margin: "30px 0 5px",
 });
 
 export default function MyContent() {
@@ -44,8 +44,13 @@ export default function MyContent() {
         </CenteredToggleButtonGroup>
       </div>
 
-      {value == "pending" ? (
-        <DashBoard userId={user?.userId} success={false} failed={false} />
+      {value === "pending" ? (
+        <DashBoard
+          userId={user?.userId}
+          success={false}
+          failed={false}
+          orderBy="asc"
+        />
       ) : (
         <DashBoard userId={user?.userId} pending={false} />
       )}

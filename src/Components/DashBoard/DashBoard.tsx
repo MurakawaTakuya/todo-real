@@ -56,6 +56,7 @@ export default function DashBoard({
             successResults={success ? successResults : []}
             failedResults={failed ? failedResults : []}
             pendingResults={pending ? pendingResults : []}
+            orderBy="asc"
           />
         </div>
       )}

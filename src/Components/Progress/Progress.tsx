@@ -15,12 +15,6 @@ import { Divider } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
 import PostModal from "../PostModal/PostModal";
 
-interface ProgressProps {
-  successResults?: SuccessResult[];
-  failedResults?: GoalWithId[];
-  pendingResults?: GoalWithId[];
-}
-
 const successPostIndicatorStyle = {
   "& > div": {
     placeSelf: "start",
@@ -39,10 +33,18 @@ const innerBorderColors = {
   pending: "#00206059",
 };
 
+interface ProgressProps {
+  successResults?: SuccessResult[];
+  failedResults?: GoalWithId[];
+  pendingResults?: GoalWithId[];
+  orderBy?: "asc" | "desc";
+}
+
 export default function Progress({
   successResults = [],
   failedResults = [],
   pendingResults = [],
+  orderBy = "desc", // 最新が上位
 }: ProgressProps) {
   const [userNames, setUserNames] = useState<Record<string, string>>({}); // <userId, userName>
   const { user } = useUser();
@@ -76,10 +78,18 @@ export default function Progress({
     ...pendingResults.map((result) => ({ ...result, type: "pending" })),
   ];
 
-  // 最新のものを上に表示
-  allResults.sort(
-    (a, b) => new Date(b.deadline).getTime() - new Date(a.deadline).getTime()
-  );
+  // typeがsuccessの場合はsubmittedAtでソートし、それ以外の場合はdeadlineでソートする
+  allResults.sort((a, b) => {
+    const getUpdatedTime = (item: typeof a) => {
+      if (item.type === "success" && "submittedAt" in item) {
+        return new Date(item.submittedAt).getTime();
+      }
+      return new Date(item.deadline).getTime();
+    };
+    return orderBy === "desc"
+      ? getUpdatedTime(b) - getUpdatedTime(a) // 最新が上位
+      : getUpdatedTime(a) - getUpdatedTime(b); // 最古が上位
+  });
 
   return (
     <>

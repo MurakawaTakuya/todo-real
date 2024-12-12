@@ -35,8 +35,12 @@ export default function MyContent() {
           }}
           aria-label="Loading button group"
         >
-          <ToggleButton value="pending">未完了</ToggleButton>
-          <ToggleButton value="finished">完了済み</ToggleButton>
+          <ToggleButton value="pending" sx={{ minWidth: "130px" }}>
+            未完了
+          </ToggleButton>
+          <ToggleButton value="finished" sx={{ minWidth: "130px" }}>
+            完了済み・失敗
+          </ToggleButton>
         </CenteredToggleButtonGroup>
       </div>
 

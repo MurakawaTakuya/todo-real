@@ -83,6 +83,7 @@ export default function AuthForm() {
                 onChange={(e) => setName(e.target.value)}
                 fullWidth
                 required
+                autoComplete="username"
               />
               <TextField
                 label="メールアドレス"
@@ -91,14 +92,16 @@ export default function AuthForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 fullWidth
                 required
+                autoComplete="email"
               />
               <TextField
                 label="パスワード"
-                type="new-password"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 fullWidth
                 required
+                autoComplete="new-password"
               />
               <RoundedButton type="submit" variant="contained" fullWidth>
                 アカウント作成
@@ -124,14 +127,16 @@ export default function AuthForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 fullWidth
                 required
+                autoComplete="email"
               />
               <TextField
                 label="パスワード"
-                type="current-password"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 fullWidth
                 required
+                autoComplete="current-password"
               />
               <RoundedButton type="submit" variant="contained" fullWidth>
                 ログイン

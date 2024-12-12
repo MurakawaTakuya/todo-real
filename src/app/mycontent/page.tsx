@@ -14,7 +14,7 @@ const CenteredToggleButtonGroup = styled(ToggleButtonGroup)({
 
 export default function MyContent() {
   const { user } = useUser();
-  const [value, setValue] = useState<"pending" | "finished" | null>("pending");
+  const [value, setValue] = useState<"pending" | "finished">("pending");
 
   return (
     <>
@@ -28,7 +28,9 @@ export default function MyContent() {
           value={value}
           exclusive
           onChange={(event, newValue) => {
-            setValue(newValue);
+            if (newValue) {
+              setValue(newValue);
+            }
           }}
           aria-label="Loading button group"
         >

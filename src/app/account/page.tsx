@@ -85,13 +85,6 @@ export default function Account() {
     }
   };
 
-  const handleFormModeChange = (
-    event: React.MouseEvent<HTMLElement>,
-    newMode: "register" | "login"
-  ) => {
-    if (newMode) setFormMode(newMode);
-  };
-
   return (
     <>
       <CssBaseline enableColorScheme />
@@ -109,7 +102,11 @@ export default function Account() {
             <CenteredToggleButtonGroup
               value={formMode}
               exclusive
-              onChange={handleFormModeChange}
+              onChange={(event, newValue) => {
+                if (newValue) {
+                  setFormMode(newValue);
+                }
+              }}
               aria-label="form mode"
             >
               <ToggleButton value="register" aria-label="register">

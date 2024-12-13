@@ -60,7 +60,6 @@ const getResults = async (limit: number, offset: number, userId?: string) => {
         });
       }
     } else if (goal.deadline < new Date()) {
-      // TODO: 日本時間に合ってるか確認
       failedResults.push(goal);
     } else {
       pendingResults.push(goal);

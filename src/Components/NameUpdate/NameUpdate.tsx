@@ -14,6 +14,7 @@ import Stack from "@mui/material/Stack";
 import { updateProfile } from "firebase/auth";
 import React, { useState } from "react";
 import { RoundedButton } from "../Account/LoggedInView";
+import { showSnackBar } from "../SnackBar/SnackBar";
 
 export default function NameUpdate() {
   const { user } = useUser();
@@ -23,29 +24,43 @@ export default function NameUpdate() {
   const handleNameUpdate = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const response = await fetch(`${functionsEndpoint}/user/${user?.userId}`, {
-      method: "PUT",
-      headers: {
-        "X-Firebase-AppCheck": appCheckToken,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name: newName }),
-    });
+    try {
+      const response = await fetch(
+        `${functionsEndpoint}/user/${user?.userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "X-Firebase-AppCheck": appCheckToken,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name: newName }),
+        }
+      );
 
-    // Firebase Authentication の displayName を更新
-    if (auth.currentUser) {
-      await updateProfile(auth.currentUser, { displayName: newName });
-      console.log("Firebase displayName updated successfully");
-    } else {
-      console.error("Failed to update displayName: No authenticated user");
-    }
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
 
-    if (!response.ok) {
-      console.error("Failed to update name");
-    } else {
-      console.log("Name updated successfully");
+      // Firebase AuthenticationのdisplayNameを更新
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, { displayName: newName });
+        console.log("Firebase displayName updated successfully");
+      } else {
+        console.error("Failed to update displayName: No authenticated user");
+      }
+
+      showSnackBar({
+        message: "名前を変更しました",
+        type: "success",
+      });
       setNewName("");
       setOpen(false);
+    } catch (error) {
+      console.error("Error updating name:", error);
+      showSnackBar({
+        message: "名前の変更に失敗しました",
+        type: "warning",
+      });
     }
   };
 

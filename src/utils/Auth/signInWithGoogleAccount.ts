@@ -1,13 +1,15 @@
 import { auth, googleProvider } from "@/app/firebase";
-import { createUser } from "@/utils/API/createUser";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
+import { createUser } from "@/utils/API/User/createUser";
 import { updateUser } from "@/utils/UserContext";
 import { getAdditionalUserInfo, signInWithPopup } from "firebase/auth";
 
 /**
- * Googleアカウントでログインする
+ * Firebase Authenticationを使ってGoogleアカウントでログインする
+ * 初回ログインの時のみデータベースにユーザー情報を登録する
  *
  */
-export const signUpWithGoogleAccount = async () => {
+export const signInWithGoogleAccount = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
 
@@ -24,10 +26,16 @@ export const signUpWithGoogleAccount = async () => {
       });
     }
 
-    console.log("Google login successful");
-    // console.log("Google login successful:", result.user);
+    showSnackBar({
+      message: "Googleアカウントでログインしました",
+      type: "success",
+    });
   } catch (error) {
     console.error("errorCode:", (error as Error)?.name);
     console.error("errorMessage:", (error as Error)?.message);
+    showSnackBar({
+      message: "Googleアカウントでのログインに失敗しました",
+      type: "warning",
+    });
   }
 };

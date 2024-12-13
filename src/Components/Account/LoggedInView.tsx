@@ -1,6 +1,7 @@
 import { auth } from "@/app/firebase";
 import NameUpdate from "@/Components/NameUpdate/NameUpdate";
 import NotificationButton from "@/Components/NotificationButton/NotificationButton";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { useUser } from "@/utils/UserContext";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
@@ -18,10 +19,18 @@ export default function LoggedInView() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      console.log("Signed out");
+
+      showSnackBar({
+        message: "ログアウトしました",
+        type: "warning",
+      });
     } catch (error) {
       console.error("errorCode:", (error as Error)?.name);
       console.error("errorMessage:", (error as Error)?.message);
+      showSnackBar({
+        message: "ログアウトに失敗しました",
+        type: "warning",
+      });
     }
   };
 

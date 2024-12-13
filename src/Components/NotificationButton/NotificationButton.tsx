@@ -3,25 +3,15 @@ import {
   requestPermission,
   revokePermission,
 } from "@/utils/CloudMessaging/notificationController";
-import { CssBaseline } from "@mui/material";
-import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
-import Snackbar from "@mui/material/Snackbar";
 import { useEffect, useState } from "react";
 import { RoundedButton } from "../Account/LoggedInView";
+import { showSnackBar } from "../SnackBar/SnackBar";
 
 export default function NotificationButton() {
   const [notificationTokenGenerating, setNotificationTokenGenerating] =
     useState(false);
-  const [notificationMessage, setNotificationMessage] = useState<string | null>(
-    null
-  );
   const [isNotificationActive, setIsNotificationActive] = useState(false);
-
-  // メッセージを表示
-  const handleShowNotification = (message: string) => {
-    setNotificationMessage(message);
-  };
 
   // Service Worker 状態を確認
   useEffect(() => {
@@ -41,7 +31,10 @@ export default function NotificationButton() {
     setNotificationTokenGenerating(true);
     requestPermission(() => {
       setNotificationTokenGenerating(false);
-      handleShowNotification("通知を受信しました");
+      showSnackBar({
+        message: "通知を受信します",
+        type: "success",
+      });
       setIsNotificationActive(true);
     });
   };
@@ -49,7 +42,10 @@ export default function NotificationButton() {
   // 通知を無効化
   const handleDisableNotification = () => {
     revokePermission();
-    handleShowNotification("通知を解除しました");
+    showSnackBar({
+      message: "通知を解除しました",
+      type: "success",
+    });
     setIsNotificationActive(false);
   };
 
@@ -75,17 +71,6 @@ export default function NotificationButton() {
           通知を受信
         </RoundedButton>
       )}
-
-      <CssBaseline enableColorScheme />
-      {/* TODO: 他のページでポップアップを実装したらそれに合わせる */}
-      <Snackbar
-        open={!!notificationMessage}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        autoHideDuration={3000}
-        onClose={() => setNotificationMessage(null)}
-      >
-        <Alert severity="info">{notificationMessage}</Alert>
-      </Snackbar>
     </>
   );
 }

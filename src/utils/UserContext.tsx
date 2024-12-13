@@ -1,7 +1,11 @@
 "use client";
 import { auth } from "@/app/firebase";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { LoginType, UserData } from "@/types/types";
-import { fetchUserById } from "@/utils/API/fetchUser";
+import {
+  fetchUserById,
+  handleFetchUserError,
+} from "@/utils/API/User/fetchUser";
 import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
 import {
   createContext,
@@ -56,7 +60,6 @@ export const UserProvider = ({ children }: Props) => {
       return "Guest";
     }
 
-    console.log("ログインしていません");
     return "None";
   };
 
@@ -96,23 +99,19 @@ export const UserProvider = ({ children }: Props) => {
               isMailVerified: firebaseUser.emailVerified,
             });
           }
-        } catch (error) {
+        } catch (error: unknown) {
           console.error("ユーザーデータの取得に失敗しました:", error);
+          const message = handleFetchUserError(error);
+          showSnackBar({
+            message,
+            type: "warning",
+          });
         }
       }
     );
 
     return () => unsubscribe();
   }, []);
-
-  console.log(
-    "UserData:",
-    user === undefined
-      ? "ローディング中"
-      : user === null
-      ? "ログインしていません"
-      : user
-  );
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
@@ -133,6 +132,6 @@ export const updateUser = (userData: UserData | null) => {
   if (globalSetUser) {
     globalSetUser(userData);
   } else {
-    console.error("UserProviderがまだ初期化されていません。");
+    console.error("UserProviderがまだ初期化されていません");
   }
 };

@@ -1,5 +1,6 @@
 import Header from "@/Components/Header/Header";
 import NavigationMenu from "@/Components/NavigationMenu/NavigationMenu";
+import SnackBar from "@/Components/SnackBar/SnackBar";
 import { Loader } from "@/Components/TopPage/TopPage";
 import "@/styles/globals.scss";
 import "@/utils/CloudMessaging/getNotification";
@@ -28,10 +29,12 @@ export default function RootLayout({
       <body>
         <Header />
         <UserProvider>
-          <Loader>
-            {children}
-            <NavigationMenu />
-          </Loader>
+          <SnackBar>
+            <Loader>
+              {children}
+              <NavigationMenu />
+            </Loader>
+          </SnackBar>
         </UserProvider>
       </body>
     </html>

@@ -55,10 +55,11 @@ export const signUpWithMail = (
           <>
             メールでユーザー登録しました。
             <br />
-            認証メールを送信しました。
+            認証メールを送信しました。認証されるまでは一部の機能が制限されます。
           </>
         ),
         type: "success",
+        duration: 5000,
       });
     })
     .catch((error) => {

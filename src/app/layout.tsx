@@ -29,12 +29,11 @@ export default function RootLayout({
       <body>
         <Header />
         <UserProvider>
-          <SnackBar>
-            <Loader>
-              {children}
-              <NavigationMenu />
-            </Loader>
-          </SnackBar>
+          <Loader>
+            {children}
+            <NavigationMenu />
+          </Loader>
+          <SnackBar />
         </UserProvider>
       </body>
     </html>

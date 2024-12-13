@@ -95,7 +95,7 @@ export default function GoalModal() {
         <Fab
           color="primary"
           aria-label="add"
-          sx={{ marginRight: "20px !important" }}
+          sx={{ marginRight: "10px !important" }}
           // ゲストかメール認証が未完了のユーザーは使用不可
           onClick={() => setOpen(true)}
           disabled={

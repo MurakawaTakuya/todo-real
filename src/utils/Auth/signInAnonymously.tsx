@@ -11,8 +11,15 @@ export const signInAsGuest = async () => {
     await signInAnonymously(auth);
 
     showSnackBar({
-      message: "ゲストユーザーとしてログインしました",
+      message: (
+        <>
+          ゲストユーザーとしてログインしました。
+          <br />
+          ゲストログインでは閲覧以外の機能は制限されます。
+        </>
+      ),
       type: "success",
+      duration: 5000,
     });
   } catch (error) {
     console.error("errorCode:", (error as Error)?.name);

@@ -8,23 +8,30 @@ import { ReactNode, useEffect, useState } from "react";
 interface SnackBarOptions {
   message: string | ReactNode;
   type?: "success" | "normal" | "warning";
+  duration?: number;
 }
 
 export let showSnackBar: (options: SnackBarOptions) => void;
 
-export default function SnackBar({ children }: { children: ReactNode }) {
+export default function SnackBar() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState<string | ReactNode>("");
   const [color, setColor] = useState<"success" | "neutral" | "danger">(
     "neutral"
   );
+  const [duration, setDuration] = useState(3000);
 
   useEffect(() => {
-    showSnackBar = ({ message, type = "normal" }: SnackBarOptions) => {
-      // 前のスナックバーが表示されている可能性があるので、一度初期化
+    showSnackBar = ({
+      message,
+      type = "normal",
+      duration = 3000,
+    }: SnackBarOptions) => {
+      // 初期化
       setOpen(false);
       setMessage("");
       setColor("neutral");
+      setDuration(3000);
 
       setTimeout(() => {
         setMessage(message);
@@ -36,19 +43,19 @@ export default function SnackBar({ children }: { children: ReactNode }) {
             : "neutral"
         );
         setOpen(true);
+        setDuration(duration);
       }, 10);
     };
   }, []);
 
   return (
     <>
-      {children}
       <Snackbar
         variant="soft"
         color={color}
         open={open}
         onClose={() => setOpen(false)}
-        autoHideDuration={3000}
+        autoHideDuration={duration}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         startDecorator={
           color === "success" ? (
@@ -59,9 +66,24 @@ export default function SnackBar({ children }: { children: ReactNode }) {
             <InfoOutlinedIcon />
           )
         }
-        sx={{ "--Snackbar-inset": "100px" }}
+        sx={{
+          "--Snackbar-inset": "100px",
+          "--Snackbar-padding": "12px 10px",
+          justifyContent: "center",
+          maxWidth: "90%",
+          minWidth: "250px",
+        }}
       >
-        {message}
+        <span
+          style={{
+            width:
+              typeof message !== "string" || message.length > 25
+                ? "500px"
+                : "auto",
+          }}
+        >
+          {message}
+        </span>
       </Snackbar>
     </>
   );

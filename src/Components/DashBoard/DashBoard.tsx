@@ -1,6 +1,6 @@
 "use client";
 import { GoalWithId, SuccessResult } from "@/types/types";
-import { fetchResult } from "@/utils/API/fetchResult";
+import { fetchResult } from "@/utils/API/Result/fetchResult";
 import Typography from "@mui/joy/Typography";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useEffect, useState } from "react";

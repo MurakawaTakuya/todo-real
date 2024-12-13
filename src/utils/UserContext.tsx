@@ -1,7 +1,7 @@
 "use client";
 import { auth } from "@/app/firebase";
 import { LoginType, UserData } from "@/types/types";
-import { fetchUserById } from "@/utils/API/fetchUser";
+import { fetchUserById } from "@/utils/API/User/fetchUser";
 import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
 import {
   createContext,

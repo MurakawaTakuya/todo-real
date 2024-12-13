@@ -1,6 +1,6 @@
 import { auth } from "@/app/firebase";
 import { showSnackBar } from "@/Components/SnackBar/SnackBar";
-import { createUser } from "@/utils/API/createUser";
+import { createUser } from "@/utils/API/User/createUser";
 import { updateUser } from "@/utils/UserContext";
 import {
   createUserWithEmailAndPassword,

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 interface SnackBarOptions {
   message: string;
-  color: "success" | "neutral" | "warning";
+  type: "success" | "normal" | "warning";
 }
 
 export let showSnackBar: (options: SnackBarOptions) => void;
@@ -13,16 +13,26 @@ export let showSnackBar: (options: SnackBarOptions) => void;
 export default function SnackBar({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [color, setColor] = useState<"success" | "neutral" | "warning">(
-    "success"
+  const [color, setColor] = useState<"success" | "neutral" | "danger">(
+    "neutral"
   );
 
   useEffect(() => {
-    showSnackBar = ({ message, color }: SnackBarOptions) => {
-      console.log("showSnackBar");
-      setMessage(message);
-      setColor(color);
-      setOpen(true);
+    showSnackBar = ({ message, type }: SnackBarOptions) => {
+      // 前のスナックバーが表示されている可能性があるので、一度閉じる
+      setOpen(false);
+
+      setTimeout(() => {
+        setMessage(message);
+        setColor(
+          type == "success"
+            ? "success"
+            : type == "warning"
+            ? "danger"
+            : "neutral"
+        );
+        setOpen(true);
+      }, 10);
     };
   }, []);
 

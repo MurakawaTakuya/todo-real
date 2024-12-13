@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { signOut } from "firebase/auth";
+import { showSnackBar } from "../SnackBar/SnackBar";
 
 export const RoundedButton = styled(Button)(({ theme }) => ({
   borderRadius: "30px",
@@ -18,10 +19,18 @@ export default function LoggedInView() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      console.log("Signed out");
+
+      showSnackBar({
+        message: "ログアウトしました",
+        type: "success",
+      });
     } catch (error) {
       console.error("errorCode:", (error as Error)?.name);
       console.error("errorMessage:", (error as Error)?.message);
+      showSnackBar({
+        message: "ログアウトに失敗しました",
+        type: "warning",
+      });
     }
   };
 

@@ -56,7 +56,6 @@ export const UserProvider = ({ children }: Props) => {
       return "Guest";
     }
 
-    console.log("ログインしていません");
     return "None";
   };
 
@@ -105,15 +104,6 @@ export const UserProvider = ({ children }: Props) => {
     return () => unsubscribe();
   }, []);
 
-  console.log(
-    "UserData:",
-    user === undefined
-      ? "ローディング中"
-      : user === null
-      ? "ログインしていません"
-      : user
-  );
-
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}
@@ -133,6 +123,6 @@ export const updateUser = (userData: UserData | null) => {
   if (globalSetUser) {
     globalSetUser(userData);
   } else {
-    console.error("UserProviderがまだ初期化されていません。");
+    console.error("UserProviderがまだ初期化されていません");
   }
 };

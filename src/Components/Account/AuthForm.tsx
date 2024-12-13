@@ -1,6 +1,6 @@
 import { signInAsGuest } from "@/utils/Auth/signInAnonymously";
+import { signInWithGoogleAccount } from "@/utils/Auth/signInWithGoogleAccount";
 import { signInWithMail } from "@/utils/Auth/signInWithMail";
-import { signUpWithGoogleAccount } from "@/utils/Auth/signUpWithGoogleAccount";
 import { signUpWithMail } from "@/utils/Auth/signUpWithMail";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -35,7 +35,7 @@ export default function AuthForm() {
   };
 
   const handleGoogleLogin = async () => {
-    await signUpWithGoogleAccount();
+    await signInWithGoogleAccount();
   };
 
   const handleGuestLogin = async () => {

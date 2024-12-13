@@ -1,4 +1,5 @@
 import { auth } from "@/app/firebase";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { createUser } from "@/utils/API/createUser";
 import { updateUser } from "@/utils/UserContext";
 import {
@@ -8,7 +9,7 @@ import {
 } from "firebase/auth";
 
 /**
- * Firebase Authenticationでユーザーを作成し、生成されたuserIdをドキュメントIDとしてFirestoreにユーザー情報を登録する
+ * Firebase Authenticationを使ってメールでユーザーを作成し、生成されたuserIdをドキュメントIDとしてFirestoreにユーザー情報を登録する
  *
  * @param {string} email
  * @param {string} password
@@ -45,14 +46,42 @@ export const signUpWithMail = (
       // メール確認リンクを送信
       try {
         await sendEmailVerification(user);
-        console.log("確認メールを送信しました。");
       } catch (verificationError) {
-        console.error("確認メールの送信に失敗しました:", verificationError);
+        console.error("failed to send email verification:", verificationError);
       }
-      console.log(user);
+
+      showSnackBar({
+        message: (
+          <>
+            メールでユーザー登録しました。
+            <br />
+            認証メールを送信しました。
+          </>
+        ),
+        type: "success",
+      });
     })
     .catch((error) => {
       console.error("errorCode:", (error as Error)?.name);
       console.error("errorMessage:", (error as Error)?.message);
+
+      const errorMessage = (error as Error)?.message;
+      let snackBarMessage = "メールでのユーザー登録に失敗しました";
+
+      if (errorMessage.includes("auth/invalid-email")) {
+        snackBarMessage = "メールアドレスが無効です";
+      } else if (errorMessage.includes("auth/email-already-in-use")) {
+        snackBarMessage = "このメールアドレスは既に使用されています";
+      } else if (errorMessage.includes("auth/weak-password")) {
+        snackBarMessage = "パスワードは8文字以上である必要があります";
+      } else if (errorMessage.includes("auth/too-many-requests")) {
+        snackBarMessage =
+          "リクエストが多すぎます。しばらくしてからもう一度お試しください。";
+      }
+
+      showSnackBar({
+        message: snackBarMessage,
+        type: "warning",
+      });
     });
 };

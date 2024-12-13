@@ -1,12 +1,12 @@
 import { auth } from "@/app/firebase";
 import NameUpdate from "@/Components/NameUpdate/NameUpdate";
 import NotificationButton from "@/Components/NotificationButton/NotificationButton";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { useUser } from "@/utils/UserContext";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { signOut } from "firebase/auth";
-import { showSnackBar } from "../SnackBar/SnackBar";
 
 export const RoundedButton = styled(Button)(({ theme }) => ({
   borderRadius: "30px",

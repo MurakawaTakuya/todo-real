@@ -24,3 +24,28 @@ export const fetchResult = async ({
   const data = await response.json();
   return data;
 };
+
+/**
+ * 結果取得時のエラーハンドリング
+ *
+ * @param {unknown} error
+ * @return {*}
+ */
+export const handleFetchResultError = (error: unknown) => {
+  let snackBarMessage = "データの取得に失敗しました";
+
+  if (error instanceof Error) {
+    console.error("Fetch error:", error.message);
+    if (error.message.includes("404")) {
+      snackBarMessage = "データが見つかりませんでした";
+    }
+    if (error.message.includes("500")) {
+      snackBarMessage = "サーバーエラーが発生しました";
+    }
+  } else {
+    console.error("An unknown error occurred");
+    snackBarMessage = "不明なエラーが発生しました";
+  }
+
+  return snackBarMessage;
+};

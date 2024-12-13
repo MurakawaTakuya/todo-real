@@ -1,13 +1,17 @@
 "use client";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { GoalWithId, SuccessResult } from "@/types/types";
-import { fetchResult } from "@/utils/API/Result/fetchResult";
+import {
+  fetchResult,
+  handleFetchResultError,
+} from "@/utils/API/Result/fetchResult";
 import Typography from "@mui/joy/Typography";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useEffect, useState } from "react";
 import Progress from "../Progress/Progress";
 import styles from "./DashBoard.module.scss";
 
-// 投稿を取得してPostCardに渡す
+// 投稿を取得してProgress
 export default function DashBoard({
   userId = "",
   success = true,
@@ -36,11 +40,13 @@ export default function DashBoard({
         setIsLoading(false);
       })
       .catch((error) => {
-        if (error instanceof Response && error.status === 404) {
-          setNoResult(true);
-        } else {
-          console.error("Error fetching posts:", error);
-        }
+        console.error("Error fetching results:", error);
+        setIsLoading(false);
+        const message = handleFetchResultError(error);
+        showSnackBar({
+          message,
+          type: "warning",
+        });
       });
   }, []);
 

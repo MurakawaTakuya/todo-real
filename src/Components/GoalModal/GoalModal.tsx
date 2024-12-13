@@ -55,6 +55,7 @@ export default function GoalModal() {
       setDueDate("");
       setOpen(false);
     } catch (error: unknown) {
+      console.error("Error creating goal:", error);
       const message = handleCreateGoalError(error);
       showSnackBar({
         message,

@@ -17,8 +17,33 @@ export const fetchUserById = async (userId: string): Promise<UserData> => {
   });
 
   if (!response.ok) {
-    new Error("Network response was not ok");
+    throw new Error("Network response was not ok");
   }
   const data = await response.json();
   return data;
+};
+
+/**
+ * ユーザー情報取得時のエラーハンドリング
+ *
+ * @param {unknown} error
+ * @return {*}
+ */
+export const handleFetchUserError = (error: unknown) => {
+  let snackBarMessage = "ユーザー情報の取得に失敗しました";
+
+  if (error instanceof Error) {
+    console.error("Fetch error:", error.message);
+    if (error.message.includes("404")) {
+      snackBarMessage = "ユーザーが見つかりませんでした";
+    }
+    if (error.message.includes("500")) {
+      snackBarMessage = "サーバーエラーが発生しました";
+    }
+  } else {
+    console.error("An unknown error occurred");
+    snackBarMessage = "不明なエラーが発生しました";
+  }
+
+  return snackBarMessage;
 };

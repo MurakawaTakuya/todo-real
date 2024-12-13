@@ -78,8 +78,9 @@ export default function PostModal({ goalId }: { goalId: string }) {
             setText("");
             setOpen(false);
             setFileName("");
-          } catch (err) {
-            const message = handleCreatePostError(err);
+          } catch (error: unknown) {
+            console.error("Error creating post:", error);
+            const message = handleCreatePostError(error);
             showSnackBar({
               message,
               type: "warning",

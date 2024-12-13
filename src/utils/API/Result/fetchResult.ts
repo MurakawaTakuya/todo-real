@@ -19,7 +19,7 @@ export const fetchResult = async ({
   });
 
   if (!response.ok) {
-    new Error("Network response was not ok");
+    throw new Error("Network response was not ok");
   }
   const data = await response.json();
   return data;

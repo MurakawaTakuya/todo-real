@@ -18,7 +18,7 @@ export const createUser = async (name: string, userId: string) => {
   });
 
   if (!response.ok) {
-    new Error("Network response was not ok");
+    throw new Error("Network response was not ok");
   }
   const data = await response.json();
   console.log("Success:", data);

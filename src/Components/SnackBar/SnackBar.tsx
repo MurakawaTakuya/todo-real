@@ -1,11 +1,13 @@
 "use client";
-import PlaylistAddCheckCircleRoundedIcon from "@mui/icons-material/PlaylistAddCheckCircleRounded";
+import CheckIcon from "@mui/icons-material/Check";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import Snackbar from "@mui/joy/Snackbar";
 import { useEffect, useState } from "react";
 
 interface SnackBarOptions {
   message: string;
-  type: "success" | "normal" | "warning";
+  type?: "success" | "normal" | "warning";
 }
 
 export let showSnackBar: (options: SnackBarOptions) => void;
@@ -18,16 +20,18 @@ export default function SnackBar({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    showSnackBar = ({ message, type }: SnackBarOptions) => {
+    showSnackBar = ({ message, type = "normal" }: SnackBarOptions) => {
       // 前のスナックバーが表示されている可能性があるので、一度閉じる
       setOpen(false);
+      setMessage("");
+      setColor("neutral");
 
       setTimeout(() => {
         setMessage(message);
         setColor(
-          type == "success"
+          type === "success"
             ? "success"
-            : type == "warning"
+            : type === "warning"
             ? "danger"
             : "neutral"
         );
@@ -46,7 +50,16 @@ export default function SnackBar({ children }: { children: React.ReactNode }) {
         onClose={() => setOpen(false)}
         autoHideDuration={2000}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        startDecorator={<PlaylistAddCheckCircleRoundedIcon />}
+        startDecorator={
+          color === "success" ? (
+            <CheckIcon />
+          ) : color === "danger" ? (
+            <ErrorOutlineIcon />
+          ) : (
+            <InfoOutlinedIcon />
+          )
+        }
+        sx={{ "--Snackbar-inset": "100px" }}
       >
         {message}
       </Snackbar>

@@ -22,7 +22,7 @@ export default function LoggedInView() {
 
       showSnackBar({
         message: "ログアウトしました",
-        type: "success",
+        type: "warning",
       });
     } catch (error) {
       console.error("errorCode:", (error as Error)?.name);

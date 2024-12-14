@@ -1,13 +1,12 @@
 "use client";
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 import { useUser } from "@/utils/UserContext";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { DialogContent, DialogTitle, Modal, ModalDialog } from "@mui/joy";
 import JoyButton from "@mui/joy/Button";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useState } from "react";
-import { RoundedButton } from "../Account/LoggedInView";
 import { showSnackBar } from "../SnackBar/SnackBar";
 
 export default function DeletePostModal({
@@ -47,9 +46,11 @@ export default function DeletePostModal({
 
   return (
     <>
-      <RoundedButton variant="outlined" onClick={() => setOpen(true)}>
-        <DeleteIcon style={{ fontSize: "20px" }} />
-      </RoundedButton>
+      <DeleteOutlineIcon
+        style={{ fontSize: "23px" }}
+        onClick={() => setOpen(true)}
+        sx={{ cursor: "pointer" }}
+      />
 
       <Modal
         open={open}
@@ -66,7 +67,7 @@ export default function DeletePostModal({
           <DialogContent id="delete-post-description">
             {isPastDeadline
               ? "この投稿を削除すると、目標は失敗したことになります。"
-              : "本当にこの投稿を削除しますか？"}
+              : "この投稿を削除しますか?"}
           </DialogContent>
           <Stack direction="row" spacing={1} justifyContent="flex-end">
             <JoyButton
@@ -74,14 +75,14 @@ export default function DeletePostModal({
               color="neutral"
               onClick={() => setOpen(false)}
             >
-              いいえ
+              キャンセル
             </JoyButton>
             <Button
               variant="contained"
               color="primary"
               onClick={handleDeletePost}
             >
-              はい
+              削除
             </Button>
           </Stack>
         </ModalDialog>

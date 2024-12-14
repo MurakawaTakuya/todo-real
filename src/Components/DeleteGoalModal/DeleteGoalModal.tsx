@@ -1,13 +1,12 @@
 "use client";
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 import { useUser } from "@/utils/UserContext";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { DialogContent, DialogTitle, Modal, ModalDialog } from "@mui/joy";
 import JoyButton from "@mui/joy/Button";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useEffect, useState } from "react";
-import { RoundedButton } from "../Account/LoggedInView";
 import { showSnackBar } from "../SnackBar/SnackBar";
 
 export default function DeleteGoalModal({
@@ -58,9 +57,11 @@ export default function DeleteGoalModal({
 
   return (
     <>
-      <RoundedButton variant="outlined" onClick={() => setOpen(true)}>
-        <DeleteIcon style={{ fontSize: "20px" }} />
-      </RoundedButton>
+      <DeleteOutlineIcon
+        style={{ fontSize: "23px" }}
+        onClick={() => setOpen(true)}
+        sx={{ cursor: "pointer" }}
+      />
 
       <Modal
         open={open}
@@ -74,9 +75,7 @@ export default function DeleteGoalModal({
         >
           <DialogTitle id="delete-goal-title">目標を削除</DialogTitle>
           <DialogContent id="delete-goal-description">
-            本当にこの目標を削除しますか？
-            <br />
-            期限から1時間以内もしくは過ぎている目標は削除できません。
+            この目標を削除しますか?
           </DialogContent>
           <Stack direction="row" spacing={1} justifyContent="flex-end">
             <JoyButton
@@ -84,7 +83,7 @@ export default function DeleteGoalModal({
               color="neutral"
               onClick={() => setOpen(false)}
             >
-              いいえ
+              キャンセル
             </JoyButton>
             <Button
               variant="contained"
@@ -92,7 +91,7 @@ export default function DeleteGoalModal({
               onClick={handleDeleteGoal}
               disabled={isDisabled}
             >
-              はい
+              削除
             </Button>
           </Stack>
         </ModalDialog>

@@ -168,13 +168,15 @@ const successStep = (result: SuccessResult, userName: string) => {
           <CardContent
             sx={{ padding: "10px", borderTop: "thin solid #cdcdcd" }}
           >
-            <Typography level="body-sm">
-              {formatStringToDate(result.submittedAt)}に完了
-            </Typography>
-            <DeletePostModal
-              postId={result.postId}
-              deadline={result.deadline}
-            />
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography level="body-sm">
+                {formatStringToDate(result.submittedAt)}に完了
+              </Typography>
+              <DeletePostModal
+                postId={result.postId}
+                deadline={result.deadline}
+              />
+            </div>
             {result.postText && (
               <>
                 <Divider />
@@ -259,10 +261,12 @@ const GoalCard = ({
       }}
     >
       <CardContent>
-        <Typography level="body-sm">
-          {formatStringToDate(deadline)}までに
-        </Typography>
-        <DeleteGoalModal goalId={goalId} deadline={deadline} />
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography level="body-sm">
+            {formatStringToDate(deadline)}までに
+          </Typography>
+          <DeleteGoalModal goalId={goalId} deadline={deadline} />
+        </div>
         <Divider />
         <Typography level="body-lg">{goalText}</Typography>
       </CardContent>

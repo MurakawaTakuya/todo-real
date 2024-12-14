@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useState } from "react";
 import { RoundedButton } from "../Account/LoggedInView";
+import { showSnackBar } from "../SnackBar/SnackBar";
 
 export default function DeletePostModal({
   postId,
@@ -29,10 +30,16 @@ export default function DeletePostModal({
     });
 
     if (!response.ok) {
-      console.error("Failed to delete post");
+      showSnackBar({
+        message: "目標の削除に失敗しました",
+        type: "warning",
+      });
     } else {
-      console.log("Post deleted successfully");
       setOpen(false);
+      showSnackBar({
+        message: "目標を削除しました",
+        type: "success",
+      });
     }
   };
 

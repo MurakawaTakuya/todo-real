@@ -6,34 +6,21 @@ import { DialogContent, DialogTitle, Modal, ModalDialog } from "@mui/joy";
 import JoyButton from "@mui/joy/Button";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RoundedButton } from "../Account/LoggedInView";
 
-export default function DeleteGoal({
-  goalId,
+export default function DeletePostModal({
+  postId,
   deadline,
 }: {
-  goalId: string;
+  postId: string;
   deadline: string;
 }) {
   const { user } = useUser();
   const [open, setOpen] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
 
-  useEffect(() => {
-    const now = new Date();
-    const goalDeadline = new Date(deadline);
-    const oneHourInMillis = 60 * 60 * 1000;
-
-    if (goalDeadline.getTime() - now.getTime() <= oneHourInMillis) {
-      setIsDisabled(true);
-    } else {
-      setIsDisabled(false);
-    }
-  }, [deadline]);
-
-  const handleDeleteGoal = async () => {
-    const response = await fetch(`${functionsEndpoint}/goal/${goalId}`, {
+  const handleDeletePost = async () => {
+    const response = await fetch(`${functionsEndpoint}/post/${postId}`, {
       method: "DELETE",
       headers: {
         "X-Firebase-AppCheck": appCheckToken,
@@ -42,12 +29,14 @@ export default function DeleteGoal({
     });
 
     if (!response.ok) {
-      console.error("Failed to delete goal");
+      console.error("Failed to delete post");
     } else {
-      console.log("Goal deleted successfully");
+      console.log("Post deleted successfully");
       setOpen(false);
     }
   };
+
+  const isPastDeadline = new Date() > new Date(deadline);
 
   return (
     <>
@@ -59,17 +48,18 @@ export default function DeleteGoal({
         open={open}
         onClose={() => setOpen(false)}
         keepMounted
-        disablePortal
+        disablePortal={false}
       >
         <ModalDialog
-          aria-labelledby="delete-goal-title"
-          aria-describedby="delete-goal-description"
+          aria-labelledby="delete-post-title"
+          aria-describedby="delete-post-description"
+          sx={{ width: "90%", maxWidth: 400 }}
         >
-          <DialogTitle id="delete-goal-title">目標を削除</DialogTitle>
-          <DialogContent id="delete-goal-description">
-            本当にこの目標を削除しますか？
-            <br />
-            期限から1時間以内もしくは過ぎている目標は削除できません。
+          <DialogTitle id="delete-post-title">投稿を削除</DialogTitle>
+          <DialogContent id="delete-post-description">
+            {isPastDeadline
+              ? "この投稿を削除すると、目標は失敗したことになります。"
+              : "本当にこの投稿を削除しますか？"}
           </DialogContent>
           <Stack direction="row" spacing={1} justifyContent="flex-end">
             <JoyButton
@@ -82,8 +72,7 @@ export default function DeleteGoal({
             <Button
               variant="contained"
               color="primary"
-              onClick={handleDeleteGoal}
-              disabled={isDisabled}
+              onClick={handleDeletePost}
             >
               はい
             </Button>

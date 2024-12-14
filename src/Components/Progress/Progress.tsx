@@ -13,8 +13,8 @@ import Stepper from "@mui/joy/Stepper";
 import Typography, { typographyClasses } from "@mui/joy/Typography";
 import { Divider } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
-import DeleteGoal from "../DeleteGoal/DeleteGoal";
-import DeletePost from "../DeletePost/DeletePost";
+import DeleteGoalModal from "../DeleteGoalModal/DeleteGoalModal";
+import DeletePostModal from "../DeletePostModal/DeletePostModal";
 import PostModal from "../PostModal/PostModal";
 
 const successPostIndicatorStyle = {
@@ -171,7 +171,10 @@ const successStep = (result: SuccessResult, userName: string) => {
             <Typography level="body-sm">
               {formatStringToDate(result.submittedAt)}に完了
             </Typography>
-            <DeletePost postId={result.postId} deadline={result.deadline} />
+            <DeletePostModal
+              postId={result.postId}
+              deadline={result.deadline}
+            />
             {result.postText && (
               <>
                 <Divider />
@@ -259,7 +262,7 @@ const GoalCard = ({
         <Typography level="body-sm">
           {formatStringToDate(deadline)}までに
         </Typography>
-        <DeleteGoal goalId={goalId} deadline={deadline} />
+        <DeleteGoalModal goalId={goalId} deadline={deadline} />
         <Divider />
         <Typography level="body-lg">{goalText}</Typography>
       </CardContent>

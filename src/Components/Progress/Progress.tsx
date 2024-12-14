@@ -13,6 +13,8 @@ import Stepper from "@mui/joy/Stepper";
 import Typography, { typographyClasses } from "@mui/joy/Typography";
 import { Divider } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
+import DeleteGoal from "../DeleteGoal/DeleteGoal";
+import DeletePost from "../DeletePost/DeletePost";
 import PostModal from "../PostModal/PostModal";
 
 const successPostIndicatorStyle = {
@@ -126,6 +128,7 @@ const successStep = (result: SuccessResult, userName: string) => {
           deadline={result.deadline}
           goalText={result.goalText}
           resultType="success"
+          goalId={result.goalId}
         />
       </Step>
       <Step
@@ -145,6 +148,7 @@ const successStep = (result: SuccessResult, userName: string) => {
             width: "100%",
             padding: 0,
             gap: 0,
+            zIndex: 0,
           }}
         >
           {result.storedId && (
@@ -167,6 +171,7 @@ const successStep = (result: SuccessResult, userName: string) => {
             <Typography level="body-sm">
               {formatStringToDate(result.submittedAt)}に完了
             </Typography>
+            <DeletePost postId={result.postId} deadline={result.deadline} />
             {result.postText && (
               <>
                 <Divider />
@@ -194,6 +199,7 @@ const failedStep = (result: GoalWithId, userName: string) => {
           deadline={result.deadline}
           goalText={result.text}
           resultType="failed"
+          goalId={result.goalId}
         />
       </Step>
     </StepperBlock>
@@ -215,6 +221,7 @@ const pendingStep = (result: GoalWithId, userName: string, user: UserData) => {
           deadline={result.deadline}
           goalText={result.text}
           resultType="pending"
+          goalId={result.goalId}
         />
         {/* 自分の作成した目標の場合のみ投稿可能にする */}
         {result.userId === user?.userId && <PostModal goalId={result.goalId} />}
@@ -227,10 +234,12 @@ const GoalCard = ({
   deadline,
   goalText,
   resultType,
+  goalId = "",
 }: {
   deadline: string;
   goalText: string;
   resultType?: "success" | "failed" | "pending";
+  goalId: string;
 }) => {
   return (
     <Card
@@ -250,6 +259,7 @@ const GoalCard = ({
         <Typography level="body-sm">
           {formatStringToDate(deadline)}までに
         </Typography>
+        <DeleteGoal goalId={goalId} deadline={deadline} />
         <Divider />
         <Typography level="body-lg">{goalText}</Typography>
       </CardContent>

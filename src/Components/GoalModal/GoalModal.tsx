@@ -1,6 +1,7 @@
 "use client";
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { Goal } from "@/types/types";
+import { createGoal, handleCreateGoalError } from "@/utils/API/Goal/createGoal";
 import { useUser } from "@/utils/UserContext";
 import AddIcon from "@mui/icons-material/Add";
 import SendIcon from "@mui/icons-material/Send";
@@ -26,6 +27,15 @@ export default function GoalModal() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    // 過去の時間が入力されている場合
+    if (new Date(dueDate).getTime() < Date.now()) {
+      showSnackBar({
+        message: "過去の時間を指定することはできません",
+        type: "warning",
+      });
+      return;
+    }
+
     const postData: Goal = {
       userId: user?.userId as string,
       text: text,
@@ -33,31 +43,24 @@ export default function GoalModal() {
     };
 
     try {
-      const response = await fetch(`${functionsEndpoint}/goal/`, {
-        method: "POST",
-        headers: {
-          "X-Firebase-AppCheck": appCheckToken,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(postData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = await createGoal(postData);
       console.log("Success:", data);
+
+      showSnackBar({
+        message: "目標を作成しました",
+        type: "success",
+      });
 
       setText("");
       setDueDate("");
       setOpen(false);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Fetch error:", error.message);
-      } else {
-        console.error("An unknown error occurred");
-      }
+      console.error("Error creating goal:", error);
+      const message = handleCreateGoalError(error);
+      showSnackBar({
+        message,
+        type: "warning",
+      });
     }
   };
 
@@ -92,7 +95,7 @@ export default function GoalModal() {
         <Fab
           color="primary"
           aria-label="add"
-          sx={{ marginRight: "20px !important" }}
+          sx={{ marginRight: "10px !important" }}
           // ゲストかメール認証が未完了のユーザーは使用不可
           onClick={() => setOpen(true)}
           disabled={

@@ -1,3 +1,4 @@
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { Analytics, getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import {
@@ -62,6 +63,11 @@ if (typeof window !== "undefined") {
     })
     .catch((error) => {
       console.log("App Check error:", error.message);
+      showSnackBar({
+        message:
+          "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。",
+        type: "warning",
+      });
     });
 }
 

@@ -4,12 +4,10 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 export const uploadImage = (
   file: File,
   onProgress: (progress: number) => void,
-  onError: (error: string) => void,
   onSuccess: (url: string, id: string) => void
 ) => {
   if (!file) {
-    onError("ファイルが選択されていません");
-    return;
+    throw new Error("ファイルが選択されていません");
   }
 
   // cryptoモジュールを使用してユニークなIDを生成
@@ -24,7 +22,7 @@ export const uploadImage = (
       onProgress(percent);
     },
     (error) => {
-      onError("ファイルアップに失敗しました。エラー: " + error.message);
+      throw new Error("ファイルアップに失敗しました。エラー: " + error.message);
     },
     () => {
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {

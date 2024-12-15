@@ -1,5 +1,5 @@
 import { GoalWithId, SuccessResult, UserData } from "@/types/types";
-import { fetchUserById } from "@/utils/API/fetchUser";
+import { fetchUserById } from "@/utils/API/User/fetchUser";
 import { formatStringToDate } from "@/utils/DateFormatter";
 import { useUser } from "@/utils/UserContext";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";

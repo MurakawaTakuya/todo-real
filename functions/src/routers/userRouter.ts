@@ -125,7 +125,6 @@ router.put("/:userId", async (req: Request, res: Response) => {
   const userId = req.params.userId;
   const { name, streak, fcmToken }: Partial<User> = req.body;
 
-  console.log(fcmToken);
   if (!name && !streak && fcmToken === undefined) {
     return res.status(400).json({
       message: "At least one of name, streak, or fcmToken is required",

@@ -1,6 +1,7 @@
 "use client";
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { Post } from "@/types/types";
+import { createPost, handleCreatePostError } from "@/utils/API/Post/createPost";
 import { uploadImage } from "@/utils/Uploader";
 import { useUser } from "@/utils/UserContext";
 import { Add } from "@mui/icons-material";
@@ -26,7 +27,6 @@ export default function PostModal({ goalId }: { goalId: string }) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
-  const [error, setError] = useState<string>("");
   const [progress, setProgress] = useState<number>(100);
   const [fileName, setFileName] = useState<string>("");
   const { user } = useUser();
@@ -38,56 +38,63 @@ export default function PostModal({ goalId }: { goalId: string }) {
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     setImage(selectedFile || null);
-    setError("");
     setFileName(selectedFile ? selectedFile.name : "");
   };
 
   const handleUpload = () => {
     if (!image) {
-      setError("ファイルが選択されていません");
+      showSnackBar({
+        message: "ファイルが選択されていません",
+        type: "warning",
+      });
       return;
     }
 
-    uploadImage(
-      image,
-      (percent) => setProgress(percent),
-      (errorMsg) => setError(errorMsg),
-      async (url) => {
-        const postData: Post = {
-          userId: user?.userId as string,
-          storedId: url,
-          text: text,
-          goalId: goalId,
-          submittedAt: new Date(),
-        };
+    try {
+      uploadImage(
+        image,
+        (percent) => setProgress(percent),
+        async (url) => {
+          const postData: Post = {
+            userId: user?.userId as string,
+            storedId: url,
+            text: text,
+            goalId: goalId,
+            submittedAt: new Date(),
+          };
 
-        try {
-          const response = await fetch(`${functionsEndpoint}/post/`, {
-            method: "POST",
-            headers: {
-              "X-Firebase-AppCheck": appCheckToken,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(postData),
-          });
+          try {
+            const data = await createPost(postData);
 
-          if (!response.ok) {
-            throw new Error("データの送信に失敗しました");
+            setProgress(100);
+            console.log("Post created:", data);
+
+            showSnackBar({
+              message: "投稿しました",
+              type: "success",
+            });
+
+            setImage(null);
+            setText("");
+            setOpen(false);
+            setFileName("");
+          } catch (error: unknown) {
+            console.error("Error creating post:", error);
+            const message = handleCreatePostError(error);
+            showSnackBar({
+              message,
+              type: "warning",
+            });
           }
-
-          setProgress(100);
-          const data = await response.json();
-          console.log("Post created:", data);
-
-          setImage(null);
-          setText("");
-          setOpen(false);
-        } catch (err) {
-          setError("データの送信に失敗しました");
-          console.error(err);
         }
-      }
-    );
+      );
+    } catch (error: unknown) {
+      console.error(error);
+      showSnackBar({
+        message: "画像のアップロードに失敗しました",
+        type: "warning",
+      });
+    }
   };
 
   // 以下のJoy UIによるエラーを無効化
@@ -150,7 +157,6 @@ export default function PostModal({ goalId }: { goalId: string }) {
           <DialogContent>投稿コメントと画像を入れてください</DialogContent>
           <form onSubmit={(e) => e.preventDefault()}>
             <Stack spacing={2} sx={{ mt: 2 }}>
-              {error && <Typography color="error">{error}</Typography>}
               <Input
                 type="text"
                 value={text}

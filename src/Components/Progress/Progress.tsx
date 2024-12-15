@@ -182,6 +182,7 @@ const successStep = (
               <Typography level="body-sm">
                 {formatStringToDate(result.submittedAt)}に完了
               </Typography>
+              {/* 自分の作成した投稿のみ削除できるようにする */}
               {result.userId === user?.userId && (
                 <DeletePostModal
                   postId={result.postId}
@@ -268,9 +269,9 @@ const GoalCard = ({
 }) => {
   const deadlineDate = new Date(deadline);
   const currentDate = new Date();
-  const isPastDeadline = deadlineDate < currentDate;
   const isWithinOneHour =
     deadlineDate.getTime() - currentDate.getTime() <= 3600000;
+
   return (
     <Card
       variant="outlined"
@@ -290,7 +291,8 @@ const GoalCard = ({
           <Typography level="body-sm">
             {formatStringToDate(deadline)}までに
           </Typography>
-          {!(isPastDeadline || isWithinOneHour) && userId === user?.userId && (
+          {/* 期限の1時間以内、もしくは自分の目標ではない場合は削除できないようにする */}
+          {!isWithinOneHour && userId === user?.userId && (
             <DeleteGoalModal goalId={goalId} />
           )}
         </div>

@@ -1,17 +1,36 @@
 "use client";
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 import { useUser } from "@/utils/UserContext";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { DialogContent, DialogTitle, Modal, ModalDialog } from "@mui/joy";
 import JoyButton from "@mui/joy/Button";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { useState } from "react";
-import { showSnackBar } from "../SnackBar/SnackBar";
+import { useEffect, useState } from "react";
+import { RoundedButton } from "../Account/LoggedInView";
 
-export default function DeleteGoalModal({ goalId }: { goalId: string }) {
+export default function DeleteGoal({
+  goalId,
+  deadline,
+}: {
+  goalId: string;
+  deadline: string;
+}) {
   const { user } = useUser();
   const [open, setOpen] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  useEffect(() => {
+    const now = new Date();
+    const goalDeadline = new Date(deadline);
+    const oneHourInMillis = 60 * 60 * 1000;
+
+    if (goalDeadline.getTime() - now.getTime() <= oneHourInMillis) {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
+  }, [deadline]);
 
   const handleDeleteGoal = async () => {
     const response = await fetch(`${functionsEndpoint}/goal/${goalId}`, {
@@ -23,32 +42,24 @@ export default function DeleteGoalModal({ goalId }: { goalId: string }) {
     });
 
     if (!response.ok) {
-      showSnackBar({
-        message: "目標の削除に失敗しました",
-        type: "warning",
-      });
+      console.error("Failed to delete goal");
     } else {
+      console.log("Goal deleted successfully");
       setOpen(false);
-      showSnackBar({
-        message: "目標を削除しました",
-        type: "success",
-      });
     }
   };
 
   return (
     <>
-      <DeleteOutlineIcon
-        style={{ fontSize: "23px" }}
-        onClick={() => setOpen(true)}
-        sx={{ cursor: "pointer" }}
-      />
+      <RoundedButton variant="outlined" onClick={() => setOpen(true)}>
+        <DeleteIcon style={{ fontSize: "20px" }} />
+      </RoundedButton>
 
       <Modal
         open={open}
         onClose={() => setOpen(false)}
         keepMounted
-        disablePortal={false}
+        disablePortal
       >
         <ModalDialog
           aria-labelledby="delete-goal-title"
@@ -56,7 +67,9 @@ export default function DeleteGoalModal({ goalId }: { goalId: string }) {
         >
           <DialogTitle id="delete-goal-title">目標を削除</DialogTitle>
           <DialogContent id="delete-goal-description">
-            この目標を削除しますか?
+            本当にこの目標を削除しますか？
+            <br />
+            期限から1時間以内もしくは過ぎている目標は削除できません。
           </DialogContent>
           <Stack direction="row" spacing={1} justifyContent="flex-end">
             <JoyButton
@@ -64,14 +77,15 @@ export default function DeleteGoalModal({ goalId }: { goalId: string }) {
               color="neutral"
               onClick={() => setOpen(false)}
             >
-              キャンセル
+              いいえ
             </JoyButton>
             <Button
               variant="contained"
               color="primary"
               onClick={handleDeleteGoal}
+              disabled={isDisabled}
             >
-              削除
+              はい
             </Button>
           </Stack>
         </ModalDialog>

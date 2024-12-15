@@ -48,8 +48,19 @@ export default function NotificationButton() {
       })
       .catch((error) => {
         console.error("Failed to enable notifications:", error);
+        let message = "通知の有効化に失敗しました";
+        if (error instanceof Error) {
+          if (error.message == "Permission denied") {
+            message = "ブラウザ設定からこのサイトの通知を許可してください";
+          } else if (error.message == "Firebase messaging is not initialized") {
+            message =
+              "ページを更新して数秒経過してから再度ボタンを押してください";
+          }
+        } else {
+          message = "不明なエラーが発生しました";
+        }
         showSnackBar({
-          message: "通知の有効化に失敗しました",
+          message,
           type: "warning",
         });
       })

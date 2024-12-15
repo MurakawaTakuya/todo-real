@@ -13,6 +13,7 @@ import {
   Modal,
   ModalDialog,
   Stack,
+  Typography,
 } from "@mui/joy";
 import Box from "@mui/material/Box";
 import Fab from "@mui/material/Fab";
@@ -120,7 +121,7 @@ export default function GoalModal() {
           <DialogTitle>目標を作成</DialogTitle>
           <DialogContent>達成したい内容と期限を入力してください</DialogContent>
           <form onSubmit={handleSubmit}>
-            <Stack spacing={2} sx={{ mt: 2 }}>
+            <Stack spacing={2}>
               <Input
                 placeholder="Goal Title"
                 value={text}
@@ -133,6 +134,9 @@ export default function GoalModal() {
                 onChange={(e) => setDueDate(e.target.value)}
                 required
               />
+              <Typography color="danger">
+                期限が1時間以内の目標は削除できなくなります
+              </Typography>
               <Stack direction="row" spacing={1} justifyContent="flex-end">
                 <Button
                   variant="plain"

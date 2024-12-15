@@ -13,6 +13,8 @@ import Stepper from "@mui/joy/Stepper";
 import Typography, { typographyClasses } from "@mui/joy/Typography";
 import { Divider } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
+import DeleteGoalModal from "../DeleteGoalModal/DeleteGoalModal";
+import DeletePostModal from "../DeletePostModal/DeletePostModal";
 import PostModal from "../PostModal/PostModal";
 
 const successPostIndicatorStyle = {
@@ -96,10 +98,14 @@ export default function Progress({
       {allResults.map((result) => {
         const userName = userNames[result.userId] || "Loading...";
         if (result.type === "success") {
-          return successStep(result as SuccessResult, userName);
+          return successStep(
+            result as SuccessResult,
+            userName,
+            user as UserData
+          );
         }
         if (result.type === "failed") {
-          return failedStep(result as GoalWithId, userName);
+          return failedStep(result as GoalWithId, userName, user as UserData);
         }
         if (result.type === "pending") {
           return pendingStep(result as GoalWithId, userName, user as UserData);
@@ -110,7 +116,11 @@ export default function Progress({
   );
 }
 
-const successStep = (result: SuccessResult, userName: string) => {
+const successStep = (
+  result: SuccessResult,
+  userName: string,
+  user: UserData
+) => {
   return (
     <StepperBlock key={result.goalId} userName={userName} resultType="success">
       <Step
@@ -126,6 +136,9 @@ const successStep = (result: SuccessResult, userName: string) => {
           deadline={result.deadline}
           goalText={result.goalText}
           resultType="success"
+          goalId={result.goalId}
+          userId={result.userId}
+          user={user}
         />
       </Step>
       <Step
@@ -145,6 +158,7 @@ const successStep = (result: SuccessResult, userName: string) => {
             width: "100%",
             padding: 0,
             gap: 0,
+            zIndex: 0,
           }}
         >
           {result.storedId && (
@@ -164,9 +178,18 @@ const successStep = (result: SuccessResult, userName: string) => {
           <CardContent
             sx={{ padding: "10px", borderTop: "thin solid #cdcdcd" }}
           >
-            <Typography level="body-sm">
-              {formatStringToDate(result.submittedAt)}に完了
-            </Typography>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography level="body-sm">
+                {formatStringToDate(result.submittedAt)}に完了
+              </Typography>
+              {/* 自分の作成した投稿のみ削除できるようにする */}
+              {result.userId === user?.userId && (
+                <DeletePostModal
+                  postId={result.postId}
+                  deadline={result.deadline}
+                />
+              )}
+            </div>
             {result.postText && (
               <>
                 <Divider />
@@ -180,7 +203,7 @@ const successStep = (result: SuccessResult, userName: string) => {
   );
 };
 
-const failedStep = (result: GoalWithId, userName: string) => {
+const failedStep = (result: GoalWithId, userName: string, user: UserData) => {
   return (
     <StepperBlock key={result.goalId} userName={userName} resultType="failed">
       <Step
@@ -194,6 +217,9 @@ const failedStep = (result: GoalWithId, userName: string) => {
           deadline={result.deadline}
           goalText={result.text}
           resultType="failed"
+          goalId={result.goalId}
+          userId={result.userId}
+          user={user}
         />
       </Step>
     </StepperBlock>
@@ -215,6 +241,9 @@ const pendingStep = (result: GoalWithId, userName: string, user: UserData) => {
           deadline={result.deadline}
           goalText={result.text}
           resultType="pending"
+          goalId={result.goalId}
+          userId={result.userId}
+          user={user}
         />
         {/* 自分の作成した目標の場合のみ投稿可能にする */}
         {result.userId === user?.userId && <PostModal goalId={result.goalId} />}
@@ -227,11 +256,22 @@ const GoalCard = ({
   deadline,
   goalText,
   resultType,
+  goalId = "",
+  userId,
+  user,
 }: {
   deadline: string;
   goalText: string;
   resultType?: "success" | "failed" | "pending";
+  goalId: string;
+  userId: string;
+  user: UserData;
 }) => {
+  const deadlineDate = new Date(deadline);
+  const currentDate = new Date();
+  const isWithinOneHour =
+    deadlineDate.getTime() - currentDate.getTime() <= 3600000;
+
   return (
     <Card
       variant="outlined"
@@ -247,9 +287,15 @@ const GoalCard = ({
       }}
     >
       <CardContent>
-        <Typography level="body-sm">
-          {formatStringToDate(deadline)}までに
-        </Typography>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography level="body-sm">
+            {formatStringToDate(deadline)}までに
+          </Typography>
+          {/* 期限の1時間以内、もしくは自分の目標ではない場合は削除できないようにする */}
+          {!isWithinOneHour && userId === user?.userId && (
+            <DeleteGoalModal goalId={goalId} />
+          )}
+        </div>
         <Divider />
         <Typography level="body-lg">{goalText}</Typography>
       </CardContent>

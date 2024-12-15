@@ -3,6 +3,7 @@ import {
   requestPermission,
   revokePermission,
 } from "@/utils/CloudMessaging/notificationController";
+import { useUser } from "@/utils/UserContext";
 import { CssBaseline } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -11,6 +12,7 @@ import { useEffect, useState } from "react";
 import { RoundedButton } from "../Account/LoggedInView";
 
 export default function NotificationButton() {
+  const { user } = useUser();
   const [notificationTokenGenerating, setNotificationTokenGenerating] =
     useState(false);
   const [notificationMessage, setNotificationMessage] = useState<string | null>(
@@ -38,19 +40,38 @@ export default function NotificationButton() {
 
   // 通知を有効化
   const handleEnableNotification = () => {
+    if (!user?.userId) {
+      handleShowNotification("ユーザー情報が見つかりません");
+      return;
+    }
     setNotificationTokenGenerating(true);
-    requestPermission(() => {
-      setNotificationTokenGenerating(false);
-      handleShowNotification("通知を受信しました");
-      setIsNotificationActive(true);
-    });
+    requestPermission(user.userId)
+      .then(() => {
+        handleShowNotification("通知を受信しました");
+        setIsNotificationActive(true);
+      })
+      .catch((error) => {
+        console.error("Failed to enable notifications:", error);
+        handleShowNotification("通知の有効化に失敗しました");
+      })
+      .finally(() => setNotificationTokenGenerating(false));
   };
 
   // 通知を無効化
   const handleDisableNotification = () => {
-    revokePermission();
-    handleShowNotification("通知を解除しました");
-    setIsNotificationActive(false);
+    if (!user?.userId) {
+      handleShowNotification("ユーザー情報が見つかりません");
+      return;
+    }
+    revokePermission(user.userId)
+      .then(() => {
+        handleShowNotification("通知を解除しました");
+        setIsNotificationActive(false);
+      })
+      .catch((error) => {
+        console.error("Failed to disable notifications:", error);
+        handleShowNotification("通知の解除に失敗しました");
+      });
   };
 
   return (

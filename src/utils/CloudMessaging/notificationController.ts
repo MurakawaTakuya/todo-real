@@ -1,91 +1,93 @@
 "use client";
-import { messaging } from "@/app/firebase";
+import { appCheckToken, functionsEndpoint, messaging } from "@/app/firebase";
 import { getToken } from "firebase/messaging";
 
 // 通知を受信する
-export function requestPermission(
-  setNotificationTokenGenerating?: (value: boolean) => void
-) {
+export async function requestPermission(userId: string): Promise<void> {
   if (typeof window === "undefined") {
+    console.error("This function must be run in a browser environment.");
     return;
   }
 
   console.log("Requesting permission...");
-  Notification.requestPermission().then((permission) => {
-    if (permission === "granted") {
-      console.log("Notification permission granted.");
+  const permission = await Notification.requestPermission();
+  if (permission !== "granted") {
+    throw new Error("Permission denied");
+  }
+  console.log("Notification permission granted.");
 
-      navigator.serviceWorker
-        .register("/messaging-sw.js")
-        .then(() => {
-          return navigator.serviceWorker.ready;
-        })
-        .then((registration) => {
-          console.log("Service Worker registered:", registration);
-          if (!messaging) {
-            return;
-          }
+  const registration = await navigator.serviceWorker
+    .register("/messaging-sw.js")
+    .then(() => navigator.serviceWorker.ready);
 
-          return getToken(messaging, {
-            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
-            serviceWorkerRegistration: registration,
-          });
-        })
-        .then((currentToken) => {
-          if (currentToken) {
-            console.log("currentToken:", currentToken);
-          } else {
-            console.log(
-              "No registration token available. Request permission to generate one."
-            );
-          }
-        })
-        .catch((err) => {
-          console.error("An error occurred while retrieving token. ", err);
-        })
-        .finally(() => {
-          if (setNotificationTokenGenerating) {
-            setNotificationTokenGenerating(false);
-          }
-        });
-    } else {
-      console.log("Unable to get permission to notify.");
-      if (setNotificationTokenGenerating) setNotificationTokenGenerating(false);
-    }
+  console.log("Service Worker registered:", registration);
+  if (!messaging) {
+    throw new Error("Firebase messaging is not initialized");
+  }
+
+  const currentToken = await getToken(messaging, {
+    vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+    serviceWorkerRegistration: registration,
   });
+
+  if (!currentToken) {
+    throw new Error("No registration token available");
+  }
+
+  console.log("currentToken:", currentToken);
+
+  const response = await fetch(`${functionsEndpoint}/user/${userId}`, {
+    method: "PUT",
+    headers: {
+      "X-Firebase-AppCheck": appCheckToken,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ fcmToken: currentToken }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Failed to register FCM token:", errorText);
+    throw new Error("Failed to register FCM token");
+  }
+
+  console.log("FCM token registered successfully");
 }
 
 // 通知を解除する
-export function revokePermission() {
+export async function revokePermission(userId: string): Promise<void> {
   if (typeof window === "undefined") {
-    return;
+    throw new Error("This function must be run in a browser environment.");
   }
 
-  navigator.serviceWorker.ready
-    .then((registration) => {
-      return registration.pushManager.getSubscription();
-    })
-    .then((subscription) => {
-      if (subscription) {
-        // サブスクリプションが存在する場合に解除
-        return subscription
-          .unsubscribe()
-          .then(() => {
-            return navigator.serviceWorker.getRegistration();
-          })
-          .then((registration) => {
-            if (registration) {
-              return registration.unregister();
-            }
-          });
-      } else {
-        console.log("No subscription found.");
-      }
-    })
-    .then(() => {
-      console.log("Notification permission revoked.");
-    })
-    .catch((err) => {
-      console.error("An error occurred while revoking permission. ", err);
-    });
+  const registration = await navigator.serviceWorker.ready;
+  const subscription = await registration.pushManager.getSubscription();
+
+  if (subscription) {
+    await subscription.unsubscribe();
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (reg) {
+      await reg.unregister();
+    }
+    console.log("Notification permission revoked.");
+  } else {
+    console.log("No subscription found");
+  }
+
+  const response = await fetch(`${functionsEndpoint}/user/${userId}`, {
+    method: "PUT",
+    headers: {
+      "X-Firebase-AppCheck": appCheckToken,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ fcmToken: "" }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Failed to clear FCM token:", errorText);
+    throw new Error("Failed to clear FCM token");
+  }
+
+  console.log("FCM token cleared successfully");
 }

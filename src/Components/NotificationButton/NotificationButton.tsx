@@ -3,12 +3,14 @@ import {
   requestPermission,
   revokePermission,
 } from "@/utils/CloudMessaging/notificationController";
+import { useUser } from "@/utils/UserContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useState } from "react";
 import { RoundedButton } from "../Account/LoggedInView";
 import { showSnackBar } from "../SnackBar/SnackBar";
 
 export default function NotificationButton() {
+  const { user } = useUser();
   const [notificationTokenGenerating, setNotificationTokenGenerating] =
     useState(false);
   const [isNotificationActive, setIsNotificationActive] = useState(false);
@@ -28,25 +30,67 @@ export default function NotificationButton() {
 
   // 通知を有効化
   const handleEnableNotification = () => {
-    setNotificationTokenGenerating(true);
-    requestPermission(() => {
-      setNotificationTokenGenerating(false);
+    if (!user?.userId) {
       showSnackBar({
-        message: "通知を受信します",
-        type: "success",
+        message: "ユーザー情報が見つかりません",
+        type: "warning",
       });
-      setIsNotificationActive(true);
-    });
+      return;
+    }
+    setNotificationTokenGenerating(true);
+    requestPermission(user.userId)
+      .then(() => {
+        showSnackBar({
+          message: "通知を受信します",
+          type: "success",
+        });
+        setIsNotificationActive(true);
+      })
+      .catch((error) => {
+        console.error("Failed to enable notifications:", error);
+        let message = "通知の有効化に失敗しました";
+        if (error instanceof Error) {
+          if (error.message == "Permission denied") {
+            message = "ブラウザ設定からこのサイトの通知を許可してください";
+          } else if (error.message == "Firebase messaging is not initialized") {
+            message =
+              "ページを更新して数秒経過してから再度ボタンを押してください";
+          }
+        } else {
+          message = "不明なエラーが発生しました";
+        }
+        showSnackBar({
+          message,
+          type: "warning",
+        });
+      })
+      .finally(() => setNotificationTokenGenerating(false));
   };
 
   // 通知を無効化
   const handleDisableNotification = () => {
-    revokePermission();
-    showSnackBar({
-      message: "通知を解除しました",
-      type: "success",
-    });
-    setIsNotificationActive(false);
+    if (!user?.userId) {
+      showSnackBar({
+        message: "ユーザー情報が見つかりません",
+        type: "warning",
+      });
+      return;
+    }
+    revokePermission(user.userId)
+      .then(() => {
+        showSnackBar({
+          message: "通知を解除しました",
+          type: "success",
+        });
+        setIsNotificationActive(false);
+      })
+      .catch((error) => {
+        console.error("Failed to disable notifications:", error);
+        showSnackBar({
+          message: "通知の解除に失敗しました",
+          type: "warning",
+        });
+      });
   };
 
   return (

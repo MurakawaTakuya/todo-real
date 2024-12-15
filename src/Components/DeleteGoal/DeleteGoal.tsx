@@ -1,6 +1,5 @@
 "use client";
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
-import { useUser } from "@/utils/UserContext";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DialogContent, DialogTitle, Modal, ModalDialog } from "@mui/joy";
 import JoyButton from "@mui/joy/Button";
@@ -16,7 +15,6 @@ export default function DeleteGoal({
   goalId: string;
   deadline: string;
 }) {
-  const { user } = useUser();
   const [open, setOpen] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 

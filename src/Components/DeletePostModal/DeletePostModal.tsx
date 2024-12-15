@@ -1,6 +1,5 @@
 "use client";
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
-import { useUser } from "@/utils/UserContext";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { DialogContent, DialogTitle, Modal, ModalDialog } from "@mui/joy";
 import JoyButton from "@mui/joy/Button";
@@ -16,7 +15,6 @@ export default function DeletePostModal({
   postId: string;
   deadline: string;
 }) {
-  const { user } = useUser();
   const [open, setOpen] = useState(false);
 
   const handleDeletePost = async () => {

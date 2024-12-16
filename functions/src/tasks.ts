@@ -146,10 +146,11 @@ const getUserFcmToken = async (userId: string) => {
     .doc(userId)
     .get()
     .then((doc) => doc.data());
+
   if (!userData) {
     throw new Error(`No user data found for userId:, ${userId}`);
   }
-  if (!userData.fcmToke) {
+  if (!userData.fcmToken) {
     throw new Error(`No FCM token found for userId:, ${userId}`);
   }
   if (userData.fcmToken === "") {

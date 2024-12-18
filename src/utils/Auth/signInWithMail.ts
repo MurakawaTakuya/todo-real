@@ -9,8 +9,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
  * @param {string} password
  * @return {*}
  */
-export const signInWithMail = (email: string, password: string) => {
-  signInWithEmailAndPassword(auth, email, password)
+export const signInWithMail = async (email: string, password: string) => {
+  await signInWithEmailAndPassword(auth, email, password)
     .then(() => {
       showSnackBar({
         message: "メールでログインしました",

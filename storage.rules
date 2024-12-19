@@ -1,8 +1,22 @@
 rules_version = '2';
+
 service firebase.storage {
   match /b/{bucket}/o {
-    match /post/{documentId} {
-      allow read, write: if true;
+
+    match /{allPaths=**} {
+      // 読み取り: ログイン中のユーザーのみ許可
+      allow read: if request.auth != null;
+
+      // 書き込み: ログイン中でゲストでないユーザー（メール、Google）かつ、画像ファイルのみ許可
+      // 制限: 画像ファイルのみ, 最大容量は8MB
+      allow write: if request.auth != null &&
+                    request.auth.token.firebase.sign_in_provider != 'anonymous' &&
+                    (request.resource.contentType.matches('image/.*') ||
+                    request.resource.contentType == 'image/webp') &&
+                    request.resource.size < 8 * 1024 * 1024;
     }
   }
 }
+
+// 以下のコマンドで本番環境にも適用
+// firebase deploy --only storage

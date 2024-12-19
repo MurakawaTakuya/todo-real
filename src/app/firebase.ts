@@ -38,37 +38,37 @@ if (typeof window !== "undefined") {
   messaging = getMessaging(app);
   analytics = getAnalytics(app);
 
-  // 開発環境とステージング環境でApp Checkのデバッグトークンを有効にする
-  if (
-    typeof window !== "undefined" &&
-    (process.env.NODE_ENV === "development" ||
-      process.env.NEXT_PUBLIC_IS_STAGING === "true")
-  ) {
-    (
-      window as unknown as { FIREBASE_APPCHECK_DEBUG_TOKEN: boolean }
-    ).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    console.log("App Check Debug Token Enabled");
-  }
-  // App Checkの設定
-  const appCheck = initializeAppCheck(app, {
-    provider: new ReCaptchaV3Provider(
-      process.env.NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITEKEY as string
-    ),
-    isTokenAutoRefreshEnabled: true,
-  });
-  getToken(appCheck)
-    .then((token) => {
-      console.log("App Check: Success");
-      appCheckToken = token.token;
-    })
-    .catch((error) => {
-      console.log("App Check error:", error.message);
-      showSnackBar({
-        message:
-          "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。",
-        type: "warning",
-      });
+  // 開発環境ならApp Checkを使用しない
+  // ステージング環境でApp Checkのデバッグトークンを有効にする
+  if (process.env.NODE_ENV !== "development") {
+    if (process.env.NEXT_PUBLIC_IS_STAGING === "true") {
+      (
+        window as unknown as { FIREBASE_APPCHECK_DEBUG_TOKEN: boolean }
+      ).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+      console.log("App Check Debug Token Enabled");
+    }
+    // App Checkの設定
+    const appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(
+        process.env.NEXT_PUBLIC_FIREBASE_RECAPTCHA_SITEKEY as string
+      ),
+      isTokenAutoRefreshEnabled: true,
     });
+
+    getToken(appCheck)
+      .then((token) => {
+        console.log("App Check: Success");
+        appCheckToken = token.token;
+      })
+      .catch((error) => {
+        console.log(error.message);
+        showSnackBar({
+          message:
+            "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。",
+          type: "warning",
+        });
+      });
+  }
 }
 
 export const googleProvider = new GoogleAuthProvider();

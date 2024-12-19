@@ -39,7 +39,27 @@ export default function PostModal({ goalId }: { goalId: string }) {
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
-    if (selectedFile && !selectedFile.type.startsWith("image/")) {
+
+    if (!selectedFile) {
+      showSnackBar({
+        message: "ファイルが選択されていません",
+        type: "warning",
+      });
+      return;
+    }
+
+    // ファイルサイズの上限を設定
+    const maxSize = 8; // 上限8MB
+    const fileSizeMB = selectedFile.size / (1024 * 1024);
+    if (fileSizeMB > maxSize) {
+      showSnackBar({
+        message: `最大ファイルサイズは${maxSize}MBです。`,
+        type: "warning",
+      });
+      return;
+    }
+
+    if (!selectedFile.type.startsWith("image/")) {
       showSnackBar({
         message: "画像ファイルのみアップロードできます",
         type: "warning",

@@ -80,7 +80,6 @@ export const UserProvider = ({ children }: Props) => {
           const guestData: UserData = {
             userId: firebaseUser.uid,
             name: "Guest Login",
-            streak: 0,
             loginType: "Guest",
             isMailVerified: true,
           };

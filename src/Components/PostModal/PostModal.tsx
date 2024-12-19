@@ -18,6 +18,7 @@ import {
 } from "@mui/joy";
 import Box from "@mui/material/Box";
 import MuiButton from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
@@ -29,6 +30,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
   const [image, setImage] = useState<File | null>(null);
   const [progress, setProgress] = useState<number>(100);
   const [fileName, setFileName] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const { user } = useUser();
 
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -37,11 +39,18 @@ export default function PostModal({ goalId }: { goalId: string }) {
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
+    if (selectedFile && !selectedFile.type.startsWith("image/")) {
+      showSnackBar({
+        message: "画像ファイルのみアップロードできます",
+        type: "warning",
+      });
+      return;
+    }
     setImage(selectedFile || null);
     setFileName(selectedFile ? selectedFile.name : "");
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!image) {
       showSnackBar({
         message: "ファイルが選択されていません",
@@ -50,8 +59,10 @@ export default function PostModal({ goalId }: { goalId: string }) {
       return;
     }
 
+    setLoading(true);
+
     try {
-      uploadImage(
+      await uploadImage(
         image,
         (percent) => setProgress(percent),
         async (url) => {
@@ -78,6 +89,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
             setText("");
             setOpen(false);
             setFileName("");
+            setLoading(false);
           } catch (error: unknown) {
             console.error("Error creating post:", error);
             const message = handleCreatePostError(error);
@@ -85,6 +97,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
               message,
               type: "warning",
             });
+            setLoading(false);
           }
         }
       );
@@ -94,6 +107,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
         message: "画像のアップロードに失敗しました",
         type: "warning",
       });
+      setLoading(false);
     }
   };
 
@@ -169,13 +183,14 @@ export default function PostModal({ goalId }: { goalId: string }) {
                 variant="contained"
                 tabIndex={-1}
                 startIcon={<AddAPhotoIcon />}
-                sx={{ margin: "20px auto 0 !important", height: "40px" }}
+                sx={{ margin: "16px auto 0 !important", height: "40px" }}
               >
                 <FileName>
                   {fileName ? fileName : "画像をアップロード"}
                 </FileName>
                 <VisuallyHiddenInput
                   type="file"
+                  accept="image/*"
                   onChange={handleImageChange}
                   multiple
                 />
@@ -195,8 +210,16 @@ export default function PostModal({ goalId }: { goalId: string }) {
                   color="primary"
                   endDecorator={<SendIcon />}
                   onClick={handleUpload}
+                  disabled={loading}
                 >
-                  投稿
+                  {loading ? (
+                    <>
+                      <CircularProgress size={24} sx={{ marginRight: 1 }} />
+                      投稿中
+                    </>
+                  ) : (
+                    "投稿"
+                  )}
                 </JoyButton>
               </Stack>
             </Stack>
@@ -216,8 +239,11 @@ const LinearProgressWithLabel: React.FC<LinearProgressWithLabelProps> = ({
 }) => {
   return (
     <>
-      <Typography>アップロード中...</Typography>
-      <Box display="flex" alignItems="center" sx={{ margin: "0 !important" }}>
+      <Box
+        display="flex"
+        alignItems="center"
+        sx={{ marginTop: "16px !important" }}
+      >
         <Box width="100%" mr={1}>
           <LinearProgress variant="determinate" value={value} />
         </Box>

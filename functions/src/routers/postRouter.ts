@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
-import { Post } from "./types";
+import { PostWithGoalId } from "./types";
 
 const router = express.Router();
 const db = admin.firestore();
@@ -8,23 +8,30 @@ const db = admin.firestore();
 // GET: 全ての投稿を取得
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const postSnapshot = await db.collection("post").get();
+    const goalSnapshot = await db.collection("goal").get();
 
-    if (postSnapshot.empty) {
-      return res.status(404).json({ message: "No posts found" });
+    if (goalSnapshot.empty) {
+      return res.status(404).json({ message: "No goals found" });
     }
 
-    const postData: Post[] = postSnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        postId: doc.id,
-        userId: data.userId,
-        storedId: data.storedId,
-        text: data.text,
-        goalId: data.goalId,
-        submittedAt: new Date(data.submittedAt._seconds * 1000),
-      };
-    });
+    const postData: PostWithGoalId[] = [];
+
+    for (const goalDoc of goalSnapshot.docs) {
+      const goalData = goalDoc.data();
+      if (goalData.post) {
+        postData.push({
+          goalId: goalDoc.id,
+          userId: goalData.post.userId,
+          storedURL: goalData.post.storedURL,
+          text: goalData.post.text,
+          submittedAt: goalData.post.submittedAt.toDate(),
+        });
+      }
+    }
+
+    if (postData.length === 0) {
+      return res.status(404).json({ message: "No posts found" });
+    }
 
     return res.json(postData);
   } catch (error) {
@@ -41,120 +48,98 @@ router.get("/:userId", async (req: Request, res: Response) => {
   }
 
   try {
-    const postSnapshot = await db
-      .collection("post")
+    const goalSnapshot = await db
+      .collection("goal")
       .where("userId", "==", userId)
       .get();
-    if (postSnapshot.empty) {
-      return res.status(404).json({ message: "No posts found for this user" });
+
+    if (goalSnapshot.empty) {
+      return res.status(404).json({ message: "No goals found for this user" });
     }
 
-    const posts = postSnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        postId: doc.id,
-        userId: data.userId,
-        storedId: data.storedId,
-        text: data.text,
-        goalId: data.goalId,
-        submittedAt: new Date(data.submittedAt._seconds * 1000),
-      };
-    });
+    const postData: PostWithGoalId[] = [];
 
-    return res.json(posts);
+    for (const goalDoc of goalSnapshot.docs) {
+      const goalData = goalDoc.data();
+      if (goalData.post) {
+        postData.push({
+          goalId: goalDoc.id,
+          userId: goalData.post.userId,
+          storedURL: goalData.post.storedURL,
+          text: goalData.post.text,
+          submittedAt: goalData.post.submittedAt.toDate(),
+        });
+      }
+    }
+
+    return res.json(postData);
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching user's posts" });
+    return res.status(500).json({ message: "Error fetching posts" });
   }
 });
 
-// POST: 新しい投稿を作成し、画像をStorageに保存
+// POST: 新しい投稿を作成
 router.post("/", async (req: Request, res: Response) => {
-  const postId = db.collection("post").doc().id;
-
-  let userId: Post["userId"];
-  let storedId: Post["storedId"];
-  let text: Post["text"];
-  let goalId: Post["goalId"];
-  let submittedAt: Post["submittedAt"];
+  let userId: string;
+  let storedURL: PostWithGoalId["storedURL"];
+  let text: PostWithGoalId["text"];
+  let goalId: PostWithGoalId["goalId"];
+  let submittedAt: PostWithGoalId["submittedAt"];
 
   try {
-    ({ userId, storedId, text, goalId, submittedAt } = req.body);
+    ({ userId, storedURL, text, goalId, submittedAt } = req.body);
   } catch (error) {
     return res.status(400).json({ message: "Invalid request body" });
   }
 
-  if (!userId || !storedId || !goalId || !submittedAt) {
+  if (!userId || !storedURL || !text || !goalId || !submittedAt) {
     return res.status(400).json({
-      message: "userId, storedId, text, goalId, and submittedAt are required",
+      message: "userId, storedURL, text, goalId, and submittedAt are required",
     });
   }
 
-  if (!text) {
-    text = "";
-  }
-
   try {
-    await db
-      .collection("post")
-      .doc(postId)
-      .set({
-        userId,
-        storedId,
-        text,
-        goalId,
-        submittedAt: admin.firestore.Timestamp.fromDate(new Date(submittedAt)),
-      });
+    const goalRef = db.collection("goal").doc(goalId);
+    const goalDoc = await goalRef.get();
 
-    return res.json({ message: "Post created successfully", postId });
+    if (!goalDoc.exists) {
+      return res.status(404).json({ message: "Goal not found" });
+    }
+
+    await goalRef.update({
+      post: {
+        userId,
+        storedURL,
+        text,
+        submittedAt: new Date(submittedAt),
+      },
+    });
+
+    return res
+      .status(201)
+      .json({ message: "Post created successfully", goalId });
   } catch (error) {
     return res.status(500).json({ message: "Error creating post" });
   }
 });
 
-// PUT: 投稿を更新
-router.put("/:postId", async (req: Request, res: Response) => {
-  const postId = req.params.postId;
-  const { userId, storedId, text, goalId }: Partial<Post> = req.body;
-
-  if (!userId && !storedId && !text && !goalId) {
-    return res.status(400).json({
-      message: "At least one of userId, storedId, text, or goalId is required",
-    });
-  }
-
-  const updateData: Partial<Post> = {};
-  if (userId) {
-    updateData.userId = userId;
-  }
-  if (storedId) {
-    updateData.storedId = storedId;
-  }
-  if (text) {
-    updateData.text = text;
-  }
-  if (goalId) {
-    updateData.goalId = goalId;
-  }
-
-  try {
-    await db.collection("post").doc(postId).update(updateData);
-    return res.json({ message: "Post updated successfully", postId });
-  } catch (error) {
-    return res.status(500).json({ message: "Error updating post" });
-  }
-});
-
 // DELETE: 投稿を削除
-router.delete("/:postId", async (req: Request, res: Response) => {
-  const postId = req.params.postId;
-
-  if (!postId) {
-    return res.status(400).json({ message: "Post ID is required" });
-  }
+router.delete("/:goalId", async (req: Request, res: Response) => {
+  const goalId = req.params.goalId;
 
   try {
-    await db.collection("post").doc(postId).delete();
-    return res.json({ message: "Post deleted successfully", postId });
+    const goalRef = db.collection("goal").doc(goalId);
+    const goalDoc = await goalRef.get();
+
+    if (!goalDoc.exists) {
+      return res.status(404).json({ message: "Goal not found" });
+    }
+
+    await goalRef.update({
+      post: admin.firestore.FieldValue.delete(),
+    });
+
+    return res.json({ message: "Post deleted successfully" });
   } catch (error) {
     return res.status(500).json({ message: "Error deleting post" });
   }

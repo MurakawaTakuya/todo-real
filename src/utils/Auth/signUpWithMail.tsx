@@ -15,13 +15,13 @@ import {
  * @param {string} password
  * @param {string} name
  */
-export const signUpWithMail = (
+export const signUpWithMail = async (
   email: string,
   password: string,
   name: string
 ) => {
   // メールは初回ログインの時のみ成功する、2回目以降はエラーになるので、ログインを使う
-  createUserWithEmailAndPassword(auth, email, password)
+  await createUserWithEmailAndPassword(auth, email, password)
     .then(async (userCredential) => {
       const user = userCredential.user;
 

@@ -3,6 +3,7 @@ import { signInWithGoogleAccount } from "@/utils/Auth/signInWithGoogleAccount";
 import { signInWithMail } from "@/utils/Auth/signInWithMail";
 import { signUpWithMail } from "@/utils/Auth/signUpWithMail";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -23,23 +24,43 @@ export default function AuthForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formMode, setFormMode] = useState<"register" | "login">("register");
+  const [loading, setLoading] = useState(false);
+  const [loadingType, setLoadingType] = useState<
+    "Mail" | "Google" | "Guest" | null
+  >(null);
 
   const handleRegisterSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setLoading(true);
+    setLoadingType("Mail");
     await signUpWithMail(email, password, name);
+    setLoading(false);
+    setLoadingType(null);
   };
 
   const handleLoginSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setLoading(true);
+    setLoadingType("Mail");
     await signInWithMail(email, password);
+    setLoading(false);
+    setLoadingType(null);
   };
 
   const handleGoogleLogin = async () => {
+    setLoading(true);
+    setLoadingType("Google");
     await signInWithGoogleAccount();
+    setLoading(false);
+    setLoadingType(null);
   };
 
   const handleGuestLogin = async () => {
+    setLoading(true);
+    setLoadingType("Guest");
     await signInAsGuest();
+    setLoading(false);
+    setLoadingType(null);
   };
 
   return (
@@ -98,8 +119,20 @@ export default function AuthForm() {
                 required
                 autoComplete="new-password"
               />
-              <RoundedButton type="submit" variant="contained" fullWidth>
-                アカウント作成
+              <RoundedButton
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={loading}
+              >
+                {loading && loadingType === "Mail" ? (
+                  <>
+                    <CircularProgress size={24} sx={{ marginRight: 1 }} />
+                    アカウント作成
+                  </>
+                ) : (
+                  "アカウント作成"
+                )}
               </RoundedButton>
             </Box>
           </form>
@@ -133,19 +166,55 @@ export default function AuthForm() {
                 required
                 autoComplete="current-password"
               />
-              <RoundedButton type="submit" variant="contained" fullWidth>
-                ログイン
+              <RoundedButton
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={loading}
+              >
+                {loading && loadingType === "Mail" ? (
+                  <>
+                    <CircularProgress size={24} sx={{ marginRight: 1 }} />
+                    ログイン
+                  </>
+                ) : (
+                  "ログイン"
+                )}
               </RoundedButton>
             </Box>
           </form>
         </>
       )}
       <Divider>または</Divider>
-      <RoundedButton fullWidth variant="outlined" onClick={handleGoogleLogin}>
-        Googleでログイン
+      <RoundedButton
+        fullWidth
+        variant="outlined"
+        onClick={handleGoogleLogin}
+        disabled={loading}
+      >
+        {loading && loadingType === "Google" ? (
+          <>
+            <CircularProgress size={24} sx={{ marginRight: 1 }} />
+            Googleアカウントでログイン
+          </>
+        ) : (
+          "Googleアカウントでログイン"
+        )}
       </RoundedButton>
-      <RoundedButton fullWidth variant="outlined" onClick={handleGuestLogin}>
-        ゲストログイン
+      <RoundedButton
+        fullWidth
+        variant="outlined"
+        onClick={handleGuestLogin}
+        disabled={loading}
+      >
+        {loading && loadingType === "Guest" ? (
+          <>
+            <CircularProgress size={24} sx={{ marginRight: 1 }} />
+            ゲストログイン
+          </>
+        ) : (
+          "ゲストログイン"
+        )}
       </RoundedButton>
     </>
   );

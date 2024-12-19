@@ -1,7 +1,7 @@
 export interface UserData {
   userId: string;
   name: string;
-  streak: number;
+  streak?: number;
   loginType: LoginType;
   isMailVerified: boolean;
 }

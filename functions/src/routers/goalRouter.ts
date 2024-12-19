@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
-import { Goal } from "./types";
+import { Goal, GoalWithId } from "./types";
 
 const router = express.Router();
 const db = admin.firestore();
@@ -14,13 +14,14 @@ router.get("/", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "No goals found" });
     }
 
-    const goalData: Goal[] = goalSnapshot.docs.map((doc) => {
+    const goalData: GoalWithId[] = goalSnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
         goalId: doc.id,
         deadline: new Date(data.deadline._seconds * 1000),
         userId: data.userId,
         text: data.text,
+        post: data.post,
       };
     });
 
@@ -48,17 +49,18 @@ router.get("/:userId", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "No goals found for this user" });
     }
 
-    const goals: Goal[] = goalSnapshot.docs.map((doc) => {
+    const goalData: GoalWithId[] = goalSnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
         goalId: doc.id,
         userId: data.userId,
         deadline: new Date(data.deadline._seconds * 1000),
         text: data.text,
+        post: data.post,
       };
     });
 
-    return res.json(goals);
+    return res.json(goalData);
   } catch (error) {
     return res.status(500).json({ message: "Error fetching goals" });
   }
@@ -66,8 +68,6 @@ router.get("/:userId", async (req: Request, res: Response) => {
 
 // POST: 新しい目標を作成
 router.post("/", async (req: Request, res: Response) => {
-  const goalId = db.collection("goal").doc().id;
-
   let userId: Goal["userId"];
   let deadline: Goal["deadline"];
   let text: Goal["text"];
@@ -83,6 +83,8 @@ router.post("/", async (req: Request, res: Response) => {
       .status(400)
       .json({ message: "userId, deadline, and text are required" });
   }
+
+  const goalId = db.collection("goal").doc().id;
 
   try {
     await db

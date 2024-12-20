@@ -15,6 +15,8 @@ import { Divider } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
 import DeleteGoalModal from "../DeleteGoalModal/DeleteGoalModal";
 import DeletePostModal from "../DeletePostModal/DeletePostModal";
+import CopyGoalAfterPostButton from "../GoalModal/CopyGoalAfterPostButton";
+import CopyModalButton from "../GoalModal/CopyGoalButton";
 import PostModal from "../PostModal/PostModal";
 
 const successPostIndicatorStyle = {
@@ -97,18 +99,40 @@ export default function Progress({
     <>
       {allResults.map((result) => {
         const userName = userNames[result.userId] || "Loading...";
+
+        if (!user) {
+          return null;
+        }
+
         if (result.type === "success") {
-          return successStep(
-            result as SuccessResult,
-            userName,
-            user as UserData
+          return (
+            <SuccessStep
+              key={result.goalId}
+              result={result as SuccessResult}
+              userName={userName}
+              user={user}
+            />
           );
         }
         if (result.type === "failed") {
-          return failedStep(result as GoalWithId, userName, user as UserData);
+          return (
+            <FailedStep
+              key={result.goalId}
+              result={result as GoalWithId}
+              userName={userName}
+              user={user as UserData}
+            />
+          );
         }
         if (result.type === "pending") {
-          return pendingStep(result as GoalWithId, userName, user as UserData);
+          return (
+            <PendingStep
+              key={result.goalId}
+              result={result as GoalWithId}
+              userName={userName}
+              user={user as UserData}
+            />
+          );
         }
         return null;
       })}
@@ -116,11 +140,15 @@ export default function Progress({
   );
 }
 
-const successStep = (
-  result: SuccessResult,
-  userName: string,
-  user: UserData
-) => {
+const SuccessStep = ({
+  result,
+  userName,
+  user,
+}: {
+  result: SuccessResult;
+  userName: string;
+  user: UserData;
+}) => {
   return (
     <StepperBlock key={result.goalId} userName={userName} resultType="success">
       <Step
@@ -203,7 +231,15 @@ const successStep = (
   );
 };
 
-const failedStep = (result: GoalWithId, userName: string, user: UserData) => {
+const FailedStep = ({
+  result,
+  userName,
+  user,
+}: {
+  result: GoalWithId;
+  userName: string;
+  user: UserData;
+}) => {
   return (
     <StepperBlock key={result.goalId} userName={userName} resultType="failed">
       <Step
@@ -226,7 +262,17 @@ const failedStep = (result: GoalWithId, userName: string, user: UserData) => {
   );
 };
 
-const pendingStep = (result: GoalWithId, userName: string, user: UserData) => {
+const PendingStep = ({
+  result,
+  userName,
+  user,
+}: {
+  result: GoalWithId;
+  userName: string;
+  user: UserData;
+}) => {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   return (
     <StepperBlock key={result.goalId} userName={userName} resultType="pending">
       <Step
@@ -245,8 +291,18 @@ const pendingStep = (result: GoalWithId, userName: string, user: UserData) => {
           userId={result.userId}
           user={user}
         />
-        {/* 自分の作成した目標の場合のみ投稿可能にする */}
-        {result.userId === user?.userId && <PostModal goalId={result.goalId} />}
+        {isSubmitted ? (
+          // 投稿したら同じ目標で明日にも作成できるボタンを表示する
+          <CopyGoalAfterPostButton
+            goalText={result.text}
+            deadline={result.deadline}
+          />
+        ) : (
+          // 自分の作成した目標の場合のみ投稿可能にする
+          result.userId === user?.userId && (
+            <PostModal goalId={result.goalId} setIsSubmitted={setIsSubmitted} />
+          )
+        )}
       </Step>
     </StepperBlock>
   );
@@ -291,10 +347,13 @@ const GoalCard = ({
           <Typography level="body-sm">
             {formatStringToDate(deadline)}までに
           </Typography>
-          {/* 期限の1時間以内、もしくは自分の目標ではない場合は削除できないようにする */}
-          {!isWithinOneHour && userId === user?.userId && (
-            <DeleteGoalModal goalId={goalId} />
-          )}
+          <div style={{ display: "flex", gap: "5px" }}>
+            <CopyModalButton deadline={deadline} goalText={goalText} />
+            {/* 期限の1時間以内、もしくは自分の目標ではない場合は削除できないようにする */}
+            {!isWithinOneHour && userId === user?.userId && (
+              <DeleteGoalModal goalId={goalId} />
+            )}
+          </div>
         </div>
         <Divider />
         <Typography level="body-lg">{goalText}</Typography>

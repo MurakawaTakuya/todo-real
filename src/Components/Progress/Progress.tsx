@@ -15,6 +15,7 @@ import { Divider } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
 import DeleteGoalModal from "../DeleteGoalModal/DeleteGoalModal";
 import DeletePostModal from "../DeletePostModal/DeletePostModal";
+import CopyModalButton from "../GoalModal/CopyGoalButton";
 import PostModal from "../PostModal/PostModal";
 
 const successPostIndicatorStyle = {
@@ -291,10 +292,13 @@ const GoalCard = ({
           <Typography level="body-sm">
             {formatStringToDate(deadline)}までに
           </Typography>
-          {/* 期限の1時間以内、もしくは自分の目標ではない場合は削除できないようにする */}
-          {!isWithinOneHour && userId === user?.userId && (
-            <DeleteGoalModal goalId={goalId} />
-          )}
+          <div style={{ display: "flex", gap: "5px" }}>
+            <CopyModalButton deadline={deadline} text={goalText} />
+            {/* 期限の1時間以内、もしくは自分の目標ではない場合は削除できないようにする */}
+            {!isWithinOneHour && userId === user?.userId && (
+              <DeleteGoalModal goalId={goalId} />
+            )}
+          </div>
         </div>
         <Divider />
         <Typography level="body-lg">{goalText}</Typography>

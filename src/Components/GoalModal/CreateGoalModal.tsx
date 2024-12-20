@@ -41,6 +41,7 @@ export default function CreateGoalModal({
       const localDate = new Date(
         convertedDate.getTime() - convertedDate.getTimezoneOffset() * 60000
       );
+      localDate.setDate(localDate.getDate() + 1); // 1日後にする
       setDueDate(localDate.toISOString().slice(0, 16));
     }
   }, [defaultText, defaultDeadline]);

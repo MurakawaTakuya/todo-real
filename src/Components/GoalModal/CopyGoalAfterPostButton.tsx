@@ -1,22 +1,27 @@
-import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
+import { Add } from "@mui/icons-material";
+import { Button } from "@mui/joy";
 import { useState } from "react";
 import CreateGoalModal from "./CreateGoalModal";
 
-export default function CopyModalButton({
-  deadline,
+export default function CopyGoalAfterPostButton({
   goalText,
+  deadline,
 }: {
-  deadline: string;
   goalText: string;
+  deadline: string;
 }) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <LibraryAddOutlinedIcon
+      <Button
+        variant="solid"
+        color="success"
+        startDecorator={<Add />}
         onClick={() => setOpen(true)}
-        sx={{ cursor: "pointer", fontSize: "23px" }}
-      />
+      >
+        この目標を次の日も達成する
+      </Button>
 
       <CreateGoalModal
         open={open}

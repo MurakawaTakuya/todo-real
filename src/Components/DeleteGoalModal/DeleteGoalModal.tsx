@@ -37,9 +37,8 @@ export default function DeleteGoalModal({ goalId }: { goalId: string }) {
   return (
     <>
       <DeleteOutlineIcon
-        style={{ fontSize: "23px" }}
         onClick={() => setOpen(true)}
-        sx={{ cursor: "pointer" }}
+        sx={{ cursor: "pointer", fontSize: "23px" }}
       />
 
       <Modal

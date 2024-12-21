@@ -24,7 +24,13 @@ import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import React, { ChangeEvent, useState } from "react";
 
-export default function PostModal({ goalId }: { goalId: string }) {
+export default function PostModal({
+  goalId,
+  setIsSubmitted,
+}: {
+  goalId: string;
+  setIsSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
@@ -104,6 +110,7 @@ export default function PostModal({ goalId }: { goalId: string }) {
               message: "投稿しました",
               type: "success",
             });
+            setIsSubmitted(true);
 
             setImage(null);
             setText("");

@@ -1,6 +1,6 @@
 "use client";
 import DashBoard from "@/Components/DashBoard/DashBoard";
-import GoalModal from "@/Components/GoalModal/GoalModal";
+import GoalModalButton from "@/Components/GoalModal/GoalModalButton";
 import { useUser } from "@/utils/UserContext";
 import { styled } from "@mui/material/styles";
 import ToggleButton from "@mui/material/ToggleButton";
@@ -55,7 +55,7 @@ export default function MyContent() {
         <DashBoard userId={user?.userId} pending={false} />
       )}
 
-      <GoalModal />
+      <GoalModalButton />
     </>
   );
 }

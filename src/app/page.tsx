@@ -1,12 +1,12 @@
 "use client";
 import DashBoard from "@/Components/DashBoard/DashBoard";
-import GoalModal from "@/Components/GoalModal/GoalModal";
+import GoalModalButton from "@/Components/GoalModal/GoalModalButton";
 
 export default function Top() {
   return (
     <>
       <DashBoard pending={false} />
-      <GoalModal />
+      <GoalModalButton />
     </>
   );
 }

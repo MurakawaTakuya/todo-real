@@ -109,7 +109,7 @@ export const deleteTasksOnGoalDelete = onDocumentDeleted(
 export const deleteTasksOnPostCreate = onDocumentCreated(
   {
     region: region,
-    document: "post/{postId}",
+    document: "goal/{goalId}/posts/{postId}",
   },
   async (event) => {
     if (process.env.NODE_ENV !== "production") {
@@ -127,8 +127,7 @@ export const deleteTasksOnPostCreate = onDocumentCreated(
     }
 
     try {
-      const postData = event.data.data();
-      const goalId = postData.goalId;
+      const goalId = event.params.goalId;
       const queuePath = tasksClient.queuePath(projectId, region, queue);
       const taskName = `${queuePath}/tasks/${goalId}`; // goalIdが名前になっているタスクを削除
       await tasksClient.deleteTask({ name: taskName });

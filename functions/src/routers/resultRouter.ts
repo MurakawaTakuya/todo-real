@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
-import { GoalWithId, SuccessResult } from "./types";
+import { GoalWithIdAndUserData, User } from "./types";
 
 const router = express.Router();
 const db = admin.firestore();
@@ -14,57 +14,70 @@ const getResults = async (limit: number, offset: number, userId?: string) => {
 
   const goals = goalSnapshot.docs.map((doc) => {
     const data = doc.data();
+    const post = data.post;
     return {
       goalId: doc.id,
       userId: data.userId,
-      deadline: new Date(data.deadline._seconds * 1000),
+      deadline: data.deadline.toDate(),
       text: data.text,
+      post: post && {
+        userId: post.userId,
+        storedURL: post.storedURL,
+        text: post.text,
+        submittedAt: post.submittedAt.toDate(),
+      },
     };
-  }) as GoalWithId[];
+  }) as GoalWithIdAndUserData[];
 
   if (!goals || goals.length === 0) {
     return { successResults: [], failedResults: [], pendingResults: [] };
   }
 
-  const postSnapshot = await db
-    .collection("post")
-    .where(
-      "goalId",
-      "in",
-      goals.map((goal) => goal.goalId)
-    )
-    .get();
+  const successResults: GoalWithIdAndUserData[] = [];
+  const failedResults: GoalWithIdAndUserData[] = [];
+  const pendingResults: GoalWithIdAndUserData[] = [];
 
-  const successResults: SuccessResult[] = [];
-  const failedResults: GoalWithId[] = [];
-  const pendingResults: GoalWithId[] = [];
-  goals.forEach((goal) => {
-    const post = postSnapshot.docs.find(
-      (doc) => doc.data().goalId === goal.goalId
-    );
+  // mapで<userId, userName>のリストを作成し、userNameをキャッシュする
+  const userList = new Map<string, User>();
+
+  for (const goal of goals) {
+    // userListにあるならば、userNameを取得し、無いならばfirestoreから取得してキャッシュする
+    let userData = userList.get(goal.userId);
+    if (!userData) {
+      const userDoc = await db.collection("user").doc(goal.userId).get();
+      userData = userDoc.data() as User;
+      userData = {
+        name: userData?.name || "Unknown user",
+        streak: userData?.streak || 0,
+      };
+      userList.set(goal.userId, userData);
+    }
+
+    const post = goal.post;
     if (post) {
-      const postData = post.data();
-      const submittedAt = postData.submittedAt.toDate();
-      if (submittedAt > goal.deadline) {
-        failedResults.push(goal);
+      if (post.submittedAt > goal.deadline) {
+        failedResults.push(goal, {
+          ...goal,
+          userData,
+        });
       } else {
         successResults.push({
-          userId: goal.userId,
-          goalId: goal.goalId,
-          postId: post.id,
-          goalText: goal.text,
-          postText: postData.text,
-          storedId: postData.storedId,
-          deadline: goal.deadline,
-          submittedAt: submittedAt,
+          ...goal,
+          userData,
         });
       }
     } else if (goal.deadline < new Date()) {
-      failedResults.push(goal);
+      failedResults.push({
+        ...goal,
+        userData,
+      });
     } else {
-      pendingResults.push(goal);
+      pendingResults.push({
+        ...goal,
+        userData,
+      });
     }
-  });
+  }
 
   return { successResults, failedResults, pendingResults };
 };
@@ -73,21 +86,14 @@ const getResults = async (limit: number, offset: number, userId?: string) => {
 router.get("/:userId?", async (req: Request, res: Response) => {
   const userId = req.params.userId;
 
-  const limit = req.query.limit ? Number(req.query.limit) : 50; // 取得数
-  const offset = req.query.offset ? Number(req.query.offset) : 0; // 開始位置
-  if (offset < 0) {
-    res.status(400).json({ message: "Offset must be a positive number" });
-  }
-  if (limit < 1) {
-    res.status(400).json({ message: "Limit must be more than zero" });
-  }
+  const limit = parseInt(req.query.limit as string) || 10;
+  const offset = parseInt(req.query.offset as string) || 0;
 
   try {
     const results = await getResults(limit, offset, userId);
-    res.json(results);
+    return res.json(results);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Error fetching results" });
   }
 });
 

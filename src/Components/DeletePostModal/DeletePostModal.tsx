@@ -9,16 +9,16 @@ import { useState } from "react";
 import { showSnackBar } from "../SnackBar/SnackBar";
 
 export default function DeletePostModal({
-  postId,
+  goalId,
   deadline,
 }: {
-  postId: string;
+  goalId: string;
   deadline: string;
 }) {
   const [open, setOpen] = useState(false);
 
   const handleDeletePost = async () => {
-    const response = await fetch(`${functionsEndpoint}/post/${postId}`, {
+    const response = await fetch(`${functionsEndpoint}/post/${goalId}`, {
       method: "DELETE",
       headers: {
         "X-Firebase-AppCheck": appCheckToken,

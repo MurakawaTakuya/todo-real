@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
+import { logger } from "firebase-functions";
 import { User } from "./types";
 
 const router = express.Router();
@@ -25,6 +26,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     return res.json(userData);
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error fetching user data" });
   }
 });
@@ -54,6 +56,7 @@ router.get("/id/:userId", async (req: Request, res: Response) => {
 
     return res.json(userData);
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error fetching user data" });
   }
 });
@@ -84,6 +87,7 @@ router.get("/name/:userName", async (req: Request, res: Response) => {
 
     return res.json(userData);
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error fetching user data" });
   }
 });
@@ -98,6 +102,7 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     ({ name, userId, streak = 0, fcmToken = "" } = req.body);
   } catch (error) {
+    logger.error(error);
     return res.status(400).json({ message: "Invalid request body" });
   }
 
@@ -116,6 +121,7 @@ router.post("/", async (req: Request, res: Response) => {
       .status(201)
       .json({ message: "User created successfully", userId });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error creating user" });
   }
 });
@@ -146,6 +152,7 @@ router.put("/:userId", async (req: Request, res: Response) => {
     await db.collection("user").doc(userId).update(updateData);
     return res.json({ message: "User updated successfully", userId });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error updating user" });
   }
 });
@@ -162,6 +169,7 @@ router.delete("/:userId", async (req: Request, res: Response) => {
     await db.collection("user").doc(userId).delete();
     return res.json({ message: "User deleted successfully", userId });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error deleting user" });
   }
 });

@@ -48,7 +48,8 @@ export default function NotificationButton() {
       })
       .catch((error) => {
         console.error("Failed to enable notifications:", error);
-        let message = "通知の有効化に失敗しました";
+        let message =
+          "通知の有効化に失敗しました。数秒経過してから再度ボタンを押してください。";
         if (error instanceof Error) {
           if (error.message == "Permission denied") {
             message = "ブラウザ設定からこのサイトの通知を許可してください";

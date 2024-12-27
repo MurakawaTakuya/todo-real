@@ -22,12 +22,13 @@ export default function GoalModalButton() {
           width: "100%",
           maxWidth: "600px",
           zIndex: 1000,
+          pointerEvents: "none",
         }}
       >
         <Fab
           color="primary"
           aria-label="add"
-          sx={{ marginRight: "10px !important" }}
+          sx={{ marginRight: "13px !important", pointerEvents: "auto" }}
           // ゲストかメール認証が未完了のユーザーは使用不可
           onClick={() => setOpen(true)}
           disabled={

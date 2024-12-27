@@ -1,5 +1,24 @@
 /* eslint-disable no-undef */
 
+// 通知クリック時の処理
+self.addEventListener("notificationclick", (event) => {
+  console.log("Notification click received:", event);
+  event.notification.close();
+
+  event.waitUntil(
+    clients
+      .matchAll({
+        type: "window",
+      })
+      .then((clientList) => {
+        for (const client of clientList) {
+          if (client.url === "/" && "focus" in client) return client.focus();
+        }
+        if (clients.openWindow) return clients.openWindow("/");
+      })
+  );
+});
+
 importScripts(
   "https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"
 );
@@ -22,20 +41,4 @@ const messaging = firebase.messaging();
 // バックグラウンド時の通知を処理(通知自体は何もしなくても受信される)
 messaging.onBackgroundMessage((payload) => {
   console.log("Received background message:", payload);
-});
-
-// 通知クリック時の処理
-self.addEventListener("notificationclick", (event) => {
-  console.log("Notification click received:", event);
-  event.notification.close();
-
-  event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then(() => {
-      clients
-        .openWindow("https://todo-real-c28fa.web.app/")
-        .then((windowClient) => {
-          windowClient.focus();
-        });
-    })
-  );
 });

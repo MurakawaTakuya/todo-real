@@ -45,6 +45,7 @@ export const createTasksOnGoalCreate = onDocumentCreated(
           notification: {
             title: `${marginTime}分以内に目標を完了し写真をアップロードしましょう!`,
             body: goalData.text,
+            click_action: "https://todo-real-c28fa.web.app/mycontent/",
           },
         },
       };

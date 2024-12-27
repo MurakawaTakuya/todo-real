@@ -2,7 +2,7 @@ import cors from "cors";
 import express from "express";
 import { rateLimit } from "express-rate-limit";
 import admin from "firebase-admin";
-import * as logger from "firebase-functions/logger";
+import { logger } from "firebase-functions";
 import { onRequest } from "firebase-functions/v2/https";
 import helmet from "helmet";
 import serviceAccount from "./serviceAccountKey.json";

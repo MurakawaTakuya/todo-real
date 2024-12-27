@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
+import * as logger from "firebase-functions/logger";
 import { Post } from "./types";
 
 const router = express.Router();
@@ -28,6 +29,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     return res.json(postData);
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error fetching posts" });
   }
 });
@@ -63,6 +65,7 @@ router.get("/:userId", async (req: Request, res: Response) => {
 
     return res.json(posts);
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error fetching user's posts" });
   }
 });
@@ -80,6 +83,7 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     ({ userId, storedId, text, goalId, submittedAt } = req.body);
   } catch (error) {
+    logger.error(error);
     return res.status(400).json({ message: "Invalid request body" });
   }
 
@@ -107,6 +111,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     return res.json({ message: "Post created successfully", postId });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error creating post" });
   }
 });
@@ -140,6 +145,7 @@ router.put("/:postId", async (req: Request, res: Response) => {
     await db.collection("post").doc(postId).update(updateData);
     return res.json({ message: "Post updated successfully", postId });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error updating post" });
   }
 });
@@ -156,6 +162,7 @@ router.delete("/:postId", async (req: Request, res: Response) => {
     await db.collection("post").doc(postId).delete();
     return res.json({ message: "Post deleted successfully", postId });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error deleting post" });
   }
 });

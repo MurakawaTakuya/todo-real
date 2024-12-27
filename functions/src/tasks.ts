@@ -1,6 +1,6 @@
 import { CloudTasksClient } from "@google-cloud/tasks";
 import * as admin from "firebase-admin";
-import * as logger from "firebase-functions/logger";
+import { logger } from "firebase-functions";
 import {
   onDocumentCreated,
   onDocumentDeleted,
@@ -45,7 +45,6 @@ export const createTasksOnGoalCreate = onDocumentCreated(
           notification: {
             title: `${marginTime}分以内に目標を完了し写真をアップロードしましょう!`,
             body: goalData.text,
-            click_action: "https://todo-real-c28fa.web.app/mycontent/",
           },
         },
       };
@@ -73,7 +72,7 @@ export const createTasksOnGoalCreate = onDocumentCreated(
       });
       logger.info("Task created for goalId:", goalId);
     } catch (error) {
-      logger.info("Error scheduling task:", error);
+      logger.error("Error scheduling task:", error);
     }
   }
 );

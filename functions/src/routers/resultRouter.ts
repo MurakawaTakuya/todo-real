@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
+import { logger } from "firebase-functions";
 import { GoalWithId, SuccessResult } from "./types";
 
 const router = express.Router();
@@ -86,7 +87,7 @@ router.get("/:userId?", async (req: Request, res: Response) => {
     const results = await getResults(limit, offset, userId);
     res.json(results);
   } catch (error) {
-    console.error(error);
+    logger.info(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });

@@ -79,6 +79,7 @@ export default function NameUpdate() {
         <ModalDialog
           aria-labelledby="update-name-title"
           aria-describedby="update-name-description"
+          sx={{ width: "90%", maxWidth: 400 }}
         >
           <DialogTitle id="update-name-title">名前を変更</DialogTitle>
           <DialogContent id="update-name-description">

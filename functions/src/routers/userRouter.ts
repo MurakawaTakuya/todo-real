@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { countCompletedGoals, countFailedGoals, getStreak } from "./status";
 import { User } from "./types";
 
 const router = express.Router();
@@ -15,14 +16,23 @@ router.get("/", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "No users found" });
     }
 
-    const userData: User[] = userSnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        userId: doc.id,
-        name: data.name,
-        streak: data.streak,
-      };
-    });
+    const userData: User[] = await Promise.all(
+      userSnapshot.docs.map(async (doc) => {
+        const data = doc.data();
+        const userId = doc.id;
+        const totalCompletedGoals = await countCompletedGoals(userId);
+        const totalFailedGoals = await countFailedGoals(userId);
+        const streak = await getStreak(userId);
+
+        return {
+          userId,
+          name: data.name,
+          completed: totalCompletedGoals,
+          failed: totalFailedGoals,
+          streak,
+        };
+      })
+    );
 
     return res.json(userData);
   } catch (error) {
@@ -47,11 +57,16 @@ router.get("/id/:userId", async (req: Request, res: Response) => {
     }
 
     const data = userDoc.data();
+    const totalCompletedGoals = await countCompletedGoals(userId);
+    const totalFailedGoals = await countFailedGoals(userId);
+    const streak = await getStreak(userId);
 
     const userData: User & { userId: string } = {
-      userId: userDoc.id,
-      name: data?.name || "",
-      streak: data?.streak || 0,
+      userId: userId,
+      name: data?.name || "Unknown user",
+      completed: totalCompletedGoals,
+      failed: totalFailedGoals,
+      streak,
     };
 
     return res.json(userData);
@@ -76,14 +91,23 @@ router.get("/name/:userName", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const userData: User[] = userSnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        userId: doc.id,
-        name: data.name,
-        streak: data.streak,
-      };
-    });
+    const userData: User[] = await Promise.all(
+      userSnapshot.docs.map(async (doc) => {
+        const data = doc.data();
+        const userId = doc.id;
+        const totalCompletedGoals = await countCompletedGoals(userId);
+        const totalFailedGoals = await countFailedGoals(userId);
+        const streak = await getStreak(userId);
+
+        return {
+          userId,
+          name: data.name,
+          completed: totalCompletedGoals,
+          failed: totalFailedGoals,
+          streak,
+        };
+      })
+    );
 
     return res.json(userData);
   } catch (error) {

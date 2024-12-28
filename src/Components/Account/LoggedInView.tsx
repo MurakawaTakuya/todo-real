@@ -1,12 +1,12 @@
-import { auth } from "@/app/firebase";
 import NameUpdate from "@/Components/NameUpdate/NameUpdate";
 import NotificationButton from "@/Components/NotificationButton/NotificationButton";
-import { showSnackBar } from "@/Components/SnackBar/SnackBar";
+import { handleSignOut } from "@/utils/Auth/signOut";
+import { getSuccessRate } from "@/utils/successRate";
 import { useUser } from "@/utils/UserContext";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import { signOut } from "firebase/auth";
+import { useEffect, useState } from "react";
 
 export const RoundedButton = styled(Button)(({ theme }) => ({
   borderRadius: "30px",
@@ -14,25 +14,27 @@ export const RoundedButton = styled(Button)(({ theme }) => ({
 }));
 
 export default function LoggedInView() {
+  const [userStats, setUserStats] = useState<{
+    streak: number;
+    successRate: number;
+    completed: number;
+  }>({
+    streak: 0,
+    successRate: 0,
+    completed: 0,
+  });
   const { user } = useUser();
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-
-      showSnackBar({
-        message: "ログアウトしました",
-        type: "success",
-      });
-    } catch (error) {
-      console.error("errorCode:", (error as Error)?.name);
-      console.error("errorMessage:", (error as Error)?.message);
-      showSnackBar({
-        message: "ログアウトに失敗しました",
-        type: "warning",
+  useEffect(() => {
+    if (user) {
+      const successRate = getSuccessRate(user.completed, user.failed);
+      setUserStats({
+        streak: user.streak ?? 0,
+        successRate: successRate ?? 0,
+        completed: user.completed ?? 0,
       });
     }
-  };
+  }, [user]);
 
   if (!user) {
     return null;
@@ -43,9 +45,20 @@ export default function LoggedInView() {
       {user.loginType === "Guest" ? (
         <>ゲストとしてログイン中</>
       ) : (
-        <Typography sx={{ textAlign: "center" }}>
-          ログイン中: {user.name}
-        </Typography>
+        <>
+          <Typography sx={{ textAlign: "center" }}>
+            ようこそ、{user.name}さん!
+          </Typography>
+          <Typography sx={{ textAlign: "center" }}>
+            連続達成日数: {userStats.streak}日目
+          </Typography>
+          <Typography sx={{ textAlign: "center" }}>
+            目標達成率: {userStats.successRate}%
+          </Typography>
+          <Typography sx={{ textAlign: "center" }}>
+            達成回数: {userStats.completed}回
+          </Typography>
+        </>
       )}
 
       {!user.isMailVerified && (
@@ -71,7 +84,7 @@ export default function LoggedInView() {
         </div>
       )}
 
-      <RoundedButton variant="contained" onClick={handleLogout}>
+      <RoundedButton variant="contained" onClick={handleSignOut}>
         ログアウト
       </RoundedButton>
     </>

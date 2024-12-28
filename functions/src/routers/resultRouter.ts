@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { countCompletedGoals, countFailedGoals, getStreak } from "./status";
 import { GoalWithIdAndUserData, User } from "./types";
 
 const router = express.Router();
@@ -40,6 +41,7 @@ const getResults = async (
   const goals = goalSnapshot.docs.map((doc) => {
     const data = doc.data();
     const post = data.post;
+
     return {
       goalId: doc.id,
       userId: data.userId,
@@ -66,15 +68,22 @@ const getResults = async (
 
   for (const goal of goals) {
     // userListにあるならば、userNameを取得し、無いならばfirestoreから取得してキャッシュする
-    let userData = userList.get(goal.userId);
+    const userId = goal.userId;
+    let userData = userList.get(userId);
     if (!userData) {
-      const userDoc = await db.collection("user").doc(goal.userId).get();
+      const userDoc = await db.collection("user").doc(userId).get();
+      const totalCompletedGoals = await countCompletedGoals(userId);
+      const totalFailedGoals = await countFailedGoals(userId);
+      const streak = await getStreak(userId);
+
       userData = userDoc.data() as User;
       userData = {
         name: userData?.name || "Unknown user",
-        streak: userData?.streak || 0,
+        completed: totalCompletedGoals,
+        failed: totalFailedGoals,
+        streak,
       };
-      userList.set(goal.userId, userData);
+      userList.set(userId, userData);
     }
 
     const post = goal.post;

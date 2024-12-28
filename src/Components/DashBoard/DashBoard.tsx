@@ -54,7 +54,7 @@ export default function DashBoard({
           type: "warning",
         });
       });
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     // 表示したい項目にデータがない場合はnoResultをtrueにする

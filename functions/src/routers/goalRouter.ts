@@ -98,6 +98,7 @@ router.post("/", async (req: Request, res: Response) => {
         userId: userId,
         deadline: admin.firestore.Timestamp.fromDate(new Date(deadline)),
         text: text,
+        post: null,
       });
 
     return res

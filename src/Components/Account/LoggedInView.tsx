@@ -1,10 +1,12 @@
 import NameUpdate from "@/Components/NameUpdate/NameUpdate";
 import NotificationButton from "@/Components/NotificationButton/NotificationButton";
 import { handleSignOut } from "@/utils/Auth/signOut";
+import { getSuccessRate } from "@/utils/successRate";
 import { useUser } from "@/utils/UserContext";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import { useEffect, useState } from "react";
 
 export const RoundedButton = styled(Button)(({ theme }) => ({
   borderRadius: "30px",
@@ -12,16 +14,31 @@ export const RoundedButton = styled(Button)(({ theme }) => ({
 }));
 
 export default function LoggedInView() {
+  const [userStats, setUserStats] = useState<{
+    streak: number;
+    successRate: number;
+    completed: number;
+  }>({
+    streak: 0,
+    successRate: 0,
+    completed: 0,
+  });
   const { user } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      const successRate = getSuccessRate(user.completed, user.failed);
+      setUserStats({
+        streak: user.streak ?? 0,
+        successRate: successRate ?? 0,
+        completed: user.completed ?? 0,
+      });
+    }
+  }, [user]);
 
   if (!user) {
     return null;
   }
-
-  const successRate =
-    user && user.completed && user.failed
-      ? Math.floor((user.completed / (user.completed + user.failed)) * 100)
-      : "?";
 
   return (
     <>
@@ -33,13 +50,13 @@ export default function LoggedInView() {
             ようこそ、{user.name}さん!
           </Typography>
           <Typography sx={{ textAlign: "center" }}>
-            連続達成日数: {user.streak}日目
+            連続達成日数: {userStats.streak}日目
           </Typography>
           <Typography sx={{ textAlign: "center" }}>
-            目標達成率: {successRate}%
+            目標達成率: {userStats.successRate}%
           </Typography>
           <Typography sx={{ textAlign: "center" }}>
-            達成回数: {user.completed}回
+            達成回数: {userStats.completed}回
           </Typography>
         </>
       )}

@@ -1,5 +1,6 @@
 import { GoalWithIdAndUserData, User } from "@/types/types";
 import { formatStringToDate } from "@/utils/DateFormatter";
+import { getSuccessRate } from "@/utils/successRate";
 import { useUser } from "@/utils/UserContext";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
@@ -350,12 +351,9 @@ const StepperBlock = ({
   userData?: User | null;
   resultType?: "success" | "failed" | "pending";
 }) => {
-  const successRate =
-    userData && userData.completed && userData.failed
-      ? Math.floor(
-          (userData.completed / (userData.completed + userData.failed)) * 100
-        )
-      : "?";
+  const successRate = userData
+    ? getSuccessRate(userData.completed, userData.failed)
+    : 0;
 
   return (
     <Card

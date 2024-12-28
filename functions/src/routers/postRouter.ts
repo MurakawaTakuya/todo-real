@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { updateStreak } from "./status";
 import { PostWithGoalId } from "./types";
 
 const router = express.Router();
@@ -107,6 +108,12 @@ router.post("/", async (req: Request, res: Response) => {
 
     if (!goalDoc.exists) {
       return res.status(404).json({ message: "Goal not found" });
+    }
+
+    // streakを更新
+    const goalData = goalDoc.data();
+    if (goalData?.userId) {
+      await updateStreak(goalData.userId);
     }
 
     await goalRef.update({

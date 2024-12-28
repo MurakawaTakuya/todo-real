@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { countCompletedGoals, countFailedGoals, getStreak } from "./status";
 import { User } from "./types";
 
 const router = express.Router();
@@ -18,14 +19,17 @@ router.get("/", async (req: Request, res: Response) => {
     const userData: User[] = await Promise.all(
       userSnapshot.docs.map(async (doc) => {
         const data = doc.data();
-        const totalCompletedGoals = await countCompletedGoals(doc.id);
-        const totalFailedGoals = await countFailedGoals(doc.id);
+        const userId = doc.id;
+        const totalCompletedGoals = await countCompletedGoals(userId);
+        const totalFailedGoals = await countFailedGoals(userId);
+        const streak = await getStreak(userId);
+
         return {
-          userId: doc.id,
+          userId,
           name: data.name,
           completed: totalCompletedGoals,
           failed: totalFailedGoals,
-          streak: data.streak,
+          streak,
         };
       })
     );
@@ -53,15 +57,16 @@ router.get("/id/:userId", async (req: Request, res: Response) => {
     }
 
     const data = userDoc.data();
-    const totalCompletedGoals = await countCompletedGoals(userDoc.id);
-    const totalFailedGoals = await countFailedGoals(userDoc.id);
+    const totalCompletedGoals = await countCompletedGoals(userId);
+    const totalFailedGoals = await countFailedGoals(userId);
+    const streak = await getStreak(userId);
 
     const userData: User & { userId: string } = {
-      userId: userDoc.id,
-      name: data?.name || "",
+      userId: userId,
+      name: data?.name || "Unknown user",
       completed: totalCompletedGoals,
       failed: totalFailedGoals,
-      streak: data?.streak || 0,
+      streak,
     };
 
     return res.json(userData);
@@ -89,15 +94,17 @@ router.get("/name/:userName", async (req: Request, res: Response) => {
     const userData: User[] = await Promise.all(
       userSnapshot.docs.map(async (doc) => {
         const data = doc.data();
-        const totalCompletedGoals = await countCompletedGoals(doc.id);
-        const totalFailedGoals = await countFailedGoals(doc.id);
+        const userId = doc.id;
+        const totalCompletedGoals = await countCompletedGoals(userId);
+        const totalFailedGoals = await countFailedGoals(userId);
+        const streak = await getStreak(userId);
 
         return {
-          userId: doc.id,
+          userId,
           name: data.name,
           completed: totalCompletedGoals,
           failed: totalFailedGoals,
-          streak: data.streak,
+          streak,
         };
       })
     );
@@ -196,49 +203,4 @@ const getUserFromName = async (userName: string) => {
 
 const getUserFromId = async (userId: string) => {
   return await db.collection("user").doc(userId).get();
-};
-
-// 完了した目標をカウント(postがnullでないものをカウント)
-export const countCompletedGoals = async (userId: string): Promise<number> => {
-  if (!userId) {
-    throw new Error("User ID is required");
-  }
-
-  try {
-    const countSnapshot = await db
-      .collection("goal")
-      .where("userId", "==", userId)
-      .where("post", "!=", null)
-      .count()
-      .get();
-
-    return countSnapshot.data().count;
-  } catch (error) {
-    logger.error("Error counting completed goals:", error);
-    return 0;
-  }
-};
-
-// 失敗した目標をカウント(今より前の`deadline`を持ち、postがnullの目標の数をカウント)
-export const countFailedGoals = async (userId: string): Promise<number> => {
-  if (!userId) {
-    throw new Error("User ID is required");
-  }
-
-  try {
-    const now = admin.firestore.Timestamp.now();
-
-    const countSnapshot = await db
-      .collection("goal")
-      .where("userId", "==", userId)
-      .where("deadline", "<", now)
-      .where("post", "==", null)
-      .count()
-      .get();
-
-    return countSnapshot.data().count;
-  } catch (error) {
-    logger.error("Error counting expired goals with null post:", error);
-    return 0;
-  }
 };

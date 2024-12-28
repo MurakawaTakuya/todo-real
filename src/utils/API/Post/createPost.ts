@@ -1,13 +1,13 @@
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
-import { Post } from "@/types/types";
+import { PostWithGoalId } from "@/types/types";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、投稿をFirestoreに登録する
  *
- * @param {Post} postData
+ * @param {PostWithGoalId} postData
  * @return {*}
  */
-export const createPost = async (postData: Post) => {
+export const createPost = async (postData: PostWithGoalId) => {
   const response = await fetch(`${functionsEndpoint}/post/`, {
     method: "POST",
     headers: {

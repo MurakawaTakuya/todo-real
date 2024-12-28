@@ -1,5 +1,4 @@
-import { GoalWithId, SuccessResult, UserData } from "@/types/types";
-import { fetchUserById } from "@/utils/API/User/fetchUser";
+import { GoalWithIdAndUserData, User } from "@/types/types";
 import { formatStringToDate } from "@/utils/DateFormatter";
 import { useUser } from "@/utils/UserContext";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
@@ -12,7 +11,7 @@ import StepIndicator, { stepIndicatorClasses } from "@mui/joy/StepIndicator";
 import Stepper from "@mui/joy/Stepper";
 import Typography, { typographyClasses } from "@mui/joy/Typography";
 import { Divider } from "@mui/material";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import DeleteGoalModal from "../DeleteGoalModal/DeleteGoalModal";
 import DeletePostModal from "../DeletePostModal/DeletePostModal";
 import CopyGoalAfterPostButton from "../GoalModal/CopyGoalAfterPostButton";
@@ -38,9 +37,9 @@ const innerBorderColors = {
 };
 
 interface ProgressProps {
-  successResults?: SuccessResult[];
-  failedResults?: GoalWithId[];
-  pendingResults?: GoalWithId[];
+  successResults?: GoalWithIdAndUserData[];
+  failedResults?: GoalWithIdAndUserData[];
+  pendingResults?: GoalWithIdAndUserData[];
   orderBy?: "asc" | "desc";
 }
 
@@ -50,31 +49,7 @@ export default function Progress({
   pendingResults = [],
   orderBy = "desc", // 最新が上位
 }: ProgressProps) {
-  const [userNames, setUserNames] = useState<Record<string, string>>({}); // <userId, userName>
   const { user } = useUser();
-
-  const fetchUserName = async (userId: string) => {
-    if (userNames[userId]) return; // 既に取得済みの場合はキャッシュのように再利用
-    setUserNames((prev) => ({ ...prev, [userId]: "Loading..." }));
-    try {
-      const userData = await fetchUserById(userId);
-      setUserNames((prev) => ({ ...prev, [userId]: userData.name }));
-    } catch (error) {
-      console.error("Failed to fetch user name:", error);
-      setUserNames((prev) => ({ ...prev, [userId]: "Unknown user" }));
-    }
-  };
-
-  useEffect(() => {
-    const allUserIds = [
-      ...successResults.map((result) => result.userId),
-      ...failedResults.map((result) => result.userId),
-      ...pendingResults.map((result) => result.userId),
-    ];
-    // 同じuserIdに対して1回だけ取得し、キャッシュする
-    const uniqueUserIds = Array.from(new Set(allUserIds));
-    uniqueUserIds.forEach((userId) => fetchUserName(userId));
-  }, [successResults, failedResults, pendingResults, fetchUserName]);
 
   const allResults = [
     ...successResults.map((result) => ({ ...result, type: "success" })),
@@ -85,8 +60,10 @@ export default function Progress({
   // typeがsuccessの場合はsubmittedAtでソートし、それ以外の場合はdeadlineでソートする
   allResults.sort((a, b) => {
     const getUpdatedTime = (item: typeof a) => {
-      if (item.type === "success" && "submittedAt" in item) {
-        return new Date(item.submittedAt).getTime();
+      if (item.type === "success" && "post" in item) {
+        return item.post?.submittedAt
+          ? new Date(item.post.submittedAt).getTime()
+          : 0;
       }
       return new Date(item.deadline).getTime();
     };
@@ -95,46 +72,36 @@ export default function Progress({
       : getUpdatedTime(a) - getUpdatedTime(b); // 最古が上位
   });
 
+  console.log("allResults: ", allResults);
+
   return (
     <>
       {allResults.map((result) => {
-        const userName = userNames[result.userId] || "Loading...";
-
-        if (!user) {
-          return null;
-        }
-
         if (result.type === "success") {
           return (
             <SuccessStep
               key={result.goalId}
-              result={result as SuccessResult}
-              userName={userName}
-              user={user}
+              result={result as GoalWithIdAndUserData}
+              user={user as User}
             />
           );
-        }
-        if (result.type === "failed") {
+        } else if (result.type === "failed") {
           return (
             <FailedStep
               key={result.goalId}
-              result={result as GoalWithId}
-              userName={userName}
-              user={user as UserData}
+              result={result as GoalWithIdAndUserData}
+              user={user as User}
             />
           );
-        }
-        if (result.type === "pending") {
+        } else if (result.type === "pending") {
           return (
             <PendingStep
               key={result.goalId}
-              result={result as GoalWithId}
-              userName={userName}
-              user={user as UserData}
+              result={result as GoalWithIdAndUserData}
+              user={user as User}
             />
           );
         }
-        return null;
       })}
     </>
   );
@@ -142,15 +109,22 @@ export default function Progress({
 
 const SuccessStep = ({
   result,
-  userName,
   user,
 }: {
-  result: SuccessResult;
-  userName: string;
-  user: UserData;
+  result: GoalWithIdAndUserData;
+  user: User;
 }) => {
+  const post = result.post;
+  if (!post) {
+    return null;
+  }
+
   return (
-    <StepperBlock key={result.goalId} userName={userName} resultType="success">
+    <StepperBlock
+      key={result.goalId}
+      userName={result.userData.name}
+      resultType="success"
+    >
       <Step
         active
         completed
@@ -162,7 +136,7 @@ const SuccessStep = ({
       >
         <GoalCard
           deadline={result.deadline}
-          goalText={result.goalText}
+          goalText={result.text}
           resultType="success"
           goalId={result.goalId}
           userId={result.userId}
@@ -189,15 +163,15 @@ const SuccessStep = ({
             zIndex: 0,
           }}
         >
-          {result.storedId && (
+          {post.storedURL && (
             <img
-              src={result.storedId}
-              srcSet={result.storedId}
+              src={post.storedURL}
+              srcSet={post.storedURL}
               style={{
                 objectFit: "contain",
                 maxWidth: "100%",
-                maxHeight: "70vh",
-                borderRadius: "6px 6px 0 0",
+                maxHeight: "50vh",
+                borderRadius: "5px 5px 0 0",
               }}
               loading="lazy"
               alt=""
@@ -208,20 +182,20 @@ const SuccessStep = ({
           >
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Typography level="body-sm">
-                {formatStringToDate(result.submittedAt)}に完了
+                {formatStringToDate(post.submittedAt)}に完了
               </Typography>
               {/* 自分の作成した投稿のみ削除できるようにする */}
               {result.userId === user?.userId && (
                 <DeletePostModal
-                  postId={result.postId}
+                  goalId={result.goalId}
                   deadline={result.deadline}
                 />
               )}
             </div>
-            {result.postText && (
+            {post.text && (
               <>
                 <Divider />
-                <Typography level="title-md">{result.postText}</Typography>
+                <Typography level="title-md">{post.text}</Typography>
               </>
             )}
           </CardContent>
@@ -233,15 +207,17 @@ const SuccessStep = ({
 
 const FailedStep = ({
   result,
-  userName,
   user,
 }: {
-  result: GoalWithId;
-  userName: string;
-  user: UserData;
+  result: GoalWithIdAndUserData;
+  user: User;
 }) => {
   return (
-    <StepperBlock key={result.goalId} userName={userName} resultType="failed">
+    <StepperBlock
+      key={result.goalId}
+      userName={result.userData.name}
+      resultType="failed"
+    >
       <Step
         indicator={
           <StepIndicator variant="solid" color="danger">
@@ -264,17 +240,19 @@ const FailedStep = ({
 
 const PendingStep = ({
   result,
-  userName,
   user,
 }: {
-  result: GoalWithId;
-  userName: string;
-  user: UserData;
+  result: GoalWithIdAndUserData;
+  user: User;
 }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   return (
-    <StepperBlock key={result.goalId} userName={userName} resultType="pending">
+    <StepperBlock
+      key={result.goalId}
+      userName={result.userData.name}
+      resultType="pending"
+    >
       <Step
         active
         indicator={
@@ -321,7 +299,7 @@ const GoalCard = ({
   resultType?: "success" | "failed" | "pending";
   goalId: string;
   userId: string;
-  user: UserData;
+  user: User;
 }) => {
   const deadlineDate = new Date(deadline);
   const currentDate = new Date();
@@ -333,7 +311,8 @@ const GoalCard = ({
       variant="outlined"
       size="sm"
       sx={{
-        width: "93%",
+        width: "100%",
+        boxSizing: "border-box",
         borderColor:
           resultType == "success"
             ? innerBorderColors.success

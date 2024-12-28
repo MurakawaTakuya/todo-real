@@ -3,7 +3,7 @@ import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { Goal } from "@/types/types";
 import { createGoal, handleCreateGoalError } from "@/utils/API/Goal/createGoal";
 import { useUser } from "@/utils/UserContext";
-import SendIcon from "@mui/icons-material/Send";
+import AddIcon from "@mui/icons-material/Add";
 import {
   Button,
   DialogContent,
@@ -43,6 +43,15 @@ export default function CreateGoalModal({
       );
       localDate.setDate(localDate.getDate() + 1); // 1日後にする
       setDueDate(localDate.toISOString().slice(0, 16));
+    } else {
+      // 初期値の指定が無い場合は次の日の23時に設定
+      const nextDay = new Date();
+      nextDay.setDate(nextDay.getDate() + 1);
+      nextDay.setHours(23, 0, 0, 0);
+      const localNextDay = new Date(
+        nextDay.getTime() - nextDay.getTimezoneOffset() * 60000
+      );
+      setDueDate(localNextDay.toISOString().slice(0, 16));
     }
   }, [defaultText, defaultDeadline]);
 
@@ -132,7 +141,7 @@ export default function CreateGoalModal({
                 disabled={
                   !user || user?.loginType === "Guest" || !user?.isMailVerified
                 }
-                endDecorator={<SendIcon />}
+                endDecorator={<AddIcon />}
               >
                 作成
               </Button>

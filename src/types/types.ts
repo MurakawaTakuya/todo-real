@@ -1,41 +1,33 @@
-export interface UserData {
+export interface User {
   userId: string;
   name: string;
-  streak: number;
+  streak?: number;
   loginType: LoginType;
   isMailVerified: boolean;
 }
 
 export type LoginType = "Mail" | "Google" | "Guest" | "None";
 
-export interface Post {
-  userId: string;
-  storedId: string;
-  text: string;
-  goalId: string;
-  submittedAt: Date | string;
-}
-
 export interface Goal {
   userId: string;
   deadline: Date | string;
   text: string;
+  post?: Omit<Post, "submittedAt"> & { submittedAt: string };
 }
 
-export interface GoalWithId extends Goal {
+export interface GoalWithIdAndUserData extends Goal {
   goalId: string;
+  userData: User;
   deadline: string;
 }
 
-export interface SuccessResult {
+export interface Post {
   userId: string;
+  storedURL: string;
+  text: string;
+  submittedAt: Date | string;
+}
+
+export interface PostWithGoalId extends Post {
   goalId: string;
-  postId: string;
-  goalText: string;
-  postText: string;
-  storedId: string;
-  deadline: string;
-  submittedAt: string;
-  // dealineとsubmittedAtはAPIから取得するとString型になる
-  // Date型で使用したい場合はsrc\utils\DateFormatter.tsで変換
 }

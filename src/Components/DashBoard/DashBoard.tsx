@@ -1,6 +1,6 @@
 "use client";
 import { showSnackBar } from "@/Components/SnackBar/SnackBar";
-import { GoalWithId, SuccessResult } from "@/types/types";
+import { GoalWithIdAndUserData } from "@/types/types";
 import {
   fetchResult,
   handleFetchResultError,
@@ -25,9 +25,15 @@ export default function DashBoard({
   pending?: boolean;
   orderBy?: "asc" | "desc";
 } = {}) {
-  const [successResults, setSuccessResults] = useState<SuccessResult[]>([]);
-  const [failedResults, setFailedResults] = useState<GoalWithId[]>([]);
-  const [pendingResults, setPendingResults] = useState<GoalWithId[]>([]);
+  const [successResults, setSuccessResults] = useState<GoalWithIdAndUserData[]>(
+    []
+  );
+  const [failedResults, setFailedResults] = useState<GoalWithIdAndUserData[]>(
+    []
+  );
+  const [pendingResults, setPendingResults] = useState<GoalWithIdAndUserData[]>(
+    []
+  );
   const [noResult, setNoResult] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 

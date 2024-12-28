@@ -1,6 +1,7 @@
 import { Add } from "@mui/icons-material";
 import { Button } from "@mui/joy";
 import { useState } from "react";
+import { showSnackBar } from "../SnackBar/SnackBar";
 import CreateGoalModal from "./CreateGoalModal";
 
 export default function CopyGoalAfterPostButton({
@@ -18,7 +19,13 @@ export default function CopyGoalAfterPostButton({
         variant="solid"
         color="success"
         startDecorator={<Add />}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true);
+          showSnackBar({
+            message: "1日後の同じ時間で同じ目標を作成できます",
+            type: "success",
+          });
+        }}
       >
         この目標を次の日も達成する
       </Button>

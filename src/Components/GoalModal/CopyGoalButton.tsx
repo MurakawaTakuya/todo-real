@@ -1,5 +1,6 @@
 import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
 import { useState } from "react";
+import { showSnackBar } from "../SnackBar/SnackBar";
 import CreateGoalModal from "./CreateGoalModal";
 
 export default function CopyModalButton({
@@ -14,7 +15,13 @@ export default function CopyModalButton({
   return (
     <>
       <LibraryAddOutlinedIcon
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true);
+          showSnackBar({
+            message: "1日後の同じ時間で同じ目標を作成できます",
+            type: "success",
+          });
+        }}
         sx={{ cursor: "pointer", fontSize: "23px" }}
       />
 

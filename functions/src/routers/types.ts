@@ -8,27 +8,25 @@ export interface Goal {
   userId: string;
   deadline: Date;
   text: string;
+  post?: Post;
 }
 
 export interface GoalWithId extends Goal {
   goalId: string;
 }
 
-export interface Post {
-  userId: string;
-  storedId: string;
-  text: string;
+export interface GoalWithIdAndUserData extends Goal {
   goalId: string;
+  userData?: User;
+}
+
+export interface Post {
+  userId?: string;
+  storedURL: string;
+  text: string;
   submittedAt: Date;
 }
 
-export interface SuccessResult {
-  userId: string;
-  goalId: string;
-  postId: string;
-  goalText: string;
-  postText: string;
-  storedId: string;
-  deadline: Date;
-  submittedAt: Date;
+export interface PostWithGoalId extends Post {
+  goalId: string; // Postの所属するGoalId
 }

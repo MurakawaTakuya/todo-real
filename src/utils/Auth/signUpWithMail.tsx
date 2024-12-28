@@ -38,7 +38,6 @@ export const signUpWithMail = async (
       updateUser({
         userId: user.uid,
         name: name,
-        streak: 0,
         loginType: "Mail",
         isMailVerified: user.emailVerified,
       });

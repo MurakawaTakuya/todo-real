@@ -20,7 +20,6 @@ export const signInWithGoogleAccount = async () => {
       updateUser({
         userId: result.user.uid,
         name: result.user.displayName ?? "no name",
-        streak: 0,
         loginType: "Google",
         isMailVerified: result.user.emailVerified,
       });

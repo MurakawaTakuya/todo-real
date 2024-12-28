@@ -1,6 +1,6 @@
 "use client";
 import { showSnackBar } from "@/Components/SnackBar/SnackBar";
-import { Post } from "@/types/types";
+import { PostWithGoalId } from "@/types/types";
 import { createPost, handleCreatePostError } from "@/utils/API/Post/createPost";
 import { uploadImage } from "@/utils/Uploader";
 import { useUser } from "@/utils/UserContext";
@@ -92,9 +92,9 @@ export default function PostModal({
         image,
         (percent) => setProgress(percent),
         async (url) => {
-          const postData: Post = {
+          const postData: PostWithGoalId = {
             userId: user?.userId as string,
-            storedId: url,
+            storedURL: url,
             text: text,
             goalId: goalId,
             submittedAt: new Date(),

@@ -1,7 +1,7 @@
 "use client";
 import { auth } from "@/app/firebase";
 import { showSnackBar } from "@/Components/SnackBar/SnackBar";
-import { LoginType, UserData } from "@/types/types";
+import { LoginType, User } from "@/types/types";
 import {
   fetchUserById,
   handleFetchUserError,
@@ -16,12 +16,12 @@ import {
 } from "react";
 
 interface UserContextValue {
-  user: UserData | null | undefined;
-  setUser: React.Dispatch<React.SetStateAction<UserData | null | undefined>>;
+  user: User | null | undefined;
+  setUser: React.Dispatch<React.SetStateAction<User | null | undefined>>;
 }
 
 let globalSetUser:
-  | React.Dispatch<React.SetStateAction<UserData | null | undefined>>
+  | React.Dispatch<React.SetStateAction<User | null | undefined>>
   | null
   | undefined = undefined;
 
@@ -34,7 +34,7 @@ interface Props {
 }
 
 export const UserProvider = ({ children }: Props) => {
-  const [user, setUser] = useState<UserData | null | undefined>(undefined);
+  const [user, setUser] = useState<User | null | undefined>(undefined);
 
   globalSetUser = setUser;
 
@@ -77,10 +77,9 @@ export const UserProvider = ({ children }: Props) => {
 
         // ゲスト以外のログインの場合はユーザーデータを取得しuseContextで保持
         if (loginType === "Guest") {
-          const guestData: UserData = {
+          const guestData: User = {
             userId: firebaseUser.uid,
             name: "Guest Login",
-            streak: 0,
             loginType: "Guest",
             isMailVerified: true,
           };
@@ -128,7 +127,7 @@ export const useUser = (): UserContextValue => {
   return context;
 };
 
-export const updateUser = (userData: UserData | null) => {
+export const updateUser = (userData: User | null) => {
   if (globalSetUser) {
     globalSetUser(userData);
   } else {

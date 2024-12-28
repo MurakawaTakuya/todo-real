@@ -96,11 +96,10 @@ router.get("/name/:userName", async (req: Request, res: Response) => {
 router.post("/", async (req: Request, res: Response) => {
   let userId: string;
   let name: User["name"];
-  let streak: User["streak"];
   let fcmToken: User["fcmToken"];
 
   try {
-    ({ name, userId, streak = 0, fcmToken = "" } = req.body);
+    ({ name, userId, fcmToken = "" } = req.body);
   } catch (error) {
     logger.error(error);
     return res.status(400).json({ message: "Invalid request body" });
@@ -113,7 +112,7 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     await db.collection("user").doc(userId).set({
       name: name,
-      streak: streak,
+      streak: 0,
       fcmToken: fcmToken,
     });
 
@@ -129,9 +128,9 @@ router.post("/", async (req: Request, res: Response) => {
 // PUT: ユーザー情報を更新
 router.put("/:userId", async (req: Request, res: Response) => {
   const userId = req.params.userId;
-  const { name, streak, fcmToken }: Partial<User> = req.body;
+  const { name, fcmToken }: Partial<User> = req.body;
 
-  if (!name && !streak && fcmToken === undefined) {
+  if (!name && fcmToken === undefined) {
     return res.status(400).json({
       message: "At least one of name, streak, or fcmToken is required",
     });
@@ -140,9 +139,6 @@ router.put("/:userId", async (req: Request, res: Response) => {
   const updateData: Partial<User> = {};
   if (name) {
     updateData.name = name;
-  }
-  if (streak) {
-    updateData.streak = streak;
   }
   if (fcmToken !== undefined) {
     updateData.fcmToken = fcmToken;

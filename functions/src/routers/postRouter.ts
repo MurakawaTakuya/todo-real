@@ -87,14 +87,14 @@ router.post("/", async (req: Request, res: Response) => {
   let submittedAt: PostWithGoalId["submittedAt"];
 
   try {
-    ({ userId, storedURL, text, goalId, submittedAt } = req.body);
+    ({ userId, storedURL, text = "", goalId, submittedAt } = req.body);
   } catch (error) {
     return res.status(400).json({ message: "Invalid request body" });
   }
 
-  if (!userId || !storedURL || !text || !goalId || !submittedAt) {
+  if (!userId || !storedURL || !goalId || !submittedAt) {
     return res.status(400).json({
-      message: "userId, storedURL, text, goalId, and submittedAt are required",
+      message: "userId, storedURL, goalId, and submittedAt are required",
     });
   }
 

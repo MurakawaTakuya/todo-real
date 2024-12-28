@@ -57,8 +57,6 @@ export default function Progress({
     ...pendingResults.map((result) => ({ ...result, type: "pending" })),
   ];
 
-  console.log("allResults: ", allResults);
-
   // typeがsuccessの場合はsubmittedAtでソートし、それ以外の場合はdeadlineでソートする
   allResults.sort((a, b) => {
     const getUpdatedTime = (item: typeof a) => {
@@ -74,29 +72,36 @@ export default function Progress({
       : getUpdatedTime(a) - getUpdatedTime(b); // 最古が上位
   });
 
+  console.log("allResults: ", allResults);
+
   return (
     <>
       {allResults.map((result) => {
         if (result.type === "success") {
-          <SuccessStep
-            key={result.goalId}
-            result={result as GoalWithIdAndUserData}
-            user={user as User}
-          />;
+          return (
+            <SuccessStep
+              key={result.goalId}
+              result={result as GoalWithIdAndUserData}
+              user={user as User}
+            />
+          );
         } else if (result.type === "failed") {
-          <FailedStep
-            key={result.goalId}
-            result={result as GoalWithIdAndUserData}
-            user={user as User}
-          />;
+          return (
+            <FailedStep
+              key={result.goalId}
+              result={result as GoalWithIdAndUserData}
+              user={user as User}
+            />
+          );
         } else if (result.type === "pending") {
-          <PendingStep
-            key={result.goalId}
-            result={result as GoalWithIdAndUserData}
-            user={user as User}
-          />;
+          return (
+            <PendingStep
+              key={result.goalId}
+              result={result as GoalWithIdAndUserData}
+              user={user as User}
+            />
+          );
         }
-        return null;
       })}
     </>
   );
@@ -165,8 +170,8 @@ const SuccessStep = ({
               style={{
                 objectFit: "contain",
                 maxWidth: "100%",
-                maxHeight: "70vh",
-                borderRadius: "6px 6px 0 0",
+                maxHeight: "50vh",
+                borderRadius: "5px 5px 0 0",
               }}
               loading="lazy"
               alt=""
@@ -306,7 +311,8 @@ const GoalCard = ({
       variant="outlined"
       size="sm"
       sx={{
-        width: "93%",
+        width: "100%",
+        boxSizing: "border-box",
         borderColor:
           resultType == "success"
             ? innerBorderColors.success

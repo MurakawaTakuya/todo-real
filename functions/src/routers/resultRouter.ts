@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
 import { GoalWithIdAndUserData, User } from "./types";
+import { countCompletedGoals, countFailedGoals } from "./userRouter";
 
 const router = express.Router();
 const db = admin.firestore();
@@ -69,10 +70,15 @@ const getResults = async (
     let userData = userList.get(goal.userId);
     if (!userData) {
       const userDoc = await db.collection("user").doc(goal.userId).get();
+      const totalCompletedGoals = await countCompletedGoals(goal.userId);
+      const totalFailedGoals = await countFailedGoals(goal.userId);
+
       userData = userDoc.data() as User;
       userData = {
         name: userData?.name || "Unknown user",
-        streak: userData?.streak || 0,
+        completed: totalCompletedGoals,
+        failed: totalFailedGoals,
+        streak: 0,
       };
       userList.set(goal.userId, userData);
     }

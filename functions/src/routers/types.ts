@@ -1,6 +1,8 @@
 export interface User {
   name: string;
-  streak: number;
+  completed?: number;
+  failed?: number;
+  streak?: number;
   fcmToken?: string;
 }
 
@@ -8,7 +10,7 @@ export interface Goal {
   userId: string;
   deadline: Date;
   text: string;
-  post?: Post;
+  post: Post | null;
 }
 
 export interface GoalWithId extends Goal {

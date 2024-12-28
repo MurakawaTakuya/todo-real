@@ -53,6 +53,9 @@ export default function LoggedInView() {
             ようこそ、{user.name}さん!
           </Typography>
           <Typography sx={{ textAlign: "center" }}>
+            連続達成日数: {user.streak}日目
+          </Typography>
+          <Typography sx={{ textAlign: "center" }}>
             目標達成率: {successRate}%
           </Typography>
           <Typography sx={{ textAlign: "center" }}>

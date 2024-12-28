@@ -390,13 +390,13 @@ const StepperBlock = ({
         </Typography>
         <div style={{ display: "flex", gap: "10px" }}>
           <Typography level="title-sm" component="span">
-            {successRate}日連続
+            {userData?.streak}日連続
           </Typography>
           <Typography level="title-sm" component="span">
             達成率{successRate}%
           </Typography>
           <Typography level="title-sm" component="span">
-            {userData?.completed}回達成
+            累計{userData?.completed}回達成
           </Typography>
         </div>
       </div>

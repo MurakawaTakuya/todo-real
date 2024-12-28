@@ -1,12 +1,10 @@
-import { auth } from "@/app/firebase";
 import NameUpdate from "@/Components/NameUpdate/NameUpdate";
 import NotificationButton from "@/Components/NotificationButton/NotificationButton";
-import { showSnackBar } from "@/Components/SnackBar/SnackBar";
+import { handleSignOut } from "@/utils/Auth/signOut";
 import { useUser } from "@/utils/UserContext";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import { signOut } from "firebase/auth";
 
 export const RoundedButton = styled(Button)(({ theme }) => ({
   borderRadius: "30px",
@@ -15,24 +13,6 @@ export const RoundedButton = styled(Button)(({ theme }) => ({
 
 export default function LoggedInView() {
   const { user } = useUser();
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-
-      showSnackBar({
-        message: "ログアウトしました",
-        type: "success",
-      });
-    } catch (error) {
-      console.error("errorCode:", (error as Error)?.name);
-      console.error("errorMessage:", (error as Error)?.message);
-      showSnackBar({
-        message: "ログアウトに失敗しました",
-        type: "warning",
-      });
-    }
-  };
 
   if (!user) {
     return null;
@@ -87,7 +67,7 @@ export default function LoggedInView() {
         </div>
       )}
 
-      <RoundedButton variant="contained" onClick={handleLogout}>
+      <RoundedButton variant="contained" onClick={handleSignOut}>
         ログアウト
       </RoundedButton>
     </>

@@ -1,7 +1,7 @@
 import Header from "@/Components/Header/Header";
+import { Loader } from "@/Components/Loader/Loader";
 import NavigationMenu from "@/Components/NavigationMenu/NavigationMenu";
 import SnackBar from "@/Components/SnackBar/SnackBar";
-import { Loader } from "@/Components/TopPage/TopPage";
 import "@/styles/globals.scss";
 import "@/utils/CloudMessaging/getNotification";
 import { UserProvider } from "@/utils/UserContext";

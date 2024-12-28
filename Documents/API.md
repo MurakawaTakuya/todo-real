@@ -103,7 +103,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
           "text": "hoge fuga",
           "post": {
               "userId": "Vlx6GCtq90ag3lxgh0pcCKGp5ba0",
-              "storedId": "ointtq9NT5TPgEnKS4tb",
+              "storedURL": "ointtq9NT5TPgEnKS4tb",
               "text": "数学の勉強したよ^^",
               "submittedAt": {
                   "_seconds": 1735603199,
@@ -144,7 +144,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
     - Content-Type: multipart/form-data
   - Body (form-data)
     - userId: string
-    - storedId: string (画像のストレージパス、/post/{storedId}/image)
+    - storedURL: string (画像のストレージパス、/post/{storedURL}/image)
     - text: string
     - goalId: string
     - submittedAt: Date
@@ -152,7 +152,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
     ```json
     {
         "userId": "IK0Zc2hoUYaYjXoqzmCl",
-        "storedId": "DF48XfTFc42l6C58lLDq",
+        "storedURL": "hogehoge URL",
         "text": "今日は勉強をがんばった",
         "goalId": "RXlHJiv3GtpzSDHhfljS",
         "submittedAt": "2024-12-31T23:59:59.000Z"
@@ -177,7 +177,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
       {
           "id": "9fgWJA6wMN54EkxIC2WD",
           "userId": "IK0Zc2hoUYaYjXoqzmCl",
-          "storedId": "t8eo1wEE7AT12eZo3dKA",
+          "storedURL": "hogehoge URL",
           "text": "今日は勉強をがんばった",
           "goalId": "RXlHJiv3GtpzSDHhfljS",
           "submittedAt": "2024-12-31T23:59:59.000Z"
@@ -193,7 +193,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
     - Content-Type: application/json
   - Body
     - userId?: string
-    - storedId?: string
+    - storedURL?: string
     - text?: string
     - goalId?: string
     - submittedAt?: Date
@@ -215,35 +215,44 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
   {
       "successResults": [
           {
-              "goalId": "iU2YbeHYWzTOv6THwKBS",
-              "userId": "Vlx6GCtq90ag3lxgh0pcCKGp5ba0",
-              "deadline": "2025-12-01T23:59:59.000Z",
-              "text": "hoge fuga",
+              "goalId": "e1q1KRGjt9mtwg4eIkFY",
+              "userId": "u6HqTq3fi17OH8ZflojatI09GRl3",
+              "deadline": "2024-12-29T14:00:00.000Z",
+              "text": "Duolingoやる",
               "post": {
-                  "userId": "Vlx6GCtq90ag3lxgh0pcCKGp5ba0",
-                  "storedURL": "ointtq9NT5TPgEnKS4tb",
-                  "text": "数学の勉強したよ^^",
-                  "submittedAt": "2024-12-30T23:59:59.000Z"
+                  "userId": "u6HqTq3fi17OH8ZflojatI09GRl3",
+                  "storedURL": "hogehoge URL",
+                  "text": "フランス語したよ",
+                  "submittedAt": "2024-12-28T09:45:10.718Z"
               },
-              "userName": "yaho"
-          }
+              "userData": {
+                  "name": "Hoge Fuga",
+                  "streak": 0
+              }
+          },
       ],
       "failedResults": [
           {
-              "goalId": "MCvDIHWMFYKIOiFO5iaF",
-              "userId": "Vlx6GCtq90ag3lxgh0pcCKGp5ba0",
-              "deadline": "2023-12-01T23:59:59.000Z",
-              "text": "hoge fuga",
-              "userName": "yaho"
-          },
+              "goalId": "mtnlXIght7ibmPPX13gw",
+              "userId": "u6HqTq3fi17OH8ZflojatI09GRl3",
+              "deadline": "2024-12-28T09:47:00.000Z",
+              "text": "世界一周する",
+              "userData": {
+                  "name": "Hoge Fuga",
+                  "streak": 0
+              }
+          }
       ],
       "pendingResults": [
           {
-              "goalId": "nmul2KBXWZlGlbHw2Yz4",
-              "userId": "Vlx6GCtq90ag3lxgh0pcCKGp5ba0",
-              "deadline": "2025-12-01T23:59:59.000Z",
-              "text": "hoge fuga",
-              "userName": "yaho"
+              "goalId": "KvVRySu3Hkfl0V8Fubzf",
+              "userId": "u6HqTq3fi17OH8ZflojatI09GRl3",
+              "deadline": "2024-12-30T14:00:00.000Z",
+              "text": "「機械学習からマルチモーダル情報処理へ」を読む",
+              "userData": {
+                  "name": "Hoge Fuga",
+                  "streak": 0
+              }
           }
       ]
   }

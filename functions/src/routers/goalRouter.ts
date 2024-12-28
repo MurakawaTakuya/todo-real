@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
+import { logger } from "firebase-functions";
 import { Goal, GoalWithId } from "./types";
 
 const router = express.Router();
@@ -27,6 +28,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     return res.json(goalData);
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error fetching goals" });
   }
 });
@@ -62,6 +64,7 @@ router.get("/:userId", async (req: Request, res: Response) => {
 
     return res.json(goalData);
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error fetching goals" });
   }
 });
@@ -75,6 +78,7 @@ router.post("/", async (req: Request, res: Response) => {
   try {
     ({ userId, deadline, text } = req.body as Goal);
   } catch (error) {
+    logger.error(error);
     return res.status(400).json({ message: "Invalid request body" });
   }
 
@@ -100,6 +104,7 @@ router.post("/", async (req: Request, res: Response) => {
       .status(201)
       .json({ message: "Goal created successfully", goalId });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error creating goal" });
   }
 });
@@ -134,6 +139,7 @@ router.put("/:goalId", async (req: Request, res: Response) => {
     await db.collection("goal").doc(goalId).update(updateData);
     return res.json({ message: "Goal updated successfully", goalId });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error updating goal" });
   }
 });
@@ -150,6 +156,7 @@ router.delete("/:goalId", async (req: Request, res: Response) => {
     await db.collection("goal").doc(goalId).delete();
     return res.json({ message: "Goal deleted successfully", goalId });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error deleting goal" });
   }
 });

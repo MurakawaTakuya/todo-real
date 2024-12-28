@@ -143,18 +143,16 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
   - Headers
     - Content-Type: multipart/form-data
   - Body (form-data)
-    - userId: string
-    - storedURL: string (画像のストレージパス、/post/{storedURL}/image)
-    - text: string
     - goalId: string
+    - text: string
+    - storedURL: string (画像のストレージパス、/post/{storedURL}/image)
     - submittedAt: Date
   - Example
     ```json
     {
-        "userId": "IK0Zc2hoUYaYjXoqzmCl",
-        "storedURL": "hogehoge URL",
-        "text": "今日は勉強をがんばった",
         "goalId": "RXlHJiv3GtpzSDHhfljS",
+        "text": "今日は勉強をがんばった",
+        "storedURL": "hogehoge URL",
         "submittedAt": "2024-12-31T23:59:59.000Z"
     }
     ```
@@ -175,10 +173,10 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
   ```json
   [
       {
-          "id": "9fgWJA6wMN54EkxIC2WD",
+          "goalId": "9fgWJA6wMN54EkxIC2WD",
           "userId": "IK0Zc2hoUYaYjXoqzmCl",
-          "storedURL": "hogehoge URL",
           "text": "今日は勉強をがんばった",
+          "storedURL": "hogehoge URL",
           "goalId": "RXlHJiv3GtpzSDHhfljS",
           "submittedAt": "2024-12-31T23:59:59.000Z"
       }
@@ -186,17 +184,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
   ```
 
 ### Update Post
-- URL: /post/:postId
-- Method: PUT
-- Request
-  - Headers
-    - Content-Type: application/json
-  - Body
-    - userId?: string
-    - storedURL?: string
-    - text?: string
-    - goalId?: string
-    - submittedAt?: Date
+Use Create Post API to update post.
 
 ### Delete Post
 - URL: /post/:postId
@@ -220,9 +208,8 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
               "deadline": "2024-12-29T14:00:00.000Z",
               "text": "Duolingoやる",
               "post": {
-                  "userId": "u6HqTq3fi17OH8ZflojatI09GRl3",
-                  "storedURL": "hogehoge URL",
                   "text": "フランス語したよ",
+                  "storedURL": "hogehoge URL",
                   "submittedAt": "2024-12-28T09:45:10.718Z"
               },
               "userData": {

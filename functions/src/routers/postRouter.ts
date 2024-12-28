@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
+import { logger } from "firebase-functions";
 import { PostWithGoalId } from "./types";
 
 const router = express.Router();
@@ -21,9 +22,9 @@ router.get("/", async (req: Request, res: Response) => {
       if (goalData.post) {
         postData.push({
           goalId: goalDoc.id,
-          userId: goalData.post.userId,
-          storedURL: goalData.post.storedURL,
+          userId: goalData.userId,
           text: goalData.post.text,
+          storedURL: goalData.post.storedURL,
           submittedAt: goalData.post.submittedAt.toDate(),
         });
       }
@@ -35,6 +36,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     return res.json(postData);
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error fetching posts" });
   }
 });
@@ -64,9 +66,9 @@ router.get("/:userId", async (req: Request, res: Response) => {
       if (goalData.post) {
         postData.push({
           goalId: goalDoc.id,
-          userId: goalData.post.userId,
-          storedURL: goalData.post.storedURL,
+          userId: goalData.userId,
           text: goalData.post.text,
+          storedURL: goalData.post.storedURL,
           submittedAt: goalData.post.submittedAt.toDate(),
         });
       }
@@ -74,25 +76,26 @@ router.get("/:userId", async (req: Request, res: Response) => {
 
     return res.json(postData);
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching posts" });
+    logger.error(error);
+    return res.status(500).json({ message: "Error fetching user's posts" });
   }
 });
 
 // POST: 新しい投稿を作成
 router.post("/", async (req: Request, res: Response) => {
-  let userId: string;
-  let storedURL: PostWithGoalId["storedURL"];
-  let text: PostWithGoalId["text"];
   let goalId: PostWithGoalId["goalId"];
+  let text: PostWithGoalId["text"];
+  let storedURL: PostWithGoalId["storedURL"];
   let submittedAt: PostWithGoalId["submittedAt"];
 
   try {
-    ({ userId, storedURL, text = "", goalId, submittedAt } = req.body);
+    ({ goalId, text = "", storedURL, submittedAt } = req.body);
   } catch (error) {
+    logger.error(error);
     return res.status(400).json({ message: "Invalid request body" });
   }
 
-  if (!userId || !storedURL || !goalId || !submittedAt) {
+  if (!goalId || !storedURL || !submittedAt) {
     return res.status(400).json({
       message: "userId, storedURL, goalId, and submittedAt are required",
     });
@@ -108,9 +111,8 @@ router.post("/", async (req: Request, res: Response) => {
 
     await goalRef.update({
       post: {
-        userId,
-        storedURL,
         text,
+        storedURL,
         submittedAt: new Date(submittedAt),
       },
     });
@@ -119,6 +121,7 @@ router.post("/", async (req: Request, res: Response) => {
       .status(201)
       .json({ message: "Post created successfully", goalId });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error creating post" });
   }
 });
@@ -141,6 +144,7 @@ router.delete("/:goalId", async (req: Request, res: Response) => {
 
     return res.json({ message: "Post deleted successfully" });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ message: "Error deleting post" });
   }
 });

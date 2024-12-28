@@ -138,19 +138,6 @@ export default function PostModal({
     }
   };
 
-  // 以下のJoy UIによるエラーを無効化
-  try {
-    const consoleError = console.error;
-    console.error = (...args) => {
-      if (args[0]?.includes("Accessing element.ref was removed")) {
-        return;
-      }
-      consoleError(...args);
-    };
-  } catch {
-    console.error("Failed to disable Joy UI error");
-  }
-
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
     clipPath: "inset(50%)",

@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
+import { logger } from "firebase-functions";
 import { GoalWithIdAndUserData, User } from "./types";
 
 const router = express.Router();
@@ -45,9 +46,8 @@ const getResults = async (
       deadline: data.deadline.toDate(),
       text: data.text,
       post: post && {
-        userId: post.userId,
-        storedURL: post.storedURL,
         text: post.text,
+        storedURL: post.storedURL,
         submittedAt: post.submittedAt.toDate(),
       },
     };
@@ -114,7 +114,7 @@ const getResults = async (
 router.get("/:userId?", async (req: Request, res: Response) => {
   const userId = req.params.userId;
 
-  const limit = parseInt(req.query.limit as string) || 10;
+  const limit = parseInt(req.query.limit as string) || 100; // TODO: デフォルト値を適切に設定
   const offset = parseInt(req.query.offset as string) || 0;
   const includeSuccess = req.query.success !== "false";
   const includeFailed = req.query.failed !== "false";
@@ -131,6 +131,7 @@ router.get("/:userId?", async (req: Request, res: Response) => {
     );
     return res.json(results);
   } catch (error) {
+    logger.info(error);
     return res.status(500).json({ message: "Error fetching results" });
   }
 });

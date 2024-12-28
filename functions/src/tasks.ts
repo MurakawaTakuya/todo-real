@@ -1,6 +1,6 @@
 import { CloudTasksClient } from "@google-cloud/tasks";
 import * as admin from "firebase-admin";
-import * as logger from "firebase-functions/logger";
+import { logger } from "firebase-functions";
 import {
   onDocumentCreated,
   onDocumentDeleted,
@@ -72,7 +72,7 @@ export const createTasksOnGoalCreate = onDocumentCreated(
       });
       logger.info("Task created for goalId:", goalId);
     } catch (error) {
-      logger.info("Error scheduling task:", error);
+      logger.error("Error scheduling task:", error);
     }
   }
 );

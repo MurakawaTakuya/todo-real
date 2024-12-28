@@ -59,7 +59,6 @@ export default function DeletePostModal({
         <ModalDialog
           aria-labelledby="delete-post-title"
           aria-describedby="delete-post-description"
-          sx={{ width: "90%", maxWidth: 400 }}
         >
           <DialogTitle id="delete-post-title">投稿を削除</DialogTitle>
           <DialogContent id="delete-post-description">

@@ -1,6 +1,8 @@
 export interface User {
   userId: string;
   name: string;
+  completed?: number;
+  failed?: number;
   streak?: number;
   loginType: LoginType;
   isMailVerified: boolean;

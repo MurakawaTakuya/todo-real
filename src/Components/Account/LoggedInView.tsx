@@ -38,14 +38,27 @@ export default function LoggedInView() {
     return null;
   }
 
+  const successRate =
+    user && user.completed && user.failed
+      ? Math.floor((user.completed / (user.completed + user.failed)) * 100)
+      : "?";
+
   return (
     <>
       {user.loginType === "Guest" ? (
         <>ゲストとしてログイン中</>
       ) : (
-        <Typography sx={{ textAlign: "center" }}>
-          ログイン中: {user.name}
-        </Typography>
+        <>
+          <Typography sx={{ textAlign: "center" }}>
+            ようこそ、{user.name}さん!
+          </Typography>
+          <Typography sx={{ textAlign: "center" }}>
+            目標達成率: {successRate}%
+          </Typography>
+          <Typography sx={{ textAlign: "center" }}>
+            達成回数: {user.completed}回
+          </Typography>
+        </>
       )}
 
       {!user.isMailVerified && (

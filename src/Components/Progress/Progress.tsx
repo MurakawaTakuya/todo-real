@@ -122,7 +122,7 @@ const SuccessStep = ({
   return (
     <StepperBlock
       key={result.goalId}
-      userName={result.userData.name}
+      userData={result.userData}
       resultType="success"
     >
       <Step
@@ -215,7 +215,7 @@ const FailedStep = ({
   return (
     <StepperBlock
       key={result.goalId}
-      userName={result.userData.name}
+      userData={result.userData}
       resultType="failed"
     >
       <Step
@@ -250,7 +250,7 @@ const PendingStep = ({
   return (
     <StepperBlock
       key={result.goalId}
-      userName={result.userData.name}
+      userData={result.userData}
       resultType="pending"
     >
       <Step
@@ -343,13 +343,20 @@ const GoalCard = ({
 
 const StepperBlock = ({
   children,
-  userName = "Unknown user",
+  userData = null,
   resultType,
 }: {
   children: ReactNode;
-  userName: string;
+  userData?: User | null;
   resultType?: "success" | "failed" | "pending";
 }) => {
+  const successRate =
+    userData && userData.completed && userData.failed
+      ? Math.floor(
+          (userData.completed / (userData.completed + userData.failed)) * 100
+        )
+      : "?";
+
   return (
     <Card
       variant="soft"
@@ -370,7 +377,29 @@ const StepperBlock = ({
         gap: "6px",
       }}
     >
-      <Typography level="title-lg">{userName}</Typography>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "flex-end",
+          gap: "5px 20px",
+        }}
+      >
+        <Typography level="title-lg" component="span">
+          {userData?.name}
+        </Typography>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Typography level="title-sm" component="span">
+            {successRate}日連続
+          </Typography>
+          <Typography level="title-sm" component="span">
+            達成率{successRate}%
+          </Typography>
+          <Typography level="title-sm" component="span">
+            {userData?.completed}回達成
+          </Typography>
+        </div>
+      </div>
       <Divider />
       <Stepper
         orientation="vertical"

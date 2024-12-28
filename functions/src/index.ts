@@ -18,7 +18,7 @@ import resultRouter from "./routers/resultRouter";
 import userRouer from "./routers/userRouter";
 
 const app = express();
-app.set("trust proxy", 1);
+app.set("trust proxy", true);
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
@@ -65,7 +65,11 @@ if (process.env.NODE_ENV === "production") {
 app.use(
   rateLimit({
     windowMs: 10 * 60 * 1000,
-    max: 1000,
+    max: 300,
+    keyGenerator: (req) => {
+      const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
+      return Array.isArray(key) ? key[0] : key;
+    },
   })
 );
 // 1時間で最大1000回に制限
@@ -73,6 +77,10 @@ app.use(
   rateLimit({
     windowMs: 60 * 60 * 1000,
     max: 1000,
+    keyGenerator: (req) => {
+      const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
+      return Array.isArray(key) ? key[0] : key;
+    },
   })
 );
 

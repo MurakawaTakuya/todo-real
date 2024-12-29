@@ -17,8 +17,11 @@ export const fetchUserById = async (userId: string): Promise<User> => {
   });
 
   if (!response.ok) {
-    throw new Error("Network response was not ok");
+    const status = response.status;
+    const data = await response.json();
+    throw new Error(`Error ${status}: ${data.message}`);
   }
+
   const data = await response.json();
   return data;
 };
@@ -39,6 +42,9 @@ export const handleFetchUserError = (error: unknown) => {
     }
     if (error.message.includes("500")) {
       snackBarMessage = "サーバーエラーが発生しました";
+    }
+    if (error.message.includes("429")) {
+      snackBarMessage = "リクエストが多すぎます。数分後に再度お試しください";
     }
   } else {
     console.error("An unknown error occurred");

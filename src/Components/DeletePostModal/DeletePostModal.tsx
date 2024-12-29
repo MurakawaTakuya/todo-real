@@ -6,6 +6,7 @@ import JoyButton from "@mui/joy/Button";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useState } from "react";
+import { triggerDashBoardRerender } from "../DashBoard/DashBoard";
 import { showSnackBar } from "../SnackBar/SnackBar";
 
 export default function DeletePostModal({
@@ -37,6 +38,7 @@ export default function DeletePostModal({
         message: "目標を削除しました",
         type: "success",
       });
+      triggerDashBoardRerender();
     }
   };
 

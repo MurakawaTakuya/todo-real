@@ -70,6 +70,11 @@ app.use(
       const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
       return Array.isArray(key) ? key[0] : key;
     },
+    handler: (req, res) => {
+      return res
+        .status(429)
+        .json({ message: "Too many requests, please try again later." });
+    },
   })
 );
 // 1時間で最大300回に制限
@@ -80,6 +85,11 @@ app.use(
     keyGenerator: (req) => {
       const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
       return Array.isArray(key) ? key[0] : key;
+    },
+    handler: (req, res) => {
+      return res
+        .status(429)
+        .json({ message: "Too many requests, please try again later." });
     },
   })
 );

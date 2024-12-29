@@ -11,7 +11,9 @@ import { useEffect, useState } from "react";
 import Progress from "../Progress/Progress";
 import styles from "./DashBoard.module.scss";
 
-// 投稿を取得してProgress
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+let rerenderDashBoard: () => void = () => {};
+
 export default function DashBoard({
   userId = "",
   success = true,
@@ -37,7 +39,8 @@ export default function DashBoard({
   const [noResult, setNoResult] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
+  const fetchData = () => {
+    setIsLoading(true);
     fetchResult({ userId, success, failed, pending })
       .then((data) => {
         setSuccessResults(data.successResults);
@@ -54,10 +57,14 @@ export default function DashBoard({
           type: "warning",
         });
       });
+  };
+
+  useEffect(() => {
+    rerenderDashBoard = fetchData;
+    fetchData();
   }, [userId, success, failed, pending]);
 
   useEffect(() => {
-    // 表示したい項目にデータがない場合はnoResultをtrueにする
     setNoResult(
       ((success && successResults.length === 0) || !success) &&
         ((failed && failedResults.length === 0) || !failed) &&
@@ -91,4 +98,8 @@ export default function DashBoard({
       )}
     </>
   );
+}
+
+export function triggerDashBoardRerender() {
+  rerenderDashBoard();
 }

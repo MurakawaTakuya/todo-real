@@ -125,7 +125,7 @@ const processGoals = async (
 router.get("/:userId?", async (req: Request, res: Response) => {
   const userId = req.params.userId;
 
-  let limit = parseInt(req.query.limit as string) || 100;
+  let limit = parseInt(req.query.limit as string) || 10;
   if (limit < 1 || limit > 100) {
     limit = 100;
   }

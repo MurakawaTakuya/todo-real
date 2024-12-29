@@ -25,7 +25,7 @@ export interface GoalWithIdAndUserData extends Goal {
 
 export interface Post {
   userId: string;
-  storedURL: string;
+  storedId: string;
   text: string;
   submittedAt: Date | string;
 }

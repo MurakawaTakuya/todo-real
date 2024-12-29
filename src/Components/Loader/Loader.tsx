@@ -18,10 +18,9 @@ export const Loader = ({ children }: LoaderProps) => {
     redirect("/account");
   }
 
-  // 10秒経ったらボタンを表示
   setTimeout(() => {
     setShowErrorButton(true);
-  }, 6000);
+  }, 10000);
 
   return (
     <>
@@ -54,7 +53,7 @@ export const Loader = ({ children }: LoaderProps) => {
             >
               <Typography
                 color="warning"
-                sx={{ textAlign: "center", width: "90vw" }}
+                sx={{ textAlign: "center", width: "90vw", maxWidth: "500px" }}
               >
                 認証エラーが発生した可能性があります。
                 <br />

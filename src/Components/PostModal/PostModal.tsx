@@ -2,7 +2,7 @@
 import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { PostWithGoalId } from "@/types/types";
 import { createPost, handleCreatePostError } from "@/utils/API/Post/createPost";
-import { uploadImage } from "@/utils/Uploader";
+import { removeImageMetadata, uploadImage } from "@/utils/Uploader";
 import { useUser } from "@/utils/UserContext";
 import { Add } from "@mui/icons-material";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
@@ -43,7 +43,7 @@ export default function PostModal({
     setText(event.target.value);
   };
 
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
 
     if (!selectedFile) {
@@ -56,7 +56,8 @@ export default function PostModal({
 
     // ファイルサイズの上限を設定
     const maxSize = 8; // 上限8MB
-    const fileSizeMB = selectedFile.size / (1024 * 1024);
+    const fileWithoutMetadata = await removeImageMetadata(selectedFile); // モーションフォトの動画を除いたサイズを取得
+    const fileSizeMB = fileWithoutMetadata.size / (1024 * 1024);
     if (fileSizeMB > maxSize) {
       showSnackBar({
         message: `最大ファイルサイズは${maxSize}MBです。`,
@@ -91,10 +92,10 @@ export default function PostModal({
       await uploadImage(
         image,
         (percent) => setProgress(percent),
-        async (url) => {
+        async (url, id) => {
           const postData: PostWithGoalId = {
             userId: user?.userId as string,
-            storedURL: url,
+            storedId: id,
             text: text,
             goalId: goalId,
             submittedAt: new Date(),

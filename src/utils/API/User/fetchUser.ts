@@ -17,8 +17,11 @@ export const fetchUserById = async (userId: string): Promise<User> => {
   });
 
   if (!response.ok) {
-    throw new Error("Network response was not ok");
+    const status = response.status;
+    const data = await response.json();
+    throw new Error(`Error ${status}: ${data.message}`);
   }
+
   const data = await response.json();
   return data;
 };
@@ -30,15 +33,18 @@ export const fetchUserById = async (userId: string): Promise<User> => {
  * @return {*}
  */
 export const handleFetchUserError = (error: unknown) => {
-  let snackBarMessage = "ユーザー情報の取得に失敗しました";
+  let snackBarMessage = "初回ログインかユーザーデータが見つかりません";
 
   if (error instanceof Error) {
     console.error("Fetch error:", error.message);
     if (error.message.includes("404")) {
-      snackBarMessage = "ユーザーが見つかりませんでした";
+      snackBarMessage = "ユーザー情報が登録されていません";
     }
     if (error.message.includes("500")) {
       snackBarMessage = "サーバーエラーが発生しました";
+    }
+    if (error.message.includes("429")) {
+      snackBarMessage = "リクエストが多すぎます。数分後に再度お試しください";
     }
   } else {
     console.error("An unknown error occurred");

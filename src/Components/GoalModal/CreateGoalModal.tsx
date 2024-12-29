@@ -15,6 +15,7 @@ import {
   Typography,
 } from "@mui/joy";
 import React, { useEffect, useState } from "react";
+import { triggerDashBoardRerender } from "../DashBoard/DashBoard";
 
 export default function CreateGoalModal({
   open,
@@ -81,6 +82,7 @@ export default function CreateGoalModal({
         message: "目標を作成しました",
         type: "success",
       });
+      triggerDashBoardRerender();
 
       setText("");
       setDueDate("");

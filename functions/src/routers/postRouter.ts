@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
-import { updateStreak } from "./status";
-import { PostWithGoalId } from "./types";
+import { updateStreak } from "../status";
+import { PostWithGoalId } from "../types";
 
 const router = express.Router();
 const db = admin.firestore();
@@ -25,7 +25,7 @@ router.get("/", async (req: Request, res: Response) => {
           goalId: goalDoc.id,
           userId: goalData.userId,
           text: goalData.post.text,
-          storedURL: goalData.post.storedURL,
+          storedId: goalData.post.storedId,
           submittedAt: goalData.post.submittedAt.toDate(),
         });
       }
@@ -69,7 +69,7 @@ router.get("/:userId", async (req: Request, res: Response) => {
           goalId: goalDoc.id,
           userId: goalData.userId,
           text: goalData.post.text,
-          storedURL: goalData.post.storedURL,
+          storedId: goalData.post.storedId,
           submittedAt: goalData.post.submittedAt.toDate(),
         });
       }
@@ -86,19 +86,19 @@ router.get("/:userId", async (req: Request, res: Response) => {
 router.post("/", async (req: Request, res: Response) => {
   let goalId: PostWithGoalId["goalId"];
   let text: PostWithGoalId["text"];
-  let storedURL: PostWithGoalId["storedURL"];
+  let storedId: PostWithGoalId["storedId"];
   let submittedAt: PostWithGoalId["submittedAt"];
 
   try {
-    ({ goalId, text = "", storedURL, submittedAt } = req.body);
+    ({ goalId, text = "", storedId, submittedAt } = req.body);
   } catch (error) {
     logger.error(error);
     return res.status(400).json({ message: "Invalid request body" });
   }
 
-  if (!goalId || !storedURL || !submittedAt) {
+  if (!goalId || !storedId || !submittedAt) {
     return res.status(400).json({
-      message: "userId, storedURL, goalId, and submittedAt are required",
+      message: "userId, storedId, goalId, and submittedAt are required",
     });
   }
 
@@ -119,7 +119,7 @@ router.post("/", async (req: Request, res: Response) => {
     await goalRef.update({
       post: {
         text,
-        storedURL,
+        storedId,
         submittedAt: new Date(submittedAt),
       },
     });
@@ -135,9 +135,13 @@ router.post("/", async (req: Request, res: Response) => {
 
 // DELETE: 投稿を削除
 router.delete("/:goalId", async (req: Request, res: Response) => {
-  const goalId = req.params.goalId;
-
   try {
+    const goalId = req.params.goalId;
+
+    if (!goalId) {
+      return res.status(400).json({ message: "Goal ID is required" });
+    }
+
     const goalRef = db.collection("goal").doc(goalId);
     const goalDoc = await goalRef.get();
 
@@ -145,8 +149,22 @@ router.delete("/:goalId", async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Goal not found" });
     }
 
+    // Storageから画像を削除
+    const storedId = goalDoc.data()?.post?.storedId;
+    if (storedId) {
+      try {
+        const bucket = admin.storage().bucket();
+        const file = bucket.file(`post/${storedId}`);
+        await file.delete();
+        logger.info("Image deleted successfully:", storedId);
+      } catch (error) {
+        logger.error("Error deleting image:", error);
+        return res.status(500).json({ message: "Error deleting image" });
+      }
+    }
+
     await goalRef.update({
-      post: admin.firestore.FieldValue.delete(),
+      post: null,
     });
 
     return res.json({ message: "Post deleted successfully" });

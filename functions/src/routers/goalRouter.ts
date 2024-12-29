@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
-import { Goal, GoalWithId } from "./types";
+import { Goal, GoalWithId } from "../types";
 
 const router = express.Router();
 const db = admin.firestore();
@@ -147,14 +147,35 @@ router.put("/:goalId", async (req: Request, res: Response) => {
 
 // DELETE: 目標を削除
 router.delete("/:goalId", async (req: Request, res: Response) => {
-  const goalId = req.params.goalId;
-
-  if (!goalId) {
-    return res.status(400).json({ message: "Goal ID is required" });
-  }
-
   try {
-    await db.collection("goal").doc(goalId).delete();
+    const goalId = req.params.goalId;
+
+    if (!goalId) {
+      return res.status(400).json({ message: "Goal ID is required" });
+    }
+
+    const goalRef = db.collection("goal").doc(goalId);
+    const goalDoc = await goalRef.get();
+
+    if (!goalDoc.exists) {
+      return res.status(404).json({ message: "Goal not found" });
+    }
+
+    // storageから画像を削除
+    const storedId = goalDoc.data()?.post?.storedId;
+    if (storedId) {
+      try {
+        const bucket = admin.storage().bucket();
+        const file = bucket.file(`post/${storedId}`);
+        await file.delete();
+        logger.info("Image deleted successfully:", storedId);
+      } catch (error) {
+        logger.error("Error deleting image:", error);
+        return res.status(500).json({ message: "Error deleting image" });
+      }
+    }
+
+    await goalRef.delete();
     return res.json({ message: "Goal deleted successfully", goalId });
   } catch (error) {
     logger.error(error);

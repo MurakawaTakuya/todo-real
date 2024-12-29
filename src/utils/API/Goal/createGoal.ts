@@ -18,7 +18,9 @@ export const createGoal = async (postData: Goal) => {
   });
 
   if (!response.ok) {
-    throw new Error(`Network response was not ok: ${response.statusText}`);
+    const status = response.status;
+    const data = await response.json();
+    throw new Error(`Error ${status}: ${data.message}`);
   }
 
   return await response.json();

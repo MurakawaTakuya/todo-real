@@ -38,7 +38,9 @@ export default function NameUpdate() {
       );
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const status = response.status;
+        const data = await response.json();
+        throw new Error(`Error ${status}: ${data.message}`);
       }
 
       // Firebase AuthenticationのdisplayNameを更新

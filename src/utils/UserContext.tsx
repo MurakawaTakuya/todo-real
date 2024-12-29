@@ -1,7 +1,11 @@
 "use client";
 import { auth } from "@/app/firebase";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { LoginType, User } from "@/types/types";
-import { fetchUserById } from "@/utils/API/User/fetchUser";
+import {
+  fetchUserById,
+  handleFetchUserError,
+} from "@/utils/API/User/fetchUser";
 import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
 import {
   createContext,
@@ -96,11 +100,11 @@ export const UserProvider = ({ children }: Props) => {
           }
         } catch (error: unknown) {
           console.error("ユーザーデータの取得に失敗しました:", error);
-          // const message = handleFetchUserError(error);
-          // showSnackBar({
-          //   message,
-          //   type: "warning",
-          // });
+          const message = handleFetchUserError(error);
+          showSnackBar({
+            message,
+            type: "warning",
+          });
         }
       }
     );

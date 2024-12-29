@@ -9,7 +9,7 @@ import serviceAccount from "./serviceAccountKey.json";
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-  storageBucket: "todo-real-c28fa.appspot.com",
+  storageBucket: "todo-real-c28fa.firebasestorage.app",
 });
 
 import goalRouter from "./routers/goalRouter";
@@ -61,25 +61,35 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// 10分間で最大300回に制限
+// 10分間で最大100回に制限
 app.use(
   rateLimit({
     windowMs: 10 * 60 * 1000,
+    max: 100,
+    keyGenerator: (req) => {
+      const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
+      return Array.isArray(key) ? key[0] : key;
+    },
+    handler: (req, res) => {
+      return res
+        .status(429)
+        .json({ message: "Too many requests, please try again later." });
+    },
+  })
+);
+// 1時間で最大300回に制限
+app.use(
+  rateLimit({
+    windowMs: 60 * 60 * 1000,
     max: 300,
     keyGenerator: (req) => {
       const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
       return Array.isArray(key) ? key[0] : key;
     },
-  })
-);
-// 1時間で最大1000回に制限
-app.use(
-  rateLimit({
-    windowMs: 60 * 60 * 1000,
-    max: 1000,
-    keyGenerator: (req) => {
-      const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
-      return Array.isArray(key) ? key[0] : key;
+    handler: (req, res) => {
+      return res
+        .status(429)
+        .json({ message: "Too many requests, please try again later." });
     },
   })
 );

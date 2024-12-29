@@ -1,74 +1,91 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
-import { countCompletedGoals, countFailedGoals, getStreak } from "./status";
-import { GoalWithIdAndUserData, User } from "./types";
+import { countCompletedGoals, countFailedGoals, getStreak } from "../status";
+import { GoalWithIdAndUserData, User } from "../types";
+import { getUserFromId } from "./userRouter";
 
 const router = express.Router();
 const db = admin.firestore();
 
 const getResults = async (
+  res: Response,
   limit: number,
   offset: number,
   userId?: string,
-  includeSuccess = true,
-  includeFailed = true,
-  includePending = true
+  onlyPending = false,
+  onlyFinished = false
 ) => {
-  let goalQuery = db.collection("goal").limit(limit).offset(offset);
+  let baseQuery = db.collection("goal").limit(limit).offset(offset);
+
   if (userId) {
-    goalQuery = goalQuery.where("userId", "==", userId);
+    const userDoc = await getUserFromId(userId);
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    baseQuery = baseQuery.where("userId", "==", userId);
   }
 
-  if (!includeSuccess) {
-    goalQuery = goalQuery.where("post", "==", null);
+  if (onlyPending && onlyFinished) {
+    return res.status(400).json({
+      message:
+        "Cannot set both 'onlyPending' and 'onlyFinished'. Please set only one of 'onlyPending' or 'onlyFinished', or leave both false.",
+    });
   }
 
-  if (!includeFailed) {
-    goalQuery = goalQuery
-      .where("post", "!=", null)
-      .where("deadline", ">", new Date());
-  }
+  const now = admin.firestore.Timestamp.now();
 
-  if (!includePending) {
-    goalQuery = goalQuery
-      .where("post", "==", null)
-      .where("deadline", "<=", new Date());
-  }
-
-  const goalSnapshot = await goalQuery.get();
-
-  const goals = goalSnapshot.docs.map((doc) => {
-    const data = doc.data();
-    const post = data.post;
-
-    return {
-      goalId: doc.id,
-      userId: data.userId,
-      deadline: data.deadline.toDate(),
-      text: data.text,
-      post: post && {
-        text: post.text,
-        storedURL: post.storedURL,
-        submittedAt: post.submittedAt.toDate(),
-      },
-    };
-  }) as GoalWithIdAndUserData[];
-
-  if (!goals || goals.length === 0) {
-    return { successResults: [], failedResults: [], pendingResults: [] };
-  }
-
+  const pendingResults: GoalWithIdAndUserData[] = [];
   const successResults: GoalWithIdAndUserData[] = [];
   const failedResults: GoalWithIdAndUserData[] = [];
-  const pendingResults: GoalWithIdAndUserData[] = [];
 
-  // mapで<userId, userName>のリストを作成し、userNameをキャッシュする
-  const userList = new Map<string, User>();
+  const userList = new Map<string, User>(); // ユーザー情報のキャッシュ
 
-  for (const goal of goals) {
-    // userListにあるならば、userNameを取得し、無いならばfirestoreから取得してキャッシュする
-    const userId = goal.userId;
+  if (onlyPending || (!onlyPending && !onlyFinished)) {
+    const pendingSnapshot = await baseQuery
+      .where("post", "==", null)
+      .where("deadline", ">", now)
+      .get();
+
+    const pendingGoals = await processGoals(pendingSnapshot.docs, userList);
+    pendingResults.push(...pendingGoals);
+  }
+
+  if (onlyFinished || (!onlyPending && !onlyFinished)) {
+    const completedSnapshot = await baseQuery.where("post", "!=", null).get();
+
+    const failedSnapshot = await baseQuery
+      .where("post", "==", null)
+      .where("deadline", "<=", now)
+      .get();
+
+    const completedResults = await processGoals(
+      completedSnapshot.docs,
+      userList
+    );
+    const failedResultsTemp = await processGoals(failedSnapshot.docs, userList);
+
+    successResults.push(...completedResults);
+    failedResults.push(...failedResultsTemp);
+  }
+
+  return {
+    successResults,
+    failedResults,
+    pendingResults,
+  };
+};
+
+const processGoals = async (
+  docs: FirebaseFirestore.QueryDocumentSnapshot[],
+  userList: Map<string, User>
+) => {
+  const results: GoalWithIdAndUserData[] = [];
+
+  for (const doc of docs) {
+    const data = doc.data();
+    const userId = data.userId;
+
     let userData = userList.get(userId);
     if (!userData) {
       const userDoc = await db.collection("user").doc(userId).get();
@@ -86,57 +103,44 @@ const getResults = async (
       userList.set(userId, userData);
     }
 
-    const post = goal.post;
-    if (post) {
-      if (post.submittedAt > goal.deadline) {
-        failedResults.push({
-          ...goal,
-          userData,
-        });
-      } else {
-        successResults.push({
-          ...goal,
-          userData,
-        });
-      }
-    } else if (goal.deadline < new Date()) {
-      failedResults.push({
-        ...goal,
-        userData,
-      });
-    } else {
-      pendingResults.push({
-        ...goal,
-        userData,
-      });
-    }
+    const post = data.post;
+    results.push({
+      goalId: doc.id,
+      userId: data.userId,
+      deadline: data.deadline.toDate(),
+      text: data.text,
+      post: post && {
+        text: post.text,
+        storedId: post.storedId,
+        submittedAt: post.submittedAt.toDate(),
+      },
+      userData,
+    });
   }
 
-  return {
-    successResults,
-    failedResults,
-    pendingResults,
-  };
+  return results;
 };
 
 // GET: 全ての目標または特定のユーザーの目標に対する結果を取得
 router.get("/:userId?", async (req: Request, res: Response) => {
   const userId = req.params.userId;
 
-  const limit = parseInt(req.query.limit as string) || 100; // TODO: デフォルト値を適切に設定
+  let limit = parseInt(req.query.limit as string) || 10;
+  if (limit < 1 || limit > 100) {
+    limit = 100;
+  }
   const offset = parseInt(req.query.offset as string) || 0;
-  const includeSuccess = req.query.success !== "false";
-  const includeFailed = req.query.failed !== "false";
-  const includePending = req.query.pending !== "false";
+  const onlyPending = req.query.onlyPending === "true"; // デフォルト: false
+  const onlyFinished = req.query.onlyFinished === "true"; // デフォルト: false
 
   try {
     const results = await getResults(
+      res,
       limit,
       offset,
       userId,
-      includeSuccess,
-      includeFailed,
-      includePending
+      onlyPending,
+      onlyFinished
     );
     return res.json(results);
   } catch (error) {

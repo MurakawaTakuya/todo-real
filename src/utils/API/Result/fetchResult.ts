@@ -9,18 +9,39 @@ import { appCheckToken, functionsEndpoint } from "@/app/firebase";
  */
 export const fetchResult = async ({
   userId = "",
-}: { userId?: string } = {}) => {
-  const response = await fetch(`${functionsEndpoint}/result/${userId}`, {
-    method: "GET",
-    headers: {
-      "X-Firebase-AppCheck": appCheckToken,
-      "Content-Type": "application/json",
-    },
-  });
+  success = true,
+  failed = true,
+  pending = true,
+}: {
+  userId?: string;
+  success?: boolean;
+  failed?: boolean;
+  pending?: boolean;
+} = {}) => {
+  const queryParams = new URLSearchParams();
+  if (!success && !failed && pending) {
+    queryParams.append("onlyPending", "true");
+  } else if (success && failed && !pending) {
+    queryParams.append("onlyFinished", "true");
+  }
+
+  const response = await fetch(
+    `${functionsEndpoint}/result/${userId}?${queryParams.toString()}`,
+    {
+      method: "GET",
+      headers: {
+        "X-Firebase-AppCheck": appCheckToken,
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
-    throw new Error("Network response was not ok");
+    const status = response.status;
+    const data = await response.json();
+    throw new Error(`Error ${status}: ${data.message}`);
   }
+
   const data = await response.json();
   return data;
 };

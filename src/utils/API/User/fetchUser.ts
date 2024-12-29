@@ -35,7 +35,7 @@ export const handleFetchUserError = (error: unknown) => {
   if (error instanceof Error) {
     console.error("Fetch error:", error.message);
     if (error.message.includes("404")) {
-      snackBarMessage = "ユーザーが見つかりませんでした";
+      snackBarMessage = "ユーザー情報が登録されていません";
     }
     if (error.message.includes("500")) {
       snackBarMessage = "サーバーエラーが発生しました";

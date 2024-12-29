@@ -43,7 +43,9 @@ export default function LoggedInView() {
   return (
     <>
       {user.loginType === "Guest" ? (
-        <>ゲストとしてログイン中</>
+        <Typography sx={{ textAlign: "center" }}>
+          ゲストとしてログイン中
+        </Typography>
       ) : (
         <>
           <Typography sx={{ textAlign: "center" }}>

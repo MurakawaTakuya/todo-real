@@ -38,7 +38,7 @@ export default function DashBoard({
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetchResult({ userId })
+    fetchResult({ userId, success, failed, pending })
       .then((data) => {
         setSuccessResults(data.successResults);
         setFailedResults(data.failedResults);
@@ -54,7 +54,7 @@ export default function DashBoard({
           type: "warning",
         });
       });
-  }, [userId]);
+  }, [userId, success, failed, pending]);
 
   useEffect(() => {
     // 表示したい項目にデータがない場合はnoResultをtrueにする

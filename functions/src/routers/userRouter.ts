@@ -204,10 +204,10 @@ router.delete("/:userId", async (req: Request, res: Response) => {
 export default router;
 
 // ユーザー名からユーザー情報を取得
-const getUserFromName = async (userName: string) => {
+export const getUserFromName = async (userName: string) => {
   return await db.collection("user").where("name", "==", userName).get();
 };
 
-const getUserFromId = async (userId: string) => {
+export const getUserFromId = async (userId: string) => {
   return await db.collection("user").doc(userId).get();
 };

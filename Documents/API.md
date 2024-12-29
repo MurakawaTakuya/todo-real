@@ -201,8 +201,10 @@ Use Create Post API to update post.
 - URL: /result/:?userId
   - Empty userId will return all results.
 - Parameters
-  - limit?: number - The maximum number of results to return.(Default is 50)
+  - limit?: number - The maximum number of results to return. (Default is 50)
   - offset?: number - The number of results to skip before starting to collect the result set.
+  - onlyPending?: boolean - If true, only pending goals will be returned. (Default is false)
+  - onlyCompleted?: boolean - If true, only completed or failed goals will be returned. (Default is false)
 - Method: GET
 - Response
   ```json

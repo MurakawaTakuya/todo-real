@@ -45,6 +45,7 @@ const getResults = async (
     const pendingSnapshot = await baseQuery
       .where("post", "==", null)
       .where("deadline", ">", now)
+      .orderBy("deadline", "asc") // 古いものが先
       .get();
 
     const pendingGoals = await processGoals(pendingSnapshot.docs, userList);
@@ -52,11 +53,15 @@ const getResults = async (
   }
 
   if (onlyFinished || (!onlyPending && !onlyFinished)) {
-    const completedSnapshot = await baseQuery.where("post", "!=", null).get();
+    const completedSnapshot = await baseQuery
+      .where("post", "!=", null)
+      .orderBy("post.submittedAt", "desc") // 新しいものが先
+      .get();
 
     const failedSnapshot = await baseQuery
       .where("post", "==", null)
       .where("deadline", "<=", now)
+      .orderBy("deadline", "desc") // 新しいものが先
       .get();
 
     const completedResults = await processGoals(

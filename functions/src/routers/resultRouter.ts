@@ -49,7 +49,7 @@ const getResults = async (
       text: data.text,
       post: post && {
         text: post.text,
-        storedURL: post.storedURL,
+        storedId: post.storedId,
         submittedAt: post.submittedAt.toDate(),
       },
     };

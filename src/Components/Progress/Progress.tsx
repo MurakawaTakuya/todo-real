@@ -126,7 +126,7 @@ const SuccessStep = ({
   }
 
   const storage = getStorage();
-  const imageRef = ref(storage, `post/${post.storedURL}`);
+  const imageRef = ref(storage, `post/${post.storedId}`);
 
   getDownloadURL(imageRef)
     .then((url) => {

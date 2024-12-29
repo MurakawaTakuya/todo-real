@@ -108,7 +108,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
           "text": "hoge fuga",
           "post": {
               "userId": "Vlx6GCtq90ag3lxgh0pcCKGp5ba0",
-              "storedURL": "0f9a84ed-8ae8-44b0-a6f5-5ac5ca517948",
+              "storedId": "0f9a84ed-8ae8-44b0-a6f5-5ac5ca517948",
               "text": "数学の勉強したよ^^",
               "submittedAt": {
                   "_seconds": 1735603199,
@@ -151,14 +151,14 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
   - Body (form-data)
     - goalId: string
     - text: string
-    - storedURL: string (画像のストレージパス、/post/{storedURL}/image)
+    - storedId: string (画像のストレージパス、/post/{storedId}/image)
     - submittedAt: Date
   - Example
     ```json
     {
         "goalId": "RXlHJiv3GtpzSDHhfljS",
         "text": "今日は勉強をがんばった",
-        "storedURL": "0f9a84ed-8ae8-44b0-a6f5-5ac5ca517948",
+        "storedId": "0f9a84ed-8ae8-44b0-a6f5-5ac5ca517948",
         "submittedAt": "2024-12-31T23:59:59.000Z"
     }
     ```
@@ -182,7 +182,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
           "goalId": "9fgWJA6wMN54EkxIC2WD",
           "userId": "IK0Zc2hoUYaYjXoqzmCl",
           "text": "今日は勉強をがんばった",
-          "storedURL": "0f9a84ed-8ae8-44b0-a6f5-5ac5ca517948",
+          "storedId": "0f9a84ed-8ae8-44b0-a6f5-5ac5ca517948",
           "goalId": "RXlHJiv3GtpzSDHhfljS",
           "submittedAt": "2024-12-31T23:59:59.000Z"
       }
@@ -215,7 +215,7 @@ Use Create Post API to update post.
               "text": "Duolingoやる",
               "post": {
                   "text": "フランス語したよ",
-                  "storedURL": "0f9a84ed-8ae8-44b0-a6f5-5ac5ca517948",
+                  "storedId": "0f9a84ed-8ae8-44b0-a6f5-5ac5ca517948",
                   "submittedAt": "2024-12-28T09:45:10.718Z"
               },
               "userData": {

@@ -95,7 +95,7 @@ export default function PostModal({
         async (url, id) => {
           const postData: PostWithGoalId = {
             userId: user?.userId as string,
-            storedURL: id,
+            storedId: id,
             text: text,
             goalId: goalId,
             submittedAt: new Date(),

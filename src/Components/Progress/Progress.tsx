@@ -75,8 +75,6 @@ export default function Progress({
       : getUpdatedTime(a) - getUpdatedTime(b); // 最古が上位
   });
 
-  console.log("allResults: ", allResults);
-
   return (
     <>
       {allResults.map((result) => {

@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
-import { countCompletedGoals, countFailedGoals, getStreak } from "./status";
-import { GoalWithIdAndUserData, User } from "./types";
+import { countCompletedGoals, countFailedGoals, getStreak } from "../status";
+import { GoalWithIdAndUserData, User } from "../types";
 
 const router = express.Router();
 const db = admin.firestore();

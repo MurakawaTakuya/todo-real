@@ -12,6 +12,7 @@ import StepIndicator, { stepIndicatorClasses } from "@mui/joy/StepIndicator";
 import Stepper from "@mui/joy/Stepper";
 import Typography, { typographyClasses } from "@mui/joy/Typography";
 import { Divider } from "@mui/material";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { ReactNode, useState } from "react";
 import DeleteGoalModal from "../DeleteGoalModal/DeleteGoalModal";
 import DeletePostModal from "../DeletePostModal/DeletePostModal";
@@ -115,10 +116,26 @@ const SuccessStep = ({
   result: GoalWithIdAndUserData;
   user: User;
 }) => {
+  const [imageURL, setImageURL] = useState("");
+  const [imageLoading, setImageLoading] = useState(true);
+
   const post = result.post;
   if (!post) {
     return null;
   }
+
+  const storage = getStorage();
+  const imageRef = ref(storage, `post/${post.storedURL}`);
+
+  getDownloadURL(imageRef)
+    .then((url) => {
+      console.log("Image URL:", url);
+      setImageURL(url);
+      setImageLoading(false);
+    })
+    .catch((error) => {
+      console.error("Error fetching image URL:", error);
+    });
 
   return (
     <StepperBlock
@@ -164,10 +181,10 @@ const SuccessStep = ({
             zIndex: 0,
           }}
         >
-          {post.storedURL && (
+          {!imageLoading && (
             <img
-              src={post.storedURL}
-              srcSet={post.storedURL}
+              src={imageURL}
+              srcSet={imageURL}
               style={{
                 objectFit: "contain",
                 maxWidth: "100%",

@@ -9,7 +9,7 @@ import serviceAccount from "./serviceAccountKey.json";
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-  storageBucket: "todo-real-c28fa.appspot.com",
+  storageBucket: "todo-real-c28fa.firebasestorage.app",
 });
 
 import goalRouter from "./routers/goalRouter";

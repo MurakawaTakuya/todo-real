@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
-import { countCompletedGoals, countFailedGoals, getStreak } from "./status";
-import { User } from "./types";
+import { countCompletedGoals, countFailedGoals, getStreak } from "../status";
+import { User } from "../types";
 
 const router = express.Router();
 const db = admin.firestore();
@@ -179,14 +179,21 @@ router.put("/:userId", async (req: Request, res: Response) => {
 
 // DELETE: ユーザーを削除
 router.delete("/:userId", async (req: Request, res: Response) => {
-  const userId = req.params.userId;
-
-  if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
-  }
-
   try {
-    await db.collection("user").doc(userId).delete();
+    const userId = req.params.userId;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const userRef = db.collection("user").doc(userId);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await userRef.delete();
     return res.json({ message: "User deleted successfully", userId });
   } catch (error) {
     logger.error(error);

@@ -92,10 +92,10 @@ export default function PostModal({
       await uploadImage(
         image,
         (percent) => setProgress(percent),
-        async (url) => {
+        async (url, id) => {
           const postData: PostWithGoalId = {
             userId: user?.userId as string,
-            storedURL: url,
+            storedURL: id,
             text: text,
             goalId: goalId,
             submittedAt: new Date(),

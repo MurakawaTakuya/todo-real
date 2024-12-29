@@ -5,13 +5,14 @@ import { useUser } from "@/utils/UserContext";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import CloseIcon from "@mui/icons-material/Close";
+import { CssVarsProvider, Divider, extendTheme } from "@mui/joy";
 import Card from "@mui/joy/Card";
 import CardContent from "@mui/joy/CardContent";
+import Skeleton from "@mui/joy/Skeleton";
 import Step, { stepClasses } from "@mui/joy/Step";
 import StepIndicator, { stepIndicatorClasses } from "@mui/joy/StepIndicator";
 import Stepper from "@mui/joy/Stepper";
 import Typography, { typographyClasses } from "@mui/joy/Typography";
-import { Divider } from "@mui/material";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { ReactNode, useState } from "react";
 import DeleteGoalModal from "../DeleteGoalModal/DeleteGoalModal";
@@ -117,7 +118,7 @@ const SuccessStep = ({
   user: User;
 }) => {
   const [imageURL, setImageURL] = useState("");
-  const [imageLoading, setImageLoading] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const post = result.post;
   if (!post) {
@@ -129,13 +130,21 @@ const SuccessStep = ({
 
   getDownloadURL(imageRef)
     .then((url) => {
-      console.log("Image URL:", url);
       setImageURL(url);
-      setImageLoading(false);
     })
     .catch((error) => {
       console.error("Error fetching image URL:", error);
     });
+
+  const theme = extendTheme({
+    components: {
+      JoySkeleton: {
+        defaultProps: {
+          animation: "wave",
+        },
+      },
+    },
+  });
 
   return (
     <StepperBlock
@@ -181,24 +190,41 @@ const SuccessStep = ({
             zIndex: 0,
           }}
         >
-          {!imageLoading && (
-            <img
-              src={imageURL}
-              srcSet={imageURL}
+          <div style={{ minHeight: "15vh" }}>
+            <CssVarsProvider theme={theme}>
+              <Skeleton
+                loading={!imageLoaded}
+                variant="overlay"
+                sx={{ borderRadius: "5px 5px 0 0", height: "15vh" }}
+              >
+                {imageURL && (
+                  <img
+                    src={imageURL}
+                    srcSet={imageURL}
+                    style={{
+                      objectFit: "contain",
+                      width: "100%",
+                      maxHeight: "50vh",
+                      margin: "0 auto",
+                      borderRadius: "5px 5px 0 0",
+                      borderBottom: "thin solid #cdcdcd",
+                    }}
+                    loading="lazy"
+                    alt=""
+                    onLoad={() => setImageLoaded(true)}
+                  />
+                )}
+              </Skeleton>
+            </CssVarsProvider>
+          </div>
+          <CardContent sx={{ padding: "3px 10px 10px" }}>
+            <div
               style={{
-                objectFit: "contain",
-                maxWidth: "100%",
-                maxHeight: "50vh",
-                borderRadius: "5px 5px 0 0",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
-              loading="lazy"
-              alt=""
-            />
-          )}
-          <CardContent
-            sx={{ padding: "10px", borderTop: "thin solid #cdcdcd" }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
+            >
               <Typography level="body-sm">
                 {formatStringToDate(post.submittedAt)}に完了
               </Typography>
@@ -340,7 +366,13 @@ const GoalCard = ({
       }}
     >
       <CardContent>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <Typography level="body-sm">
             {formatStringToDate(deadline)}までに
           </Typography>
@@ -379,7 +411,7 @@ const StepperBlock = ({
       sx={{
         width: "87%",
         margin: "10px auto",
-        padding: "13px",
+        padding: "10px 13px",
         borderRadius: "8px",
         border: "1px solid",
         borderColor:

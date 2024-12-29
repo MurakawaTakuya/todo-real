@@ -76,7 +76,7 @@ export default function DashBoard({
           }}
         />
       ) : noResult ? (
-        <Typography level="h4" sx={{ textAlign: "center" }}>
+        <Typography level="h4" sx={{ textAlign: "center", marginTop: "20px" }}>
           +ボタンから目標を作成しましょう!
         </Typography>
       ) : (

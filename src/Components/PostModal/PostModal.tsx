@@ -175,7 +175,7 @@ export default function PostModal({
         open={open}
         onClose={() => setOpen(false)}
         keepMounted
-        disablePortal
+        disablePortal={false}
       >
         <ModalDialog
           aria-labelledby="create-post-title"

@@ -1,6 +1,7 @@
 "use client";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import GroupIcon from "@mui/icons-material/Group";
+import HomeIcon from "@mui/icons-material/Home";
 import Person from "@mui/icons-material/Person";
 import Box from "@mui/joy/Box";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
@@ -13,25 +14,30 @@ import { useEffect, useState } from "react";
 export default function NavigationMenu() {
   const paths = [
     ["/mycontent", "/mycontent/"],
-    ["/"],
+    ["/discover", "/discover/"],
     ["/account", "/account/"],
+    ["/"],
   ];
   const pathname = window.location.pathname;
   const defaultIndex = paths[0].some((path) => path === pathname)
     ? 0
     : paths[1].some((path) => path === pathname)
     ? 1
-    : 2;
+    : paths[2].some((path) => path === pathname)
+    ? 2
+    : 3;
   const [index, setIndex] = useState(defaultIndex);
-  const colors = ["success", "primary", "warning"] as const;
 
   useEffect(() => {
     if (document.readyState === "complete") {
       if (!paths[index].some((path) => path === pathname)) {
+        // パスが存在しない場合はリダイレクト
         redirect(paths[index][0]);
       }
     }
   }, [index]);
+
+  const colors = ["success", "primary", "warning", "danger"] as const;
 
   return (
     <Box
@@ -59,7 +65,6 @@ export default function NavigationMenu() {
           maxWidth: "93%",
           mx: "auto",
           boxShadow: theme.shadow.sm,
-          "--joy-shadowChannel": theme.vars.palette[colors[index]].darkChannel,
           [`& .${tabClasses.root}`]: {
             py: 1,
             flex: 1,
@@ -81,8 +86,14 @@ export default function NavigationMenu() {
           <Tab
             disableIndicator
             orientation="vertical"
-            sx={{ margin: "0 3px", padding: "8px 0 !important" }}
-            {...(index === 0 && { color: colors[0] })}
+            sx={{
+              margin: "0 3px",
+              padding: "8px 0 !important",
+              ...(index === 0 && {
+                backgroundColor: "#e1ffe0 !important",
+                color: "#008954 !important",
+              }),
+            }}
           >
             <ListItemDecorator>
               <FormatListBulletedIcon />
@@ -92,24 +103,53 @@ export default function NavigationMenu() {
           <Tab
             disableIndicator
             orientation="vertical"
-            sx={{ margin: "0 3px", padding: "8px 0 !important" }}
-            {...(index === 1 && { color: colors[1] })}
+            sx={{
+              margin: "0 3px",
+              padding: "8px 0 !important",
+              ...(index === 1 && {
+                backgroundColor: "#ffecee !important",
+                color: "#bf1818 !important",
+              }),
+            }}
           >
             <ListItemDecorator>
-              <HomeRoundedIcon />
+              <GroupIcon />
             </ListItemDecorator>
-            Home
+            Discover
           </Tab>
           <Tab
             disableIndicator
             orientation="vertical"
-            sx={{ margin: "0 3px", padding: "8px 0 !important" }}
-            {...(index === 2 && { color: colors[2] })}
+            sx={{
+              margin: "0 3px",
+              padding: "8px 0 !important",
+              ...(index === 2 && {
+                backgroundColor: "#fff0df !important",
+                color: "#c16401 !important",
+              }),
+            }}
           >
             <ListItemDecorator>
               <Person />
             </ListItemDecorator>
             Profile
+          </Tab>
+          <Tab
+            disableIndicator
+            orientation="vertical"
+            sx={{
+              margin: "0 3px",
+              padding: "8px 0 !important",
+              ...(index === 3 && {
+                backgroundColor: "#e3f2fd !important",
+                color: "#0b6bcb !important",
+              }),
+            }}
+          >
+            <ListItemDecorator>
+              <HomeIcon />
+            </ListItemDecorator>
+            Top
           </Tab>
         </TabList>
       </Tabs>

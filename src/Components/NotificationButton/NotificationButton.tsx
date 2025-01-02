@@ -37,6 +37,10 @@ export default function NotificationButton() {
       });
       return;
     }
+    showSnackBar({
+      message: "通知を有効化中...",
+      type: "normal",
+    });
     setNotificationTokenGenerating(true);
     requestPermission(user.userId)
       .then(() => {

@@ -102,10 +102,9 @@ export default function PostModal({
           };
 
           try {
-            const data = await createPost(postData);
+            await createPost(postData);
 
             setProgress(100);
-            console.log("Post created:", data);
 
             showSnackBar({
               message: "投稿しました",

@@ -36,7 +36,6 @@ export const handleFetchUserError = (error: unknown) => {
   let snackBarMessage = "初回ログインかユーザーデータが見つかりません";
 
   if (error instanceof Error) {
-    console.error("Fetch error:", error.message);
     if (error.message.includes("404")) {
       snackBarMessage = "ユーザー情報が登録されていません";
     }

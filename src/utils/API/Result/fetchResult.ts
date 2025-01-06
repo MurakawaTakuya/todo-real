@@ -56,7 +56,6 @@ export const handleFetchResultError = (error: unknown) => {
   let snackBarMessage = "データの取得に失敗しました";
 
   if (error instanceof Error) {
-    console.error("Fetch error:", error.message);
     if (error.message.includes("404")) {
       snackBarMessage = "データが見つかりませんでした";
     }

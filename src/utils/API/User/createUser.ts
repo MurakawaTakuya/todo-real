@@ -22,7 +22,4 @@ export const createUser = async (name: string, userId: string) => {
     const data = await response.json();
     throw new Error(`Error ${status}: ${data.message}`);
   }
-
-  const data = await response.json();
-  console.log("Success:", data);
 };

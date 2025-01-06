@@ -2,13 +2,13 @@ import { signInAsGuest } from "@/utils/Auth/signInAnonymously";
 import { signInWithGoogleAccount } from "@/utils/Auth/signInWithGoogleAccount";
 import { signInWithMail } from "@/utils/Auth/signInWithMail";
 import { signUpWithMail } from "@/utils/Auth/signUpWithMail";
+import Typography from "@mui/joy/Typography";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import React, { useState } from "react";
 import { RoundedButton } from "./LoggedInView";
@@ -216,6 +216,10 @@ export default function AuthForm() {
           "ゲストログイン"
         )}
       </RoundedButton>
+      <Typography level="body-xs">
+        ゲストログインを使用するとアカウントを作成せずに閲覧できます。
+        (投稿機能は使用できません。)
+      </Typography>
     </>
   );
 }

@@ -8,6 +8,16 @@ import { Goal } from "@/types/types";
  * @return {*}
  */
 export const createGoal = async (postData: Goal) => {
+  // 過去の時間が入力されている場合
+  if (new Date(postData.deadline).getTime() < Date.now()) {
+    throw new Error("past deadline can't be set");
+  }
+
+  // 文字数制限を100文字までにする
+  if (postData.text.length > 100) {
+    throw new Error("too long comment");
+  }
+
   const response = await fetch(`${functionsEndpoint}/goal/`, {
     method: "POST",
     headers: {
@@ -36,7 +46,12 @@ export const handleCreateGoalError = (error: unknown) => {
   let snackBarMessage = "目標の作成に失敗しました";
 
   if (error instanceof Error) {
-    console.error("Fetch error:", error.message);
+    if (error.message.includes("past deadline can't be set")) {
+      snackBarMessage = "過去の時間を指定することはできません";
+    }
+    if (error.message.includes("too long comment")) {
+      snackBarMessage = "目標の文字数は100文字以下にしてください";
+    }
     if (error.message.includes("400")) {
       snackBarMessage = "入力内容に問題があります";
     }

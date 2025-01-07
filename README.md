@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# About This Project
+TODO REAL is a web application that helps users manage their goals and tasks more effectively. It also works as a social platform, allowing users to share their to-do lists with others. By sending notifications and competing with friends, it makes achieving goals more engaging and easier.
+This project is developed using Next.js, Firebase, and TypeScript.
+For More information, please refer to the Top Page.
+[TODO REAL](https://todo-real-c28fa.web.app/)
 
 ## Getting Started
 First run this command to install required packages:
@@ -50,7 +54,7 @@ firebase emulators:start
 ```
 
 ## Technical Documents
-||Document in this project or related PR|Firebase|
+||Document in this project or related PR|Firebase/Google Cloud - Official Documents|
 |-|-|-|
 |API|[API Document](./Documents/API.md)|[Firebase Cloud Functions](https://firebase.google.com/docs/functions)|
 |Database||[Firestore](https://firebase.google.com/docs/firestore)|

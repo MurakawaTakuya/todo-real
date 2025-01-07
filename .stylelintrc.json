@@ -4,7 +4,9 @@
   "rules": {
     "order/properties-alphabetical-order": true,
     "selector-class-pattern": null,
-    "block-no-empty": null
+    "block-no-empty": null,
+    "custom-property-pattern": null,
+    "value-keyword-case": null
   },
   "ignoreFiles": "node_modules/**/*"
 }

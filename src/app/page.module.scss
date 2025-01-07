@@ -1,0 +1,53 @@
+.introductionBody {
+  --primary-color: #008edc;
+  --primary-font-family: Roboto, "Zen Kaku Gothic New", sans-serif;
+
+  color: var(--primary-color);
+  font-family: var(--primary-font-family);
+  line-height: 1.7;
+
+  --joy-palette-text-primary: var(--primary-color);
+  --joy-fontFamily-display: var(--primary-font-family);
+
+  > div {
+    padding: 15px 5px;
+  }
+
+  > div:nth-child(odd) {
+    background-color: #e8f7ff;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.2;
+    margin: 5px 0;
+    text-align: center;
+  }
+
+  img {
+    border-radius: 13px;
+    display: block;
+    margin: 5px auto;
+    object-fit: contain;
+    width: 95%;
+  }
+
+  .svg {
+    fill: var(--primary-color);
+    height: 35px;
+    margin: 0;
+    padding-bottom: 3px;
+    width: 35px;
+  }
+}
+
+.highlight {
+  background-color: #008edc;
+  color: white;
+  margin: 0 2px;
+  padding: 2px 3px 0;
+}

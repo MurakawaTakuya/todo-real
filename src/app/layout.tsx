@@ -7,9 +7,11 @@ import { UserProvider } from "@/utils/UserContext";
 import type { Metadata } from "next";
 import "./firebase";
 
+const description = "TODO REALはTODOリストとBeRealを組み合わせたアプリです。";
+
 export const metadata: Metadata = {
-  title: "Todo Real(仮)",
-  description: "BeRealとTodoアプリを組み合わせたアプリ",
+  title: "Todo Real",
+  description,
 };
 
 export const viewport = {
@@ -22,6 +24,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const rootURL = "https://todo-real-c28fa.web.app/";
+
   return (
     <html lang="ja">
       <head>

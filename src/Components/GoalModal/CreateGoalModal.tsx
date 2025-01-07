@@ -29,7 +29,7 @@ export default function CreateGoalModal({
   defaultDeadline?: string;
 }) {
   const [text, setText] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [deadline, setDeadline] = useState("");
 
   const { user } = useUser();
 
@@ -43,7 +43,7 @@ export default function CreateGoalModal({
         convertedDate.getTime() - convertedDate.getTimezoneOffset() * 60000
       );
       localDate.setDate(localDate.getDate() + 1); // 1日後にする
-      setDueDate(localDate.toISOString().slice(0, 16));
+      setDeadline(localDate.toISOString().slice(0, 16));
     } else {
       // 初期値の指定が無い場合は次の日の23時に設定
       const nextDay = new Date();
@@ -52,31 +52,21 @@ export default function CreateGoalModal({
       const localNextDay = new Date(
         nextDay.getTime() - nextDay.getTimezoneOffset() * 60000
       );
-      setDueDate(localNextDay.toISOString().slice(0, 16));
+      setDeadline(localNextDay.toISOString().slice(0, 16));
     }
   }, [defaultText, defaultDeadline]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // 過去の時間が入力されている場合
-    if (new Date(dueDate).getTime() < Date.now()) {
-      showSnackBar({
-        message: "過去の時間を指定することはできません",
-        type: "warning",
-      });
-      return;
-    }
-
     const postData: Goal = {
       userId: user?.userId as string,
       text: text,
-      deadline: new Date(dueDate),
+      deadline: new Date(deadline),
     };
 
     try {
-      const data = await createGoal(postData);
-      console.log("Success:", data);
+      await createGoal(postData);
 
       showSnackBar({
         message: "目標を作成しました",
@@ -85,7 +75,7 @@ export default function CreateGoalModal({
       triggerDashBoardRerender();
 
       setText("");
-      setDueDate("");
+      setDeadline("");
       setOpen(false);
     } catch (error: unknown) {
       console.error("Error creating goal:", error);
@@ -114,15 +104,15 @@ export default function CreateGoalModal({
         <form onSubmit={handleSubmit}>
           <Stack spacing={2}>
             <Input
-              placeholder="Goal Title"
+              placeholder="目標内容"
               value={text}
               onChange={(e) => setText(e.target.value)}
               required
             />
             <Input
               type="datetime-local"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
               required
             />
             <Typography color="danger">

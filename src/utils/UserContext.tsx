@@ -68,7 +68,7 @@ export const UserProvider = ({ children }: Props) => {
       auth,
       async (firebaseUser: FirebaseUser | null) => {
         if (!firebaseUser) {
-          console.log("No user is logged in.");
+          console.log("ログインしていません");
           setUser(null);
           return;
         }

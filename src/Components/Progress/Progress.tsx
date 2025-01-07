@@ -15,6 +15,7 @@ import Stepper from "@mui/joy/Stepper";
 import Typography, { typographyClasses } from "@mui/joy/Typography";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { ReactNode, useState } from "react";
+import CenterIn from "../Animation/CenterIn";
 import DeleteGoalModal from "../DeleteGoalModal/DeleteGoalModal";
 import DeletePostModal from "../DeletePostModal/DeletePostModal";
 import CopyGoalAfterPostButton from "../GoalModal/CopyGoalAfterPostButton";
@@ -403,92 +404,94 @@ const StepperBlock = ({
     : 0;
 
   return (
-    <Card
-      variant="soft"
-      size="sm"
-      sx={{
-        width: "87%",
-        margin: "10px auto",
-        padding: "10px 13px",
-        borderRadius: "8px",
-        border: "1px solid",
-        borderColor:
-          resultType == "success"
-            ? outerBorderColors.success
-            : resultType == "failed"
-            ? outerBorderColors.failed
-            : outerBorderColors.pending,
-        boxShadow: "1px 1px 8px #d9d9d96b",
-        gap: "6px",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "flex-end",
-          gap: "5px 20px",
+    <CenterIn>
+      <Card
+        variant="soft"
+        size="sm"
+        sx={{
+          width: "87%",
+          margin: "10px auto",
+          padding: "10px 13px",
+          borderRadius: "8px",
+          border: "1px solid",
+          borderColor:
+            resultType == "success"
+              ? outerBorderColors.success
+              : resultType == "failed"
+              ? outerBorderColors.failed
+              : outerBorderColors.pending,
+          boxShadow: "1px 1px 8px #d9d9d96b",
+          gap: "6px",
         }}
       >
-        <Typography level="title-lg" component="span">
-          {userData?.name}
-        </Typography>
-        <div style={{ display: "flex", gap: "10px" }}>
-          <Typography level="title-sm" component="span">
-            {userData?.streak}日連続
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "flex-end",
+            gap: "5px 20px",
+          }}
+        >
+          <Typography level="title-lg" component="span">
+            {userData?.name}
           </Typography>
-          <Typography level="title-sm" component="span">
-            達成率{successRate}%
-          </Typography>
-          <Typography level="title-sm" component="span">
-            累計{userData?.completed}回達成
-          </Typography>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <Typography level="title-sm" component="span">
+              {userData?.streak}日連続
+            </Typography>
+            <Typography level="title-sm" component="span">
+              達成率{successRate}%
+            </Typography>
+            <Typography level="title-sm" component="span">
+              累計{userData?.completed}回達成
+            </Typography>
+          </div>
         </div>
-      </div>
-      <Divider />
-      <Stepper
-        orientation="vertical"
-        sx={(theme) => ({
-          gap: "0px",
-          "--Stepper-verticalGap": "30px",
-          "--StepIndicator-size": "2.5rem",
-          "--Step-gap": "1rem",
-          "--Step-connectorInset": "0.5rem",
-          "--Step-connectorRadius": "1rem",
-          "--Step-connectorThickness": "4px",
-          "--joy-palette-success-solidBg": "var(--joy-palette-success-400)",
-          [`& .${stepClasses.completed}`]: {
-            "&::after": { bgcolor: "success.solidBg" },
-          },
-          // copletedとactive両方の場合
-          [`& .${stepClasses.completed}.${stepClasses.active}`]: {
-            [`& .${stepIndicatorClasses.root}`]: {
-              border: "4px solid #fff",
-              boxShadow: `0 0 0 1px ${theme.vars.palette.primary[500]}`,
+        <Divider />
+        <Stepper
+          orientation="vertical"
+          sx={(theme) => ({
+            gap: "0px",
+            "--Stepper-verticalGap": "30px",
+            "--StepIndicator-size": "2.5rem",
+            "--Step-gap": "1rem",
+            "--Step-connectorInset": "0.5rem",
+            "--Step-connectorRadius": "1rem",
+            "--Step-connectorThickness": "4px",
+            "--joy-palette-success-solidBg": "var(--joy-palette-success-400)",
+            [`& .${stepClasses.completed}`]: {
+              "&::after": { bgcolor: "success.solidBg" },
             },
-            "&::after": {
-              bgcolor: "success.solidBg",
-              marginTop: "-50px",
+            // copletedとactive両方の場合
+            [`& .${stepClasses.completed}.${stepClasses.active}`]: {
+              [`& .${stepIndicatorClasses.root}`]: {
+                border: "4px solid #fff",
+                boxShadow: `0 0 0 1px ${theme.vars.palette.primary[500]}`,
+              },
+              "&::after": {
+                bgcolor: "success.solidBg",
+                marginTop: "-50px",
+              },
             },
-          },
-          [`& .${stepClasses.active}`]: {
-            [`& .${stepIndicatorClasses.root}`]: {
-              border: "4px solid #fff",
-              boxShadow: `0 0 0 1px ${theme.vars.palette.primary[500]}`,
+            [`& .${stepClasses.active}`]: {
+              [`& .${stepIndicatorClasses.root}`]: {
+                border: "4px solid #fff",
+                boxShadow: `0 0 0 1px ${theme.vars.palette.primary[500]}`,
+              },
             },
-          },
-          [`& .${stepClasses.disabled} *`]: {
-            color: "neutral.softDisabledColor",
-          },
-          [`& .${typographyClasses["title-sm"]}`]: {
-            textTransform: "uppercase",
-            letterSpacing: "1px",
-            fontSize: "10px",
-          },
-        })}
-      >
-        {children}
-      </Stepper>
-    </Card>
+            [`& .${stepClasses.disabled} *`]: {
+              color: "neutral.softDisabledColor",
+            },
+            [`& .${typographyClasses["title-sm"]}`]: {
+              textTransform: "uppercase",
+              letterSpacing: "1px",
+              fontSize: "10px",
+            },
+          })}
+        >
+          {children}
+        </Stepper>
+      </Card>
+    </CenterIn>
   );
 };

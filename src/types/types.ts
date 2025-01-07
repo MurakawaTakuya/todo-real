@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface User {
   userId: string;
   name: string;
@@ -32,4 +34,21 @@ export interface Post {
 
 export interface PostWithGoalId extends Post {
   goalId: string;
+}
+
+export const animationTypes = [
+  "left",
+  "right",
+  "center",
+  "bottom",
+  "top",
+] as const;
+export type AnimationType = (typeof animationTypes)[number];
+
+export interface AnimationConfigs {
+  children: ReactNode;
+  duration?: number;
+  delay?: number;
+  distance?: number; // アニメーションの移動距離(ex. 右に100px移動しながらフェードイン)
+  margin?: number; // 画面に入ってから何px超えたら表示するか
 }

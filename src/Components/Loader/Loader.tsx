@@ -4,7 +4,7 @@ import { useUser } from "@/utils/UserContext";
 import CircularProgress from "@mui/joy/CircularProgress";
 import { Button, Typography } from "@mui/material";
 import { redirect } from "next/navigation";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 interface LoaderProps {
   children: ReactNode;
@@ -14,9 +14,14 @@ export const Loader = ({ children }: LoaderProps) => {
   const [showErrorButton, setShowErrorButton] = useState(false);
 
   const { user } = useUser();
-  if (user === null && window.location.pathname !== "/account/") {
-    redirect("/account");
-  }
+
+  // ログインしていない場合はログインページにリダイレクト
+  useEffect(() => {
+    const pathname = window.location.pathname;
+    if (user === null && pathname !== "/account/" && pathname !== "/") {
+      redirect("/account");
+    }
+  }, [user]);
 
   setTimeout(() => {
     setShowErrorButton(true);

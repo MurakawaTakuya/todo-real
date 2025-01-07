@@ -33,7 +33,7 @@ export default function Top() {
           <FormatListBulletedIcon className={styles.svg} />
           <StyledTypography level="h1">TODO REAL</StyledTypography>
         </div>
-        <img src="/img/app.png" />
+        <img src="/img/app.webp" />
       </div>
 
       <div>
@@ -42,7 +42,7 @@ export default function Top() {
           やりたいことがつい後回しになってしまったり、毎日続けたいと思っていた習慣が途切れてしまったり…そんな経験はありませんか?
           <br />
           TODO REALはあなたの目標達成・継続を手助けします!
-          <img src="/img/todoListImage.jpg" />
+          <img src="/img/todoListImage.webp" />
           TODO REALでは目標を完了したら写真を投稿することができ、
           <Highlight>
             SNS感覚でTODOリストを使ったり友達と共有できます!
@@ -61,7 +61,7 @@ export default function Top() {
         <StyledTypography level="body-md">
           完了したTODOリストは友達に公開されます。友達に共有することで、達成感を共有できます。
         </StyledTypography>
-        <img src="/img/completed1.png" />
+        <img src="/img/completed1.webp" />
       </div>
 
       <div>
@@ -71,7 +71,7 @@ export default function Top() {
         <StyledTypography level="body-md">
           失敗してもペナルティの無いTODOリストとは異なり、期限内に完了しなかったTODOリストも公開されます。なんて恥ずかしい。
         </StyledTypography>
-        <img src="/img/failed.png" />
+        <img src="/img/failed.webp" />
       </div>
 
       <div>
@@ -82,7 +82,7 @@ export default function Top() {
           5分前になると通知を送信します。通知を受け取ることで、TODOリストの達成を手助けします。
           {/* TODO: 画像を差し替える */}
         </StyledTypography>
-        <img src="/img/notification.jpg" />
+        <img src="/img/notification.webp" />
       </div>
 
       <div>
@@ -94,7 +94,7 @@ export default function Top() {
           <br />
           また、達成率や達成回数で友達と競うこともできます!
         </StyledTypography>
-        <img src="/img/competition.png" />
+        <img src="/img/competition.webp" />
       </div>
 
       <div>
@@ -106,7 +106,7 @@ export default function Top() {
           <br />
           完了投稿をすると投稿ボタンが変化して同じ目標をワンクリックで複製できるように!
         </StyledTypography>
-        <img src="/img/copyGoal.png" />
+        <img src="/img/copyGoal.webp" />
       </div>
 
       <div>
@@ -117,7 +117,7 @@ export default function Top() {
           友達の投稿を表示するには、あなたの完了した目標をシェアしましょう。あなたが最後に投稿した時間より後の目標の画像はモザイクがかかっています。
         </StyledTypography>
         {/* TODO: 正式に実装したら画像を新しくする */}
-        <img src="/img/blur.png" />
+        <img src="/img/blur.webp" />
       </div>
 
       <div>
@@ -130,7 +130,7 @@ export default function Top() {
         <StyledTypography level="body-md">
           画面右下の+ボタンから目標を作成できます。
         </StyledTypography>
-        <img src="/img/create.png" style={{ marginBottom: "15px" }} />
+        <img src="/img/create.webp" style={{ marginBottom: "15px" }} />
 
         <StyledTypography level="h4" component="h3">
           2. 投稿
@@ -138,12 +138,12 @@ export default function Top() {
         <StyledTypography level="body-md">
           目標を完了したら写真をアップロードして共有しましょう!
         </StyledTypography>
-        <img src="/img/post.png" style={{ marginBottom: "10px" }} />
+        <img src="/img/post.webp" style={{ marginBottom: "10px" }} />
 
         <StyledTypography level="body-md">
           アップロードしたら自動で友達に公開されます!
         </StyledTypography>
-        <img src="/img/completed2.png" />
+        <img src="/img/completed2.webp" />
       </div>
 
       <div>

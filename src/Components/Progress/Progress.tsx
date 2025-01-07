@@ -189,12 +189,15 @@ const SuccessStep = ({
             zIndex: 0,
           }}
         >
-          <div style={{ minHeight: "15vh" }}>
+          <div style={{ minHeight: "15vh", display: "flex" }}>
             <CssVarsProvider theme={theme}>
               <Skeleton
                 loading={!imageLoaded}
                 variant="overlay"
-                sx={{ borderRadius: "5px 5px 0 0", height: "15vh" }}
+                sx={{
+                  borderRadius: "5px 5px 0 0",
+                  height: "15vh",
+                }}
               >
                 {imageURL && (
                   <img
@@ -404,7 +407,7 @@ const StepperBlock = ({
     : 0;
 
   return (
-    <CenterIn>
+    <CenterIn duration={0.3}>
       <Card
         variant="soft"
         size="sm"

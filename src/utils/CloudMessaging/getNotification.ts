@@ -5,18 +5,23 @@ import { onMessage } from "firebase/messaging";
 // フォアグラウンド時の通知を受信
 if (typeof window !== "undefined" && messaging) {
   {
-    onMessage(messaging, (payload) => {
-      console.log("Received foreground message:", payload);
-      if (payload.notification) {
-        const { title, body } = payload.notification;
-        const notification = new Notification(title ?? "Default Title", {
-          body,
-        });
-        notification.onclick = () => {
-          window.focus();
-        };
-      }
-    });
+    try {
+      onMessage(messaging, (payload) => {
+        console.log("Received foreground message:", payload);
+        if (payload.data) {
+          const { title, body, icon } = payload.data;
+          const notification = new Notification(title ?? "Default Title", {
+            body,
+            icon,
+          });
+          notification.onclick = () => {
+            window.focus();
+          };
+        }
+      });
+    } catch (error) {
+      console.error("Error while receiving foreground message:", error);
+    }
   }
 }
 

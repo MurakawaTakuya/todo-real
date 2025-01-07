@@ -52,12 +52,7 @@ const verifyAppCheckToken = async (
 // Postmanを使うためにCloud FunctionsのApp Checkは開発環境では使用しない
 if (process.env.NODE_ENV === "production") {
   app.use((req, res, next) => {
-    // /sendNotificationと/receiveTestは別の認証を使用するのでApp Checkを使用しない
-    if (req.path !== "/sendNotification" && req.path !== "/receiveTest") {
-      verifyAppCheckToken(req, res, next);
-    } else {
-      next();
-    }
+    verifyAppCheckToken(req, res, next);
   });
 }
 

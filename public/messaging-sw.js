@@ -40,5 +40,19 @@ const messaging = firebase.messaging();
 
 // バックグラウンド時の通知を処理(通知自体は何もしなくても受信される)
 messaging.onBackgroundMessage((payload) => {
-  console.log("Received background message:", payload);
+  try {
+    console.log("Received background message:", payload);
+
+    const { title, body, icon } = payload.data;
+    const notificationOptions = {
+      body,
+      icon,
+    };
+
+    self.registration.showNotification(title, notificationOptions);
+  } catch (error) {
+    console.error("Error while receiving background message:", error);
+  }
 });
+
+// フォアグラウンド通知は`src\utils\CloudMessaging\getNotification.ts`で処理

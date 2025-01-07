@@ -42,9 +42,10 @@ export const createTasksOnGoalCreate = onDocumentCreated(
       const postData = {
         message: {
           token: fcmToken, // 通知を受信する端末のトークン
-          notification: {
+          data: {
             title: `${marginTime}分以内に目標を完了し写真をアップロードしましょう!`,
             body: goalData.text,
+            icon: "https://todo-real-c28fa.web.app/appIcon.svg",
           },
         },
       };

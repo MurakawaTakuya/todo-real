@@ -1,5 +1,6 @@
 "use client";
 
+import CenterIn from "@/Components/Animation/CenterIn";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import Button from "@mui/joy/Button";
@@ -18,8 +19,8 @@ const StyledTypography = styled(Typography)<TypographyProps>`
 export default function Top() {
   return (
     <div className={styles.introductionBody}>
-      <div style={{ paddingTop: "20px" }}>
-        <StyledTypography level="h4" component="h2">
+      <CenterIn>
+        <StyledTypography level="h4" component="h2" sx={{ paddingTop: "20px" }}>
           友達と共有・競争できるTODOリスト
         </StyledTypography>
         <div
@@ -34,9 +35,9 @@ export default function Top() {
           <StyledTypography level="h1">TODO REAL</StyledTypography>
         </div>
         <img src="/img/app.webp" />
-      </div>
+      </CenterIn>
 
-      <div>
+      <CenterIn>
         <StyledTypography level="h2">TODO REALとは?</StyledTypography>
         <StyledTypography level="body-md">
           やりたいことがつい後回しになってしまったり、毎日続けたいと思っていた習慣が途切れてしまったり…そんな経験はありませんか?
@@ -52,9 +53,9 @@ export default function Top() {
           <Highlight>思わず開きたくなるアプリに</Highlight>
           変えることができます!
         </StyledTypography>
-      </div>
+      </CenterIn>
 
-      <div>
+      <CenterIn>
         <StyledTypography level="h3" component="h2">
           完了したTODOリストを友達と共有
         </StyledTypography>
@@ -62,9 +63,9 @@ export default function Top() {
           完了したTODOリストは友達に公開されます。友達に共有することで、達成感を共有できます。
         </StyledTypography>
         <img src="/img/completed1.webp" />
-      </div>
+      </CenterIn>
 
-      <div>
+      <CenterIn>
         <StyledTypography level="h3" component="h2">
           失敗したら友達に晒す
         </StyledTypography>
@@ -72,9 +73,9 @@ export default function Top() {
           失敗してもペナルティの無いTODOリストとは異なり、期限内に完了しなかったTODOリストも公開されます。なんて恥ずかしい。
         </StyledTypography>
         <img src="/img/failed.webp" />
-      </div>
+      </CenterIn>
 
-      <div>
+      <CenterIn>
         <StyledTypography level="h3" component="h2">
           期限が近づくと通知を送信
         </StyledTypography>
@@ -83,9 +84,9 @@ export default function Top() {
           {/* TODO: 画像を差し替える */}
         </StyledTypography>
         <img src="/img/notification.webp" />
-      </div>
+      </CenterIn>
 
-      <div>
+      <CenterIn>
         <StyledTypography level="h3" component="h2">
           毎日継続して友達と競おう
         </StyledTypography>
@@ -95,9 +96,9 @@ export default function Top() {
           また、達成率や達成回数で友達と競うこともできます!
         </StyledTypography>
         <img src="/img/competition.webp" />
-      </div>
+      </CenterIn>
 
-      <div>
+      <CenterIn>
         <StyledTypography level="h3" component="h2">
           目標を作成する面倒を無くす
         </StyledTypography>
@@ -107,9 +108,9 @@ export default function Top() {
           完了投稿をすると投稿ボタンが変化して同じ目標をワンクリックで複製できるように!
         </StyledTypography>
         <img src="/img/copyGoal.webp" />
-      </div>
+      </CenterIn>
 
-      <div>
+      <CenterIn>
         <StyledTypography level="h3" component="h2">
           友達の投稿を見たいなら、あなたも投稿しましょう
         </StyledTypography>
@@ -118,9 +119,9 @@ export default function Top() {
         </StyledTypography>
         {/* TODO: 正式に実装したら画像を新しくする */}
         <img src="/img/blur.webp" />
-      </div>
+      </CenterIn>
 
-      <div>
+      <CenterIn>
         <StyledTypography level="h2" component="h2">
           使い方
         </StyledTypography>
@@ -144,9 +145,9 @@ export default function Top() {
           アップロードしたら自動で友達に公開されます!
         </StyledTypography>
         <img src="/img/completed2.webp" />
-      </div>
+      </CenterIn>
 
-      <div>
+      <CenterIn>
         <h1>今すぐ始めよう!</h1>
         <StyledTypography
           level="body-sm"
@@ -165,31 +166,33 @@ export default function Top() {
         >
           ゲストログインを使用するとアカウントを作成せずに閲覧できますが、投稿機能は使用できません。
         </Typography>
-      </div>
+      </CenterIn>
 
-      <div>
+      <CenterIn>
         <StyledTypography level="h3" component="h2">
           今後追加したい機能
         </StyledTypography>
         <StyledTypography level="body-md">
           いいねやコメント等の友達とインタラクトできる機能を実装予定です。
         </StyledTypography>
-      </div>
+      </CenterIn>
 
-      <Typography level="body-sm" sx={{ marginTop: "10px" }}>
-        <a
-          href="https://github.com/MurakawaTakuya/todo-real"
-          target="_blank"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "5px",
-          }}
-        >
-          <GitHubIcon /> コード・実装方法はGitHubのドキュメントを参照
-        </a>
-      </Typography>
+      <CenterIn>
+        <Typography level="body-sm" sx={{ marginTop: "10px" }}>
+          <a
+            href="https://github.com/MurakawaTakuya/todo-real"
+            target="_blank"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            <GitHubIcon /> コード・実装方法はGitHubのドキュメントを参照
+          </a>
+        </Typography>
+      </CenterIn>
     </div>
   );
 }

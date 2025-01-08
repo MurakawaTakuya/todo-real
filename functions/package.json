@@ -9,7 +9,7 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "emu": "concurrently -k -n \"TypeScript,Emulator\" -c \"cyan.bold,green.bold\" \"npx tsc --watch\" \"firebase emulators:start\""
+    "emu": "npm i && concurrently -k -n \"TypeScript,Emulator\" -c \"cyan.bold,green.bold\" \"npx tsc --watch\" \"firebase emulators:start\""
   },
   "engines": {
     "node": "18"

@@ -379,7 +379,9 @@ const GoalCard = ({
             {formatStringToDate(deadline)}までに
           </Typography>
           <div style={{ display: "flex", gap: "5px" }}>
-            <CopyModalButton deadline={deadline} goalText={goalText} />
+            {user.loginType !== "Guest" && user.isMailVerified && (
+              <CopyModalButton deadline={deadline} goalText={goalText} />
+            )}
             {/* 期限の1時間以内、もしくは自分の目標ではない場合は削除できないようにする */}
             {!isWithinOneHour && userId === user?.userId && (
               <DeleteGoalModal goalId={goalId} />

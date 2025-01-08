@@ -2,6 +2,7 @@
 import DashBoard from "@/Components/DashBoard/DashBoard";
 import GoalModalButton from "@/Components/GoalModal/GoalModalButton";
 import { useUser } from "@/utils/UserContext";
+import Typography from "@mui/joy/Typography";
 import { styled } from "@mui/material/styles";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
@@ -44,7 +45,23 @@ export default function MyContent() {
         </CenteredToggleButtonGroup>
       </div>
 
-      {value === "pending" ? (
+      {user?.loginType === "Guest" ? (
+        <Typography
+          level="body-md"
+          color="danger"
+          sx={{ textAlign: "center", marginTop: "20px" }}
+        >
+          ゲストログインでは投稿を作成できません。
+        </Typography>
+      ) : !user?.isMailVerified ? (
+        <Typography
+          level="body-md"
+          color="danger"
+          sx={{ textAlign: "center", marginTop: "20px" }}
+        >
+          メールに届いた認証リンクを確認してください。
+        </Typography>
+      ) : value === "pending" ? (
         <DashBoard
           key="pending"
           userId={user?.userId}

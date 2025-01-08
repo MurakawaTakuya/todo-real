@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import "./firebase";
 
 const description = "TODO REALはTODOリストとBeRealを組み合わせたアプリです。";
+export const rootURL = "https://todo-real-c28fa.web.app/";
 
 export const metadata: Metadata = {
   title: "Todo Real",
@@ -24,8 +25,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const rootURL = "https://todo-real-c28fa.web.app/";
-
   return (
     <html lang="ja">
       <head>
@@ -38,7 +37,7 @@ export default function RootLayout({
         <meta property="og:type" content="website" />
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="サンプルページタイトル" />
+        <meta name="twitter:title" content="TODO REAL" />
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={`${rootURL}/img/thumbnail.png`} />
 

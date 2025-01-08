@@ -2,12 +2,12 @@
 import AuthForm from "@/Components/Account/AuthForm";
 import LoggedInView from "@/Components/Account/LoggedInView";
 import { useUser } from "@/utils/UserContext";
+import Typography from "@mui/joy/Typography";
 import Box from "@mui/material/Box";
 import MuiCard from "@mui/material/Card";
 import CssBaseline from "@mui/material/CssBaseline";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
-import Typography from "@mui/material/Typography";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -38,8 +38,8 @@ export default function Account() {
         sx={{ padding: 2 }}
       >
         <Card variant="outlined">
-          <Typography variant="h4" textAlign="center">
-            TODO-REAL
+          <Typography level="h1" textAlign="center" fontWeight={700}>
+            TODO REAL
           </Typography>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {user ? <LoggedInView /> : <AuthForm />}

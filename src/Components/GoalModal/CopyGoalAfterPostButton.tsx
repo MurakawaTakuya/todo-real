@@ -22,8 +22,8 @@ export default function CopyGoalAfterPostButton({
         onClick={() => {
           setOpen(true);
           showSnackBar({
-            message: "1日後の同じ時間で同じ目標を作成できます",
-            type: "success",
+            message: "明日の同じ時間で同じ目標を作成できます",
+            type: "normal",
           });
         }}
       >

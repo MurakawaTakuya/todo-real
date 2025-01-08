@@ -189,12 +189,15 @@ const SuccessStep = ({
             zIndex: 0,
           }}
         >
-          <div style={{ minHeight: "15vh" }}>
+          <div style={{ minHeight: "15vh", display: "flex" }}>
             <CssVarsProvider theme={theme}>
               <Skeleton
                 loading={!imageLoaded}
                 variant="overlay"
-                sx={{ borderRadius: "5px 5px 0 0", height: "15vh" }}
+                sx={{
+                  borderRadius: "5px 5px 0 0",
+                  height: "15vh",
+                }}
               >
                 {imageURL && (
                   <img
@@ -384,7 +387,20 @@ const GoalCard = ({
           </div>
         </div>
         <Divider />
-        <Typography level="body-lg">{goalText}</Typography>
+        <Typography
+          level="body-lg"
+          sx={{
+            ...(resultType === "success" && {
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              WebkitLineClamp: 2,
+            }),
+          }}
+        >
+          {goalText}
+        </Typography>
       </CardContent>
     </Card>
   );
@@ -404,7 +420,7 @@ const StepperBlock = ({
     : 0;
 
   return (
-    <CenterIn>
+    <CenterIn duration={0.3}>
       <Card
         variant="soft"
         size="sm"

@@ -25,7 +25,7 @@ export const Loader = ({ children }: LoaderProps) => {
 
   setTimeout(() => {
     setShowErrorButton(true);
-  }, 10000);
+  }, 15000);
 
   return (
     <>

@@ -3,9 +3,9 @@ import NotificationButton from "@/Components/NotificationButton/NotificationButt
 import { handleSignOut } from "@/utils/Auth/signOut";
 import { getSuccessRate } from "@/utils/successRate";
 import { useUser } from "@/utils/UserContext";
+import Typography from "@mui/joy/Typography";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
-import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 
 export const RoundedButton = styled(Button)(({ theme }) => ({
@@ -43,47 +43,53 @@ export default function LoggedInView() {
   return (
     <>
       {user.loginType === "Guest" ? (
-        <Typography sx={{ textAlign: "center" }}>
+        <Typography level="body-lg" sx={{ textAlign: "center" }}>
           ゲストとしてログイン中
         </Typography>
       ) : (
         <>
-          <Typography sx={{ textAlign: "center" }}>
+          <Typography level="body-lg" sx={{ textAlign: "center" }}>
             ようこそ、{user.name}さん!
           </Typography>
-          <Typography sx={{ textAlign: "center" }}>
-            連続達成日数: {userStats.streak}日目
-          </Typography>
-          <Typography sx={{ textAlign: "center" }}>
-            目標達成率: {userStats.successRate}%
-          </Typography>
-          <Typography sx={{ textAlign: "center" }}>
-            達成回数: {userStats.completed}回
-          </Typography>
+          <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+            <Typography level="title-md" sx={{ textAlign: "center" }}>
+              連続達成日数: {userStats.streak}日目
+            </Typography>
+            <Typography level="title-md" sx={{ textAlign: "center" }}>
+              目標達成率: {userStats.successRate}%
+            </Typography>
+            <Typography level="title-md" sx={{ textAlign: "center" }}>
+              達成回数: {userStats.completed}回
+            </Typography>
+          </div>
         </>
       )}
 
       {!user.isMailVerified && (
-        <Typography color="error">
+        <Typography color="danger">
           メールに届いた認証リンクを確認してください。
-          <br />
           認証が完了するまで閲覧以外の機能は制限されます。
         </Typography>
       )}
 
       {user.loginType === "Guest" && (
-        <Typography color="error">
+        <Typography color="danger">
           ゲストユーザーは閲覧以外の機能は制限されます。
           全ての機能を利用するにはログインが必要です。
         </Typography>
       )}
 
-      {/* ゲストかメール未認証の場合は名前を変更できないようにする */}
+      {/* ゲストかメール未認証の場合は名前の変更や通知の使用をできないようにする */}
       {user.loginType !== "Guest" && user.isMailVerified && (
-        <div style={{ display: "flex", justifyContent: "space-evenly" }}>
-          <NameUpdate />
-          <NotificationButton />
-        </div>
+        <>
+          <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+            <NameUpdate />
+            <NotificationButton />
+          </div>
+          <Typography color="neutral" sx={{ textAlign: "center" }}>
+            通知を有効にすると、目標が未達成の場合に期限の5分前に通知を送信します。
+          </Typography>
+        </>
       )}
 
       <RoundedButton variant="contained" onClick={handleSignOut}>

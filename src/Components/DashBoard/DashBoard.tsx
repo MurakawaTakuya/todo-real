@@ -5,9 +5,11 @@ import {
   fetchResult,
   handleFetchResultError,
 } from "@/utils/API/Result/fetchResult";
+import CircularProgress from "@mui/joy/CircularProgress";
 import Typography from "@mui/joy/Typography";
 import LinearProgress from "@mui/material/LinearProgress";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import CenterIn from "../Animation/CenterIn";
 import Progress from "../Progress/Progress";
 import styles from "./DashBoard.module.scss";
 
@@ -26,7 +28,7 @@ export default function DashBoard({
   failed?: boolean;
   pending?: boolean;
   orderBy?: "asc" | "desc";
-} = {}) {
+}) {
   const [successResults, setSuccessResults] = useState<GoalWithIdAndUserData[]>(
     []
   );
@@ -38,15 +40,101 @@ export default function DashBoard({
   );
   const [noResult, setNoResult] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [reachedBottom, setReachedBottom] = useState<boolean>(false);
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const isAlreadyFetching = useRef(false);
+  const offset = useRef(0);
+  const noMore = useRef(false);
+
+  const limit = 10; // limitずつ表示
+
+  useEffect(() => {
+    setTimeout(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !isLoading && !noMore.current) {
+            setReachedBottom(true);
+            fetchData();
+          }
+        },
+        { threshold: 1 }
+      );
+
+      if (bottomRef.current) {
+        observer.observe(bottomRef.current);
+      }
+
+      return () => {
+        if (bottomRef.current) {
+          observer.disconnect();
+        }
+      };
+    }, 1000);
+  }, [isLoading, noMore.current, bottomRef.current, bottomRef]);
+
+  useEffect(() => {
+    offset.current =
+      successResults.length + failedResults.length + pendingResults.length;
+  }, [successResults, failedResults, pendingResults]);
 
   const fetchData = () => {
-    setIsLoading(true);
-    fetchResult({ userId, success, failed, pending })
+    if (noMore.current) {
+      return;
+    }
+    if (isAlreadyFetching.current) {
+      return;
+    } else {
+      isAlreadyFetching.current = true;
+    }
+    if (reachedBottom && !isLoadingMore) {
+      setIsLoadingMore(true);
+    }
+    fetchResult({
+      userId,
+      success,
+      failed,
+      pending,
+      offset: offset.current,
+      limit,
+    })
       .then((data) => {
-        setSuccessResults(data.successResults);
-        setFailedResults(data.failedResults);
-        setPendingResults(data.pendingResults);
+        // 既に追加されている場合は追加しない
+        setSuccessResults((prev) => {
+          const newResults = data.successResults.filter(
+            (result: GoalWithIdAndUserData) =>
+              !prev.some((item) => item.goalId === result.goalId)
+          );
+          return [...prev, ...newResults];
+        });
+        setFailedResults((prev) => {
+          const newResults = data.failedResults.filter(
+            (result: GoalWithIdAndUserData) =>
+              !prev.some((item) => item.goalId === result.goalId)
+          );
+          return [...prev, ...newResults];
+        });
+        setPendingResults((prev) => {
+          const newResults = data.pendingResults.filter(
+            (result: GoalWithIdAndUserData) =>
+              !prev.some((item) => item.goalId === result.goalId)
+          );
+          return [...prev, ...newResults];
+        });
+
+        if (
+          data.successResults.length +
+            data.failedResults.length +
+            data.pendingResults.length <
+          limit
+        ) {
+          noMore.current = true;
+        }
+
         setIsLoading(false);
+        setReachedBottom(false);
+        isAlreadyFetching.current = false;
+        setIsLoadingMore(false);
       })
       .catch((error) => {
         console.error("Error fetching results:", error);
@@ -61,7 +149,9 @@ export default function DashBoard({
 
   useEffect(() => {
     rerenderDashBoard = fetchData;
-    fetchData();
+    if (userId) {
+      fetchData();
+    }
   }, [userId, success, failed, pending]);
 
   useEffect(() => {
@@ -83,9 +173,14 @@ export default function DashBoard({
           }}
         />
       ) : noResult ? (
-        <Typography level="h4" sx={{ textAlign: "center", marginTop: "20px" }}>
-          +ボタンから目標を作成しましょう!
-        </Typography>
+        <CenterIn delay={1}>
+          <Typography
+            level="h4"
+            sx={{ textAlign: "center", marginTop: "20px" }}
+          >
+            +ボタンから目標を作成しましょう!
+          </Typography>
+        </CenterIn>
       ) : (
         <div className={styles.postsContainer}>
           <Progress
@@ -94,6 +189,34 @@ export default function DashBoard({
             pendingResults={pending ? pendingResults : []}
             orderBy={orderBy}
           />
+          <div className="bottom" ref={bottomRef}></div>
+
+          {!noMore.current &&
+            (reachedBottom ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: "20px",
+                }}
+              >
+                <CircularProgress
+                  color="primary"
+                  variant="soft"
+                  size="lg"
+                  value={30}
+                />
+              </div>
+            ) : (
+              <Typography
+                level="body-md"
+                color="primary"
+                textAlign="center"
+                sx={{ fontWeight: 700 }}
+              >
+                スクロールしてもっと表示
+              </Typography>
+            ))}
         </div>
       )}
     </>

@@ -9,11 +9,15 @@ import { appCheckToken, functionsEndpoint } from "@/app/firebase";
  */
 export const fetchResult = async ({
   userId = "",
+  offset,
+  limit,
   success = true,
   failed = true,
   pending = true,
 }: {
   userId?: string;
+  offset?: number;
+  limit?: number;
   success?: boolean;
   failed?: boolean;
   pending?: boolean;
@@ -23,6 +27,12 @@ export const fetchResult = async ({
     queryParams.append("onlyPending", "true");
   } else if (success && failed && !pending) {
     queryParams.append("onlyFinished", "true");
+  }
+  if (offset) {
+    queryParams.append("offset", offset.toString());
+  }
+  if (limit) {
+    queryParams.append("limit", limit.toString());
   }
 
   const response = await fetch(

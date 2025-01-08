@@ -387,7 +387,20 @@ const GoalCard = ({
           </div>
         </div>
         <Divider />
-        <Typography level="body-lg">{goalText}</Typography>
+        <Typography
+          level="body-lg"
+          sx={{
+            ...(resultType === "success" && {
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              WebkitLineClamp: 2,
+            }),
+          }}
+        >
+          {goalText}
+        </Typography>
       </CardContent>
     </Card>
   );

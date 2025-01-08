@@ -46,13 +46,14 @@ export default function MyContent() {
 
       {value === "pending" ? (
         <DashBoard
+          key="pending"
           userId={user?.userId}
           success={false}
           failed={false}
           orderBy="asc"
         />
       ) : (
-        <DashBoard userId={user?.userId} pending={false} />
+        <DashBoard key="finished" userId={user?.userId} pending={false} />
       )}
 
       <GoalModalButton />

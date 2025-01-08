@@ -51,6 +51,26 @@ export default function LoggedInView() {
           <Typography level="body-lg" sx={{ textAlign: "center" }}>
             ようこそ、{user.name}さん!
           </Typography>
+        </>
+      )}
+
+      {!user.isMailVerified && (
+        <Typography color="danger">
+          メールに届いた認証リンクを確認してください。
+          認証が完了するまで閲覧以外の機能は使用できません。
+        </Typography>
+      )}
+
+      {user.loginType === "Guest" && (
+        <Typography color="danger">
+          ゲストユーザーは閲覧以外の機能は使用できません。
+          全ての機能を利用するにはログインが必要です。
+        </Typography>
+      )}
+
+      {/* ゲストかメール未認証の場合は閲覧以外の機能を使用できなくする */}
+      {user.loginType !== "Guest" && user.isMailVerified && (
+        <>
           <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
             <Typography level="title-md" sx={{ textAlign: "center" }}>
               連続達成日数: {userStats.streak}日目
@@ -62,26 +82,6 @@ export default function LoggedInView() {
               達成回数: {userStats.completed}回
             </Typography>
           </div>
-        </>
-      )}
-
-      {!user.isMailVerified && (
-        <Typography color="danger">
-          メールに届いた認証リンクを確認してください。
-          認証が完了するまで閲覧以外の機能は制限されます。
-        </Typography>
-      )}
-
-      {user.loginType === "Guest" && (
-        <Typography color="danger">
-          ゲストユーザーは閲覧以外の機能は制限されます。
-          全ての機能を利用するにはログインが必要です。
-        </Typography>
-      )}
-
-      {/* ゲストかメール未認証の場合は名前の変更や通知の使用をできないようにする */}
-      {user.loginType !== "Guest" && user.isMailVerified && (
-        <>
           <div style={{ display: "flex", justifyContent: "space-evenly" }}>
             <NameUpdate />
             <NotificationButton />

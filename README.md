@@ -5,17 +5,12 @@ For More information, please refer to the Top Page.
 [TODO REAL](https://todo-real-c28fa.web.app/)
 
 ## Getting Started
-First run this command to install required packages:
-
-```bash
-npm install
-```
-
-Then, run the development server:
+Run the development server:
 
 ```bash
 npm run dev
 ```
+This includes `npm i` and `next dev`, so you don't have to care about refreshing packages.
 
 ## Learn More
 To learn more about Next.js, take a look at the following resources:
@@ -46,7 +41,7 @@ Then, you can start the emulator by running the following command if you have ac
 cd .\functions\
 npm run emu
 ```
-This command includes `firebase emulators:start` and `npx tsc --watch` which watches the files and restarts the server when the files are changed.
+This command includes `npm i`, `firebase emulators:start` and `npx tsc --watch` which watches the files and restarts the server when the files are changed.
 
 if you don't want ts-node to watch the files, just use
 ```

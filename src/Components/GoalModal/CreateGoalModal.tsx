@@ -33,6 +33,17 @@ export default function CreateGoalModal({
 
   const { user } = useUser();
 
+  const resetDeadline = () => {
+    // 次の日の23時に設定
+    const nextDay = new Date();
+    nextDay.setDate(nextDay.getDate() + 1);
+    nextDay.setHours(23, 0, 0, 0);
+    const localNextDay = new Date(
+      nextDay.getTime() - nextDay.getTimezoneOffset() * 60000
+    );
+    setDeadline(localNextDay.toISOString().slice(0, 16));
+  };
+
   useEffect(() => {
     if (defaultText) {
       setText(defaultText);
@@ -42,17 +53,10 @@ export default function CreateGoalModal({
       const localDate = new Date(
         convertedDate.getTime() - convertedDate.getTimezoneOffset() * 60000
       );
-      localDate.setDate(localDate.getDate() + 1); // 1日後にする
+      localDate.setDate(localDate.getDate() + 1); // 明日にする
       setDeadline(localDate.toISOString().slice(0, 16));
     } else {
-      // 初期値の指定が無い場合は次の日の23時に設定
-      const nextDay = new Date();
-      nextDay.setDate(nextDay.getDate() + 1);
-      nextDay.setHours(23, 0, 0, 0);
-      const localNextDay = new Date(
-        nextDay.getTime() - nextDay.getTimezoneOffset() * 60000
-      );
-      setDeadline(localNextDay.toISOString().slice(0, 16));
+      resetDeadline();
     }
   }, [defaultText, defaultDeadline]);
 
@@ -75,7 +79,7 @@ export default function CreateGoalModal({
       triggerDashBoardRerender();
 
       setText("");
-      setDeadline("");
+      resetDeadline();
       setOpen(false);
     } catch (error: unknown) {
       console.error("Error creating goal:", error);

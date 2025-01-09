@@ -98,7 +98,7 @@ export default function NavigationMenu() {
             <ListItemDecorator>
               <FormatListBulletedIcon />
             </ListItemDecorator>
-            My content
+            <span style={{ fontWeight: 600 }}>自分の目標</span>
           </Tab>
           <Tab
             disableIndicator
@@ -114,7 +114,7 @@ export default function NavigationMenu() {
             <ListItemDecorator>
               <GroupIcon />
             </ListItemDecorator>
-            Discover
+            <span style={{ fontWeight: 600 }}>みんなの投稿</span>
           </Tab>
           <Tab
             disableIndicator
@@ -130,7 +130,7 @@ export default function NavigationMenu() {
             <ListItemDecorator>
               <Person />
             </ListItemDecorator>
-            Profile
+            <span style={{ fontWeight: 600 }}>アカウント</span>
           </Tab>
           <Tab
             disableIndicator
@@ -146,7 +146,7 @@ export default function NavigationMenu() {
             <ListItemDecorator>
               <HomeIcon />
             </ListItemDecorator>
-            Top
+            <span style={{ fontWeight: 600 }}>トップ</span>
           </Tab>
         </TabList>
       </Tabs>

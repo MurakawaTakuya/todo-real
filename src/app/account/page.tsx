@@ -1,6 +1,8 @@
 "use client";
 import AuthForm from "@/Components/Account/AuthForm";
 import LoggedInView from "@/Components/Account/LoggedInView";
+import NotificationButton from "@/Components/NotificationButton/NotificationButton";
+import { PWAButton } from "@/Components/PWAButton/PWAButton";
 import { useUser } from "@/utils/UserContext";
 import Typography from "@mui/joy/Typography";
 import Box from "@mui/material/Box";
@@ -8,6 +10,14 @@ import MuiCard from "@mui/material/Card";
 import CssBaseline from "@mui/material/CssBaseline";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
+import { useEffect, useState } from "react";
+import styles from "./page.module.scss";
+
+declare global {
+  interface Navigator {
+    standalone?: boolean;
+  }
+}
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -27,6 +37,28 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 export default function Account() {
   const { user } = useUser();
+  const [isIOS, setIsIOS] = useState(false);
+  const [isPWA, setIsPWA] = useState(false);
+
+  // iOSか判定
+  useEffect(() => {
+    const checkIOS = () => {
+      const userAgent = navigator.userAgent || navigator.vendor;
+      return /iPad|iPhone|iPod/.test(userAgent);
+    };
+    setIsIOS(checkIOS());
+  }, []);
+
+  // PWAか判定
+  useEffect(() => {
+    const checkPWA = () => {
+      return (
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true
+      );
+    };
+    setIsPWA(checkPWA());
+  }, []);
 
   return (
     <>
@@ -35,16 +67,57 @@ export default function Account() {
         direction="column"
         justifyContent="center"
         alignItems="center"
-        sx={{ padding: 2 }}
+        sx={{ padding: "20px", gap: "20px" }}
       >
-        <Card variant="outlined">
-          <Typography level="h1" textAlign="center" fontWeight={700}>
+        <Card variant="outlined" sx={{ padding: "20px 8% 30px" }}>
+          <Typography
+            level="h1"
+            color="primary"
+            textAlign="center"
+            fontWeight={700}
+          >
             TODO REAL
           </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
             {user ? <LoggedInView /> : <AuthForm />}
           </Box>
         </Card>
+
+        {user?.loginType !== "Guest" && user?.isMailVerified && (
+          <Card variant="outlined" sx={{ padding: "25px 20px 30px" }}>
+            <Typography
+              level="h3"
+              color="primary"
+              textAlign="center"
+              fontWeight={600}
+            >
+              通知を受信・アプリに追加
+            </Typography>
+            <Typography sx={{ textAlign: "center" }}>
+              目標が未達成の場合に期限の5分前に通知を送信します。
+            </Typography>
+            <div className={styles.buttonContainer}>
+              <div>
+                <NotificationButton defaultDisabled={isIOS} />
+              </div>
+              <div>
+                <PWAButton defaultDisabled={isPWA || isIOS} />
+              </div>
+            </div>
+            {isIOS && (
+              <>
+                <Typography color="danger" sx={{ textAlign: "center" }}>
+                  iOSでは通常ブラウザで通知機能と「アプリに追加」ボタンを使用できません。以下の画像のように「ホーム画面に追加」を押してから、ホーム画面から起動してください。
+                </Typography>
+                <img
+                  src="/img/iOSPWA.webp"
+                  alt="iOS PWA"
+                  style={{ width: "80%", margin: "0 auto" }}
+                />
+              </>
+            )}
+          </Card>
+        )}
       </Stack>
     </>
   );

@@ -48,7 +48,14 @@ export default function LoggedInView() {
         </Typography>
       ) : (
         <>
-          <Typography level="body-lg" sx={{ textAlign: "center" }}>
+          <Typography
+            level="body-lg"
+            sx={{
+              textAlign: "center",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
             ようこそ、{user.name}さん!
           </Typography>
         </>

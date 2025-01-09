@@ -164,7 +164,7 @@ export default function Top() {
         </div>
         <Typography
           level="body-sm"
-          sx={{ textAlign: "center", paddingTop: "10px", fontWeight: 600 }}
+          sx={{ textAlign: "center", padding: "10px 13px 0", fontWeight: 600 }}
         >
           ゲストログインを使用するとアカウントを作成せずに閲覧できますが、投稿機能は使用できません。
         </Typography>
@@ -175,7 +175,7 @@ export default function Top() {
           今後追加したい機能
         </StyledTypography>
         <StyledTypography level="body-md">
-          いいねやコメント等の友達とインタラクトできる機能を実装予定です。
+          いいねやコメント等の友達とインタラクトできる機能、友達のみに表示できる機能を実装予定です。
         </StyledTypography>
       </CenterIn>
 

@@ -73,7 +73,7 @@ export const PWAButton = ({
     <>
       {isAleadyInstalled ? (
         <RoundedButton variant="outlined" color="success" disabled>
-          アプリに追加済み!
+          追加済み!
         </RoundedButton>
       ) : (
         <RoundedButton

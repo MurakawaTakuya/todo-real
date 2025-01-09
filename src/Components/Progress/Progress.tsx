@@ -450,7 +450,11 @@ const StepperBlock = ({
             gap: "5px 20px",
           }}
         >
-          <Typography level="title-lg" component="span">
+          <Typography
+            level="title-lg"
+            component="span"
+            sx={{ overflow: "hidden", textOverflow: "ellipsis" }}
+          >
             {userData?.name}
           </Typography>
           <div style={{ display: "flex", gap: "10px" }}>

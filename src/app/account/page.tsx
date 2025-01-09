@@ -91,7 +91,7 @@ export default function Account() {
               textAlign="center"
               fontWeight={600}
             >
-              通知を受信・アプリに追加
+              アプリに追加・通知を受信
             </Typography>
             <div className={styles.buttonContainer}>
               <div>
@@ -106,7 +106,6 @@ export default function Account() {
               <br />
               <br />
               通知を有効にすると、端末の目標が未達成の場合に期限の5分前に通知を送信します。
-              <br />
             </Typography>
             <Typography color="neutral" level="body-xs">
               1ユーザー1端末のみ。最後に登録した端末に送信します。

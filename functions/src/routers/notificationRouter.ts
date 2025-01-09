@@ -8,6 +8,14 @@ const db = admin.firestore();
 
 // POST: 通知を送信
 router.post("/", async (req: Request, res: Response) => {
+  const token = req.headers.token;
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  if (token !== process.env.NOTIFICATION_KEY) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   let goalId: string;
   let marginTime: number;
 
@@ -69,7 +77,12 @@ router.post("/", async (req: Request, res: Response) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     };
-    logger.info("Sending notification:", goalData.text);
+    logger.info("Sending notification:", {
+      goalId: goalId,
+      userId: goalData.userId,
+      text: goalData.text,
+      fcmToken: userData.fcmToken,
+    });
 
     // 通知を送信
     const response = await fetch(url, {
@@ -99,6 +112,3 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 export default router;
-
-// logger
-// auth

@@ -1,11 +1,10 @@
 import { CloudTasksClient } from "@google-cloud/tasks";
-import * as admin from "firebase-admin";
+import { Buffer } from "buffer";
 import { logger } from "firebase-functions";
 import {
   onDocumentCreated,
   onDocumentDeleted,
 } from "firebase-functions/v2/firestore";
-import { GoogleAuth } from "google-auth-library";
 
 const tasksClient = new CloudTasksClient();
 const projectId = process.env.GCP_PROJECT_ID;
@@ -38,22 +37,12 @@ export const createTasksOnGoalCreate = onDocumentCreated(
         goalData.deadline.toDate().getTime() - marginTime * 60 * 1000
       );
       const goalId = event.params.goalId;
-      const fcmToken = await getUserFcmToken(goalData.userId);
       const postData = {
-        message: {
-          token: fcmToken, // 通知を受信する端末のトークン
-          data: {
-            title: `${marginTime}分以内に目標を完了し写真をアップロードしましょう!`,
-            body: goalData.text,
-            icon: "https://todo-real-c28fa.web.app/appIcon.svg",
-          },
-        },
+        goalId,
+        marginTime,
       };
       const queuePath = tasksClient.queuePath(projectId, region, queue);
-      const auth = new GoogleAuth({
-        scopes: ["https://www.googleapis.com/auth/cloud-platform"],
-      });
-      const accessToken = await auth.getAccessToken();
+      const accessToken = process.env.NOTIFICATION_KEY;
 
       await tasksClient.createTask({
         parent: queuePath,
@@ -61,10 +50,10 @@ export const createTasksOnGoalCreate = onDocumentCreated(
           name: `${queuePath}/tasks/${goalId}`, // タスクの名前をgoalIdに設定
           httpRequest: {
             httpMethod: "POST",
-            url: `https://fcm.googleapis.com//v1/projects/${projectId}/messages:send`,
+            url: "https://firestore-okdtj725ta-an.a.run.app/notification",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${accessToken}`,
+              token: `${accessToken}`,
             },
             body: Buffer.from(JSON.stringify(postData)).toString("base64"),
           },
@@ -138,23 +127,3 @@ export const deleteTasksOnPostCreate = onDocumentCreated(
     }
   }
 );
-
-const getUserFcmToken = async (userId: string) => {
-  const userData = await admin
-    .firestore()
-    .collection("user")
-    .doc(userId)
-    .get()
-    .then((doc) => doc.data());
-
-  if (!userData) {
-    throw new Error(`No user data found for userId:, ${userId}`);
-  }
-  if (!userData.fcmToken) {
-    throw new Error(`No FCM token found for userId:, ${userId}`);
-  }
-  if (userData.fcmToken === "") {
-    throw new Error(`FCM token is not stored for userId:, ${userId}`);
-  }
-  return userData.fcmToken;
-};

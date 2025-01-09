@@ -13,7 +13,7 @@ const StyledTypography = styled(Typography)<TypographyProps>`
   color: var(--primary-color);
   font-family: Roboto, "Zen Kaku Gothic New", sans-serif;
   font-weight: 600;
-  padding: 0 3px;
+  padding: 0 13px;
 `;
 
 export default function Top() {
@@ -32,7 +32,9 @@ export default function Top() {
           }}
         >
           <FormatListBulletedIcon className={styles.svg} />
-          <StyledTypography level="h1">TODO REAL</StyledTypography>
+          <StyledTypography level="h1" sx={{ padding: "0 !important" }}>
+            TODO REAL
+          </StyledTypography>
         </div>
         <img src="/img/app.webp" />
       </CenterIn>
@@ -95,7 +97,7 @@ export default function Top() {
           <br />
           また、達成率や達成回数で友達と競うこともできます!
         </StyledTypography>
-        <img src="/img/competition.webp" />
+        <img src="/img/competition.webp" style={{ width: "70%" }} />
       </CenterIn>
 
       <CenterIn>

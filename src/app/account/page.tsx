@@ -93,20 +93,29 @@ export default function Account() {
             >
               通知を受信・アプリに追加
             </Typography>
-            <Typography sx={{ textAlign: "center" }}>
-              目標が未達成の場合に期限の5分前に通知を送信します。
-            </Typography>
             <div className={styles.buttonContainer}>
               <div>
-                <NotificationButton defaultDisabled={isIOS} />
+                <PWAButton defaultDisabled={isIOS || isPWA} />
               </div>
               <div>
-                <PWAButton defaultDisabled={isPWA || isIOS} />
+                <NotificationButton defaultDisabled={isIOS && !isPWA} />
               </div>
             </div>
+            <Typography>
+              アプリに追加をすると、端末のホーム画面やアプリ一覧から起動できるようになります。
+              <br />
+              <br />
+              通知を有効にすると、端末の目標が未達成の場合に期限の5分前に通知を送信します。
+              <br />
+            </Typography>
+            <Typography color="neutral" level="body-xs">
+              1ユーザー1端末のみ。最後に登録した端末に送信します。
+              <br />
+              通知が受信できない場合はブラウザやサイトの権限を確認してください。
+            </Typography>
             {isIOS && (
               <>
-                <Typography color="danger" sx={{ textAlign: "center" }}>
+                <Typography color="danger">
                   iOSでは通常ブラウザで通知機能と「アプリに追加」ボタンを使用できません。以下の画像のように「ホーム画面に追加」を押してから、ホーム画面から起動してください。
                 </Typography>
                 <img

@@ -44,7 +44,8 @@ export const PWAButton = ({
     const appInstalledHandler = () => {
       console.log("PWA was successfully installed!");
       showSnackBar({
-        message: "アプリに追加しました。ホーム画面から起動してください。",
+        message:
+          "アプリに追加しました。ホーム画面から起動してください。通知を受信している場合はPWAで再度登録を推奨します。",
         type: "success",
       });
     };

@@ -9,7 +9,11 @@ import { useEffect, useState } from "react";
 import { RoundedButton } from "../Account/LoggedInView";
 import { showSnackBar } from "../SnackBar/SnackBar";
 
-export default function NotificationButton() {
+export default function NotificationButton({
+  defaultDisabled = true,
+}: {
+  defaultDisabled?: boolean;
+}) {
   const { user } = useUser();
   const [notificationTokenGenerating, setNotificationTokenGenerating] =
     useState(false);
@@ -104,7 +108,7 @@ export default function NotificationButton() {
         <RoundedButton
           variant="outlined"
           onClick={handleDisableNotification}
-          disabled={!isNotificationActive}
+          disabled={!isNotificationActive || defaultDisabled}
         >
           通知を解除
         </RoundedButton>
@@ -112,7 +116,11 @@ export default function NotificationButton() {
         <RoundedButton
           variant="outlined"
           onClick={handleEnableNotification}
-          disabled={notificationTokenGenerating || isNotificationActive}
+          disabled={
+            notificationTokenGenerating ||
+            isNotificationActive ||
+            defaultDisabled
+          }
           startIcon={
             notificationTokenGenerating ? <CircularProgress size={20} /> : null
           }

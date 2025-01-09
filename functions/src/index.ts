@@ -13,6 +13,7 @@ admin.initializeApp({
 });
 
 import goalRouter from "./routers/goalRouter";
+import notificationRouter from "./routers/notificationRouter";
 import postRouter from "./routers/postRouter";
 import resultRouter from "./routers/resultRouter";
 import userRouer from "./routers/userRouter";
@@ -52,7 +53,12 @@ const verifyAppCheckToken = async (
 // Postmanを使うためにCloud FunctionsのApp Checkは開発環境では使用しない
 if (process.env.NODE_ENV === "production") {
   app.use((req, res, next) => {
-    verifyAppCheckToken(req, res, next);
+    if (req.headers.token === process.env.NOTIFICATION_KEY) {
+      // tasksからの/notificationの場合はスキップ
+      next();
+    } else {
+      verifyAppCheckToken(req, res, next);
+    }
   });
 }
 
@@ -93,6 +99,7 @@ app.use("/user", userRouer);
 app.use("/goal", goalRouter);
 app.use("/post", postRouter);
 app.use("/result", resultRouter);
+app.use("/notification", notificationRouter);
 
 const region = "asia-northeast1";
 

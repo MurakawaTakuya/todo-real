@@ -1,5 +1,5 @@
+import styles from "@/app/account/page.module.scss";
 import NameUpdate from "@/Components/NameUpdate/NameUpdate";
-import NotificationButton from "@/Components/NotificationButton/NotificationButton";
 import { handleSignOut } from "@/utils/Auth/signOut";
 import { getSuccessRate } from "@/utils/successRate";
 import { useUser } from "@/utils/UserContext";
@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 export const RoundedButton = styled(Button)(({ theme }) => ({
   borderRadius: "30px",
-  padding: theme.spacing(1.5, 3),
+  padding: theme.spacing(1.3, 2.5),
 }));
 
 export default function LoggedInView() {
@@ -41,7 +41,7 @@ export default function LoggedInView() {
   }
 
   return (
-    <>
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
       {user.loginType === "Guest" ? (
         <Typography level="body-lg" sx={{ textAlign: "center" }}>
           ゲストとしてログイン中
@@ -68,10 +68,29 @@ export default function LoggedInView() {
         </Typography>
       )}
 
-      {/* ゲストかメール未認証の場合は閲覧以外の機能を使用できなくする */}
       {user.loginType !== "Guest" && user.isMailVerified && (
         <>
-          <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            <div
+              className={styles.buttonContainer}
+              style={{ margin: "10px 0" }}
+            >
+              <div>
+                <NameUpdate />
+              </div>
+              <div>
+                <RoundedButton variant="contained" onClick={handleSignOut}>
+                  ログアウト
+                </RoundedButton>
+              </div>
+            </div>
             <Typography level="title-md" sx={{ textAlign: "center" }}>
               連続達成日数: {userStats.streak}日目
             </Typography>
@@ -82,19 +101,8 @@ export default function LoggedInView() {
               達成回数: {userStats.completed}回
             </Typography>
           </div>
-          <div style={{ display: "flex", justifyContent: "space-evenly" }}>
-            <NameUpdate />
-            <NotificationButton />
-          </div>
-          <Typography color="neutral" sx={{ textAlign: "center" }}>
-            通知を有効にすると、目標が未達成の場合に期限の5分前に通知を送信します。
-          </Typography>
         </>
       )}
-
-      <RoundedButton variant="contained" onClick={handleSignOut}>
-        ログアウト
-      </RoundedButton>
-    </>
+    </div>
   );
 }

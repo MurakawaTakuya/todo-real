@@ -16,7 +16,7 @@ import { RoundedButton } from "./LoggedInView";
 const CenteredToggleButtonGroup = styled(ToggleButtonGroup)({
   display: "flex",
   justifyContent: "center",
-  marginBottom: "16px",
+  marginBottom: "10px",
 });
 
 export default function AuthForm() {
@@ -84,13 +84,13 @@ export default function AuthForm() {
       </CenteredToggleButtonGroup>
       {formMode === "register" ? (
         <>
-          <Typography>新規登録</Typography>
+          <Typography sx={{ marginBottom: "5px" }}>新規登録</Typography>
           <form onSubmit={handleRegisterSubmit}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 2,
+                gap: "12px",
               }}
             >
               <TextField
@@ -139,13 +139,13 @@ export default function AuthForm() {
         </>
       ) : (
         <>
-          <Typography>ログイン</Typography>
+          <Typography sx={{ marginBottom: "5px" }}>ログイン</Typography>
           <form onSubmit={handleLoginSubmit}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                gap: 2,
+                gap: "12px",
               }}
             >
               <TextField
@@ -185,41 +185,43 @@ export default function AuthForm() {
           </form>
         </>
       )}
-      <Divider>または</Divider>
-      <RoundedButton
-        fullWidth
-        variant="outlined"
-        onClick={handleGoogleLogin}
-        disabled={loading}
-      >
-        {loading && loadingType === "Google" ? (
-          <>
-            <CircularProgress size={24} sx={{ marginRight: 1 }} />
-            Googleアカウントでログイン
-          </>
-        ) : (
-          "Googleアカウントでログイン"
-        )}
-      </RoundedButton>
-      <RoundedButton
-        fullWidth
-        variant="outlined"
-        onClick={handleGuestLogin}
-        disabled={loading}
-      >
-        {loading && loadingType === "Guest" ? (
-          <>
-            <CircularProgress size={24} sx={{ marginRight: 1 }} />
-            ゲストログイン
-          </>
-        ) : (
-          "ゲストログイン"
-        )}
-      </RoundedButton>
-      <Typography level="body-xs">
-        ゲストログインを使用するとアカウントを作成せずに閲覧できます。
-        (投稿機能は使用できません。)
-      </Typography>
+      <Divider sx={{ margin: "12px 0" }}>または</Divider>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
+        <RoundedButton
+          fullWidth
+          variant="outlined"
+          onClick={handleGoogleLogin}
+          disabled={loading}
+        >
+          {loading && loadingType === "Google" ? (
+            <>
+              <CircularProgress size={24} sx={{ marginRight: 1 }} />
+              Googleアカウントでログイン
+            </>
+          ) : (
+            "Googleアカウントでログイン"
+          )}
+        </RoundedButton>
+        <RoundedButton
+          fullWidth
+          variant="outlined"
+          onClick={handleGuestLogin}
+          disabled={loading}
+        >
+          {loading && loadingType === "Guest" ? (
+            <>
+              <CircularProgress size={24} sx={{ marginRight: 1 }} />
+              ゲストログイン
+            </>
+          ) : (
+            "ゲストログイン"
+          )}
+        </RoundedButton>
+        <Typography level="body-xs">
+          ゲストログインを使用するとアカウントを作成せずに閲覧できます。
+          (投稿機能は使用できません。)
+        </Typography>
+      </div>
     </>
   );
 }

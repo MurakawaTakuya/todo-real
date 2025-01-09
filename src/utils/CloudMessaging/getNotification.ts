@@ -15,7 +15,7 @@ if (typeof window !== "undefined" && messaging) {
             icon,
           });
           notification.onclick = () => {
-            window.focus();
+            window.open("/mycontent", "_blank");
           };
         }
       });

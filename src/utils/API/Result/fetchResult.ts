@@ -63,7 +63,8 @@ export const fetchResult = async ({
  * @return {*}
  */
 export const handleFetchResultError = (error: unknown) => {
-  let snackBarMessage = "データの取得に失敗しました";
+  let snackBarMessage =
+    "データの取得に失敗しました。データが見つからないかログイン認証が必要です。";
 
   if (error instanceof Error) {
     if (error.message.includes("404")) {

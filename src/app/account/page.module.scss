@@ -1,0 +1,19 @@
+.buttonContainer {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  width: 100%;
+
+  & > div {
+    display: flex;
+    width: 100%;
+
+    &:nth-child(1) {
+      justify-content: flex-end;
+    }
+
+    &:nth-child(2) {
+      justify-content: flex-start;
+    }
+  }
+}

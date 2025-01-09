@@ -9,7 +9,8 @@
     "strict": true,
     "esModuleInterop": true,
     "target": "es2017",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "skipLibCheck": true
   },
   "compileOnSave": true,
   "include": ["src/*", "functions/src/**/*", "src/**/*.ts"]

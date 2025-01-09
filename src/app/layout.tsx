@@ -28,7 +28,11 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
+        <link rel="manifest" href="/manifest.json" />
         <link rel="icon" type="image/svg+xml" href="/appIcon.svg" />
+        <link rel="apple-touch-icon" href="/icon512_maskable.png"></link>
+        <meta name="theme-color" content="#2EC6FE" />
+
         {/* Open Graph */}
         <meta property="og:title" content="TODO REAL" />
         <meta property="og:description" content={description} />

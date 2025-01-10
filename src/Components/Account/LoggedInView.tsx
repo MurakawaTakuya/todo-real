@@ -62,10 +62,19 @@ export default function LoggedInView() {
       )}
 
       {user.loginType === "Guest" && (
-        <Typography color="danger">
-          ゲストユーザーは閲覧以外の機能は使用できません。
-          全ての機能を利用するにはログインが必要です。
-        </Typography>
+        <>
+          <Typography color="danger">
+            ゲストユーザーは閲覧以外の機能は使用できません。
+            全ての機能を利用するにはログインが必要です。
+          </Typography>
+          <RoundedButton
+            variant="contained"
+            onClick={handleSignOut}
+            sx={{ width: "150px", margin: "0 auto" }}
+          >
+            ログアウト
+          </RoundedButton>
+        </>
       )}
 
       {user.loginType !== "Guest" && user.isMailVerified && (

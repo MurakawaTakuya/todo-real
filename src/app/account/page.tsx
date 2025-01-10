@@ -1,8 +1,13 @@
 "use client";
 import AuthForm from "@/Components/Account/AuthForm";
-import LoggedInView from "@/Components/Account/LoggedInView";
+import LoggedInView, { RoundedButton } from "@/Components/Account/LoggedInView";
 import NotificationButton from "@/Components/NotificationButton/NotificationButton";
 import { PWAButton } from "@/Components/PWAButton/PWAButton";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
+import {
+  requestPermission,
+  revokePermission,
+} from "@/utils/CloudMessaging/notificationController";
 import { useUser } from "@/utils/UserContext";
 import Typography from "@mui/joy/Typography";
 import Box from "@mui/material/Box";
@@ -40,6 +45,31 @@ export default function Account() {
   const [isIOS, setIsIOS] = useState(false);
   const [isPWA, setIsPWA] = useState(false);
   const [PWAReady, setPWAReady] = useState(false);
+
+  // 通知を有効化
+  const handleEnableNotification = () => {
+    showSnackBar({
+      message: "通知を有効化中...",
+      type: "normal",
+    });
+    requestPermission()
+      .then(() => {
+        showSnackBar({
+          message: "通知を受信します",
+          type: "success",
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to enable notifications:", error);
+        showSnackBar({
+          message: error.message,
+          type: "warning",
+        });
+      })
+      .finally(() => {
+        revokePermission();
+      });
+  };
 
   // iOSか判定
   useEffect(() => {
@@ -145,6 +175,10 @@ export default function Account() {
           </Card>
         )}
       </Stack>
+
+      <RoundedButton variant="outlined" onClick={handleEnableNotification}>
+        通知を受信
+      </RoundedButton>
     </>
   );
 }

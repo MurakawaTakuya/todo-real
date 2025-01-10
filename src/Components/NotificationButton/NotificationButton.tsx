@@ -46,7 +46,7 @@ export default function NotificationButton({
       type: "normal",
     });
     setNotificationTokenGenerating(true);
-    requestPermission(user.userId)
+    requestPermission()
       .then(() => {
         showSnackBar({
           message: "通知を受信します",
@@ -85,7 +85,7 @@ export default function NotificationButton({
       });
       return;
     }
-    revokePermission(user.userId)
+    revokePermission()
       .then(() => {
         showSnackBar({
           message: "通知を解除しました",

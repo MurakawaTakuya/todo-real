@@ -1,9 +1,9 @@
 "use client";
-import { appCheckToken, functionsEndpoint, messaging } from "@/app/firebase";
+import { messaging } from "@/app/firebase";
 import { getToken } from "firebase/messaging";
 
 // 通知を受信する
-export async function requestPermission(userId: string): Promise<void> {
+export async function requestPermission(): Promise<void> {
   if (typeof window === "undefined") {
     console.error("This function must be run in a browser environment.");
     return;
@@ -36,26 +36,11 @@ export async function requestPermission(userId: string): Promise<void> {
 
   console.log("currentToken:", currentToken);
 
-  const response = await fetch(`${functionsEndpoint}/user/${userId}`, {
-    method: "PUT",
-    headers: {
-      "X-Firebase-AppCheck": appCheckToken,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ fcmToken: currentToken }),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("Failed to register FCM token:", errorText);
-    throw new Error("Failed to register FCM token");
-  }
-
   console.log("FCM token registered successfully");
 }
 
 // 通知を解除する
-export async function revokePermission(userId: string): Promise<void> {
+export async function revokePermission(): Promise<void> {
   if (typeof window === "undefined") {
     throw new Error("This function must be run in a browser environment.");
   }
@@ -72,21 +57,6 @@ export async function revokePermission(userId: string): Promise<void> {
     console.log("Notification permission revoked.");
   } else {
     console.log("No subscription found");
-  }
-
-  const response = await fetch(`${functionsEndpoint}/user/${userId}`, {
-    method: "PUT",
-    headers: {
-      "X-Firebase-AppCheck": appCheckToken,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ fcmToken: "" }),
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("Failed to clear FCM token:", errorText);
-    throw new Error("Failed to clear FCM token");
   }
 
   console.log("FCM token cleared successfully");

@@ -51,12 +51,9 @@ export default function NameUpdate() {
         console.error("Failed to update displayName: No authenticated user");
       }
 
-      showSnackBar({
-        message: "名前を変更しました",
-        type: "success",
-      });
       setNewName("");
       setOpen(false);
+      window.location.reload();
     } catch (error) {
       console.error("Error updating name:", error);
       showSnackBar({

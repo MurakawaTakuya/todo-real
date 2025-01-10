@@ -5,6 +5,7 @@ import {
   fetchResult,
   handleFetchResultError,
 } from "@/utils/API/Result/fetchResult";
+import { useUser } from "@/utils/UserContext";
 import CircularProgress from "@mui/joy/CircularProgress";
 import Typography from "@mui/joy/Typography";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -46,6 +47,11 @@ export default function DashBoard({
   const isAlreadyFetching = useRef(false);
   const offset = useRef(0);
   const noMore = useRef(false);
+
+  const [lastPostDate, setLastPostDate] = useState<string | null>(null); // 投稿が0の場合はnull
+
+  const { user } = useUser();
+  const myUserId = user?.userId;
 
   const limit = 10; // limitずつ表示
 
@@ -162,6 +168,32 @@ export default function DashBoard({
     );
   }, [success, failed, pending, successResults, failedResults, pendingResults]);
 
+  useEffect(() => {
+    if (user?.loginType === "Guest") {
+      return;
+    }
+
+    if (success) {
+      // 最後に成功した目標を取得
+      fetchResult({
+        userId: myUserId,
+        success,
+        failed: false,
+        pending: false,
+        offset: 0,
+        limit: 1,
+      })
+        .then((data) => {
+          if (data.successResults.length > 0) {
+            setLastPostDate(data.successResults[0].post?.submittedAt);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching last post date:", error);
+        });
+    }
+  }, [success]);
+
   return (
     <>
       {isLoading ? (
@@ -188,6 +220,7 @@ export default function DashBoard({
             failedResults={failed ? failedResults : []}
             pendingResults={pending ? pendingResults : []}
             orderBy={orderBy}
+            lastPostDate={lastPostDate}
           />
           <div className="bottom" ref={bottomRef}></div>
 

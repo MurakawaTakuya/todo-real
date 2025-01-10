@@ -28,6 +28,11 @@ const successPostIndicatorStyle = {
   },
 };
 
+const blurImageStyle = {
+  filter: "blur(20px)",
+  clipPath: "inset(0)",
+};
+
 const outerBorderColors = {
   success: "#008c328a",
   failed: "#a2000082",
@@ -45,6 +50,7 @@ interface ProgressProps {
   failedResults?: GoalWithIdAndUserData[];
   pendingResults?: GoalWithIdAndUserData[];
   orderBy?: "asc" | "desc";
+  lastPostDate: string | null; // 投稿が0の場合はnull
 }
 
 export default function Progress({
@@ -52,6 +58,7 @@ export default function Progress({
   failedResults = [],
   pendingResults = [],
   orderBy = "desc", // 最新が上位
+  lastPostDate,
 }: ProgressProps) {
   const { user } = useUser();
 
@@ -85,6 +92,13 @@ export default function Progress({
               key={result.goalId}
               result={result as GoalWithIdAndUserData}
               user={user as User}
+              isBlured={
+                result.post?.submittedAt && lastPostDate
+                  ? new Date(result.post.submittedAt) > new Date(lastPostDate)
+                  : user?.loginType === "Guest" // ゲストユーザーは特別にモザイクを解除
+                  ? false
+                  : true
+              }
             />
           );
         } else if (result.type === "failed") {
@@ -112,9 +126,11 @@ export default function Progress({
 const SuccessStep = ({
   result,
   user,
+  isBlured,
 }: {
   result: GoalWithIdAndUserData;
   user: User;
+  isBlured: boolean;
 }) => {
   const [imageURL, setImageURL] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -189,7 +205,13 @@ const SuccessStep = ({
             zIndex: 0,
           }}
         >
-          <div style={{ minHeight: "15vh", display: "flex" }}>
+          <div
+            style={{
+              minHeight: "15vh",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
             <CssVarsProvider theme={theme}>
               <Skeleton
                 loading={!imageLoaded}
@@ -210,6 +232,7 @@ const SuccessStep = ({
                       margin: "0 auto",
                       borderRadius: "5px 5px 0 0",
                       borderBottom: "thin solid #cdcdcd",
+                      ...(isBlured ? blurImageStyle : {}),
                     }}
                     loading="lazy"
                     alt=""
@@ -218,6 +241,40 @@ const SuccessStep = ({
                 )}
               </Skeleton>
             </CssVarsProvider>
+            {isBlured && imageURL && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "45%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "85%",
+                  fontWeight: 700,
+                  textAlign: "center",
+                }}
+              >
+                <CenterIn delay={0.5}>
+                  <Typography
+                    level="body-lg"
+                    sx={{
+                      color: "black",
+                      textShadow: "0 0 10px rgb(201 228 255)",
+                    }}
+                  >
+                    投稿をするとモザイクが解除されます
+                  </Typography>
+                  <Typography
+                    level="body-sm"
+                    sx={{
+                      color: "black",
+                      textShadow: "0 0 8px rgb(201 228 255)",
+                    }}
+                  >
+                    最後にあなたが完了した目標より後に投稿された画像はモザイクがかかります。自分も目標を達成して共有しましょう!
+                  </Typography>
+                </CenterIn>
+              </div>
+            )}
           </div>
           <CardContent sx={{ padding: "3px 10px 10px" }}>
             <div

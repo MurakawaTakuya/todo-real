@@ -114,10 +114,10 @@ export default function Top() {
 
       <CenterIn>
         <StyledTypography level="h3" component="h2">
-          友達の投稿を見たいなら、あなたも投稿しましょう
+          見るだけではなく行動しましょう
         </StyledTypography>
         <StyledTypography level="body-md">
-          友達の投稿を表示するには、あなたの完了した目標をシェアしましょう。あなたが最後に投稿した時間より後の目標の画像はモザイクがかかっています。
+          友達の投稿を表示するには、あなたの完了した目標をシェアしましょう。あなたが最後に投稿した時間より後の目標の画像はモザイクがかかっています。(ゲストログインの場合は特別に表示されます)
         </StyledTypography>
         {/* TODO: 正式に実装したら画像を新しくする */}
         <img src="/img/blur.webp" />

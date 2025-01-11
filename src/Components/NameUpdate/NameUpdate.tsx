@@ -65,7 +65,11 @@ export default function NameUpdate() {
 
   return (
     <>
-      <RoundedButton variant="outlined" onClick={() => setOpen(true)}>
+      <RoundedButton
+        variant="outlined"
+        onClick={() => setOpen(true)}
+        disabled={user?.loginType === "Guest" || !user?.isMailVerified}
+      >
         名前を変更
       </RoundedButton>
 

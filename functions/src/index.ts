@@ -45,7 +45,7 @@ const verifyAppCheckToken = async (
     console.log("Verified App Check Token:", decodedToken);
     next();
   } catch (error) {
-    console.error("Invalid App Check token:", error);
+    logger.error(`Invalid App Check token with ${appCheckToken}:`, error);
     res.status(401).send("Invalid App Check token.");
   }
 };

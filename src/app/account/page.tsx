@@ -114,7 +114,7 @@ export default function Account() {
             </div>
             {!PWAReady && (
               <Typography color="danger" textAlign="center">
-                PWAを起動中です。しばらくしてから再度お試しください。
+                PWAを準備中です。しばらくしてからページを更新してください。
               </Typography>
             )}
             {(user?.loginType === "Guest" || !user?.isMailVerified) && (

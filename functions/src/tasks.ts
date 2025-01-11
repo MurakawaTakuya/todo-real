@@ -4,6 +4,7 @@ import { logger } from "firebase-functions";
 import {
   onDocumentCreated,
   onDocumentDeleted,
+  onDocumentUpdated,
 } from "firebase-functions/v2/firestore";
 
 const tasksClient = new CloudTasksClient();
@@ -67,6 +68,7 @@ export const createTasksOnGoalCreate = onDocumentCreated(
   }
 );
 
+// 目標を削除した時にtasksから通知予定を削除する
 export const deleteTasksOnGoalDelete = onDocumentDeleted(
   { region: region, document: "goal/{goalId}" },
   async (event) => {
@@ -96,10 +98,11 @@ export const deleteTasksOnGoalDelete = onDocumentDeleted(
   }
 );
 
-export const deleteTasksOnPostCreate = onDocumentCreated(
+// 目標を完了した時にtasksから通知予定を削除する
+export const deleteTasksOnPostCreate = onDocumentUpdated(
   {
     region: region,
-    document: "goal/{goalId}/posts/{postId}",
+    document: "goal/{goalId}",
   },
   async (event) => {
     if (process.env.NODE_ENV !== "production") {
@@ -113,6 +116,10 @@ export const deleteTasksOnPostCreate = onDocumentCreated(
 
     if (!event.data) {
       logger.info("No data found in event.");
+      return;
+    }
+
+    if (event.data.after.data().post !== null) {
       return;
     }
 

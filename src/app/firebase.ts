@@ -1,3 +1,4 @@
+"use client";
 import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { Analytics, getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
@@ -55,7 +56,7 @@ if (typeof window !== "undefined") {
       isTokenAutoRefreshEnabled: true,
     });
 
-    getToken(appCheck)
+    await getToken(appCheck)
       .then((token) => {
         console.log("App Check: Success");
         appCheckToken = token.token;
@@ -68,6 +69,11 @@ if (typeof window !== "undefined") {
           type: "warning",
         });
       });
+
+    showSnackBar({
+      message: `appCheckToken: ${appCheckToken}`,
+      type: "normal",
+    });
   }
 }
 

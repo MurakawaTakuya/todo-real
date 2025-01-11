@@ -39,6 +39,7 @@ export default function Account() {
   const { user } = useUser();
   const [isIOS, setIsIOS] = useState(false);
   const [isPWA, setIsPWA] = useState(false);
+  const [PWAReady, setPWAReady] = useState(false);
 
   // iOSか判定
   useEffect(() => {
@@ -83,7 +84,7 @@ export default function Account() {
           </Box>
         </Card>
 
-        {user?.loginType !== "Guest" && user?.isMailVerified && (
+        {user && (
           <Card variant="outlined" sx={{ padding: "25px 20px 30px" }}>
             <Typography
               level="h3"
@@ -95,21 +96,37 @@ export default function Account() {
             </Typography>
             <div className={styles.buttonContainer}>
               <div>
-                <PWAButton defaultDisabled={isIOS || isPWA} />
+                <PWAButton
+                  defaultDisabled={isIOS || isPWA}
+                  PWAReady={PWAReady}
+                  setPWAReady={setPWAReady}
+                />
               </div>
               <div>
-                <NotificationButton defaultDisabled={isIOS && !isPWA} />
+                <NotificationButton
+                  defaultDisabled={
+                    (isIOS && !isPWA) ||
+                    user?.loginType === "Guest" ||
+                    !user?.isMailVerified
+                  }
+                />
               </div>
             </div>
+            {!PWAReady && (
+              <Typography color="danger" textAlign="center">
+                PWAを起動中です。しばらくしてから再度お試しください。
+              </Typography>
+            )}
+            {(user?.loginType === "Guest" || !user?.isMailVerified) && (
+              <Typography color="danger" textAlign="center">
+                通知を利用するには認証が必要です。
+              </Typography>
+            )}
             <Typography>
               アプリに追加をすると、端末のホーム画面やアプリ一覧から起動できるようになります。
-              <br />
-              <br />
-              通知を有効にすると、端末の目標が未達成の場合に期限の5分前に通知を送信します。
-              <br />
             </Typography>
             <Typography color="neutral" level="body-xs">
-              1ユーザー1端末のみ。最後に登録した端末に送信します。
+              通知を複数端末で登録した場合は、最後に登録した端末に送信します。
               <br />
               通知が受信できない場合はブラウザやサイトの権限を確認してください。
             </Typography>

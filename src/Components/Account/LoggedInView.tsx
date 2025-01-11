@@ -23,6 +23,7 @@ export default function LoggedInView() {
     successRate: 0,
     completed: 0,
   });
+
   const { user } = useUser();
 
   useEffect(() => {
@@ -67,15 +68,19 @@ export default function LoggedInView() {
             ゲストユーザーは閲覧以外の機能は使用できません。
             全ての機能を利用するにはログインが必要です。
           </Typography>
-          <RoundedButton
-            variant="contained"
-            onClick={handleSignOut}
-            sx={{ width: "150px", margin: "0 auto" }}
-          >
-            ログアウト
-          </RoundedButton>
         </>
       )}
+
+      <div className={styles.buttonContainer} style={{ margin: "10px 0" }}>
+        <div>
+          <NameUpdate />
+        </div>
+        <div>
+          <RoundedButton variant="contained" onClick={handleSignOut}>
+            ログアウト
+          </RoundedButton>
+        </div>
+      </div>
 
       {user.loginType !== "Guest" && user.isMailVerified && (
         <>
@@ -87,19 +92,6 @@ export default function LoggedInView() {
               gap: "5px",
             }}
           >
-            <div
-              className={styles.buttonContainer}
-              style={{ margin: "10px 0" }}
-            >
-              <div>
-                <NameUpdate />
-              </div>
-              <div>
-                <RoundedButton variant="contained" onClick={handleSignOut}>
-                  ログアウト
-                </RoundedButton>
-              </div>
-            </div>
             <Typography level="title-md" sx={{ textAlign: "center" }}>
               連続達成日数: {userStats.streak}日目
             </Typography>

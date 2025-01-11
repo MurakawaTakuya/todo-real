@@ -16,11 +16,14 @@ declare global {
 
 export const PWAButton = ({
   defaultDisabled = true,
+  PWAReady,
+  setPWAReady,
 }: {
   defaultDisabled?: boolean;
+  PWAReady: boolean;
+  setPWAReady: (value: boolean) => void;
 }) => {
   const deferredPromptRef = useRef<BeforeInstallPromptEvent | null>(null);
-  const [ready, setReady] = useState(false);
   const [isAleadyInstalled, setIsAlreadyInstalled] = useState(false);
 
   useEffect(() => {
@@ -37,7 +40,7 @@ export const PWAButton = ({
     checkIfInstalled();
 
     const beforeInstallPromptHandler = (event: BeforeInstallPromptEvent) => {
-      setReady(true);
+      setPWAReady(true);
       deferredPromptRef.current = event;
     };
 
@@ -78,7 +81,7 @@ export const PWAButton = ({
       ) : (
         <RoundedButton
           variant="outlined"
-          disabled={!ready || defaultDisabled}
+          disabled={!PWAReady || defaultDisabled}
           onClick={handleClickInstall}
         >
           アプリに追加

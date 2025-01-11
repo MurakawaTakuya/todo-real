@@ -40,25 +40,16 @@ export default function Account() {
   const [isIOS, setIsIOS] = useState(false);
   const [isPWA, setIsPWA] = useState(false);
   const [PWAReady, setPWAReady] = useState(false);
+  const [isNotificationUnavailable, setIsNotificationUnavailable] =
+    useState(false);
 
-  // iOSか判定
   useEffect(() => {
-    const checkIOS = () => {
-      const userAgent = navigator.userAgent || navigator.vendor;
-      return /iPad|iPhone|iPod/.test(userAgent);
-    };
-    setIsIOS(checkIOS());
-  }, []);
-
-  // PWAか判定
-  useEffect(() => {
-    const checkPWA = () => {
-      return (
-        window.matchMedia("(display-mode: standalone)").matches ||
+    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent));
+    setIsPWA(
+      window.matchMedia("(display-mode: standalone)").matches ||
         window.navigator.standalone === true
-      );
-    };
-    setIsPWA(checkPWA());
+    );
+    setIsNotificationUnavailable(typeof Notification === "undefined");
   }, []);
 
   return (
@@ -79,7 +70,7 @@ export default function Account() {
           >
             TODO REAL
           </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             {user ? <LoggedInView /> : <AuthForm />}
           </Box>
         </Card>
@@ -94,6 +85,7 @@ export default function Account() {
             >
               通知を受信・アプリに追加
             </Typography>
+
             <div className={styles.buttonContainer}>
               <div>
                 <PWAButton
@@ -107,39 +99,55 @@ export default function Account() {
                   defaultDisabled={
                     (isIOS && !isPWA) ||
                     user?.loginType === "Guest" ||
-                    !user?.isMailVerified
+                    !user?.isMailVerified ||
+                    isNotificationUnavailable
                   }
                 />
               </div>
             </div>
-            {!PWAReady && (
-              <Typography color="danger" textAlign="center">
-                PWAを準備中です。しばらくしてからページを更新してください。
-              </Typography>
-            )}
-            {(user?.loginType === "Guest" || !user?.isMailVerified) && (
-              <Typography color="danger" textAlign="center">
-                通知を利用するには認証が必要です。
-              </Typography>
-            )}
-            <Typography>
-              アプリに追加をすると、端末のホーム画面やアプリ一覧から起動できるようになります。
-            </Typography>
-            <Typography color="neutral" level="body-xs">
-              通知を複数端末で登録した場合は、最後に登録した端末に送信します。
-              <br />
-              通知が受信できない場合はブラウザやサイトの権限を確認してください。
-            </Typography>
-            {isIOS && (
+
+            {isNotificationUnavailable ? (
               <>
-                <Typography color="danger">
-                  iOSでは通常ブラウザで通知機能と「アプリに追加」ボタンを使用できません。以下の画像のように「ホーム画面に追加」を押してから、ホーム画面から起動してください。
+                <Typography color="danger" level="body-sm">
+                  この端末ではアプリ機能や通知機能が使用できません。
+                  {isIOS && "iOS 16.4以降に更新してください"}
                 </Typography>
-                <img
-                  src="/img/iOSPWA.webp"
-                  alt="iOS PWA"
-                  style={{ width: "80%", margin: "0 auto" }}
-                />
+              </>
+            ) : (
+              <>
+                {!PWAReady && !isPWA && (
+                  <Typography color="danger" textAlign="center">
+                    PWAを起動中です。しばらくしてから再度お試しください。
+                  </Typography>
+                )}
+                {(user?.loginType === "Guest" || !user?.isMailVerified) && (
+                  <Typography color="danger" textAlign="center">
+                    通知を利用するには認証が必要です。
+                  </Typography>
+                )}
+
+                <Typography>
+                  アプリに追加をすると、端末のホーム画面やアプリ一覧から起動できるようになります。
+                </Typography>
+                <Typography color="neutral" level="body-xs">
+                  通知を複数端末で登録した場合は、最後に登録した端末に送信します。
+                  <br />
+                  通知が受信できない場合はブラウザやサイトの権限を確認してください。
+                </Typography>
+
+                {/* iOSのPWAの追加方法 */}
+                {isIOS && (
+                  <>
+                    <Typography color="danger">
+                      iOSでは通常ブラウザで通知機能と「アプリに追加」ボタンを使用できません。以下の画像のように「ホーム画面に追加」を押してから、ホーム画面から起動してください。
+                    </Typography>
+                    <img
+                      src="/img/iOSPWA.webp"
+                      alt="iOS PWA"
+                      style={{ width: "80%", margin: "0 auto" }}
+                    />
+                  </>
+                )}
               </>
             )}
           </Card>

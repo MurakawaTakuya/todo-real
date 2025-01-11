@@ -46,6 +46,7 @@ export default function RootLayout({
         <meta property="og:image" content={`${rootURL}/img/thumbnail.png`} />
         <meta property="og:url" content={`${rootURL}`} />
         <meta property="og:type" content="website" />
+
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="TODO REAL" />

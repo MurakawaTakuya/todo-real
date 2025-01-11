@@ -25,6 +25,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "TODO REAL",
+    url: "https://todo-real-c28fa.web.app/",
+  };
+
   return (
     <html lang="ja">
       <head>
@@ -54,6 +61,16 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap"
           rel="stylesheet"
         ></link>
+
+        {/* Google Searcgh Console */}
+        <meta
+          name="google-site-verification"
+          content="bXYLAh9xBwD_lAd7nd7CK4UoXgxmfBZFt3-Vcqjkk-4"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </head>
       <body>
         <UserProvider>

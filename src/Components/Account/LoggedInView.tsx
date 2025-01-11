@@ -42,7 +42,7 @@ export default function LoggedInView() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+    <>
       {user.loginType === "Guest" ? (
         <Typography level="body-lg" sx={{ textAlign: "center" }}>
           ゲストとしてログイン中
@@ -104,6 +104,6 @@ export default function LoggedInView() {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 }

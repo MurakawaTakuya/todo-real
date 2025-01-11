@@ -16,7 +16,6 @@ import { RoundedButton } from "./LoggedInView";
 const CenteredToggleButtonGroup = styled(ToggleButtonGroup)({
   display: "flex",
   justifyContent: "center",
-  marginBottom: "10px",
 });
 
 export default function AuthForm() {
@@ -82,9 +81,17 @@ export default function AuthForm() {
           ログイン
         </ToggleButton>
       </CenteredToggleButtonGroup>
+
+      {typeof Notification === "undefined" && (
+        <Typography color="danger" level="body-sm">
+          この端末では通知等の機能が使用できません。
+          {/iPad|iPhone|iPod/.test(navigator.userAgent) &&
+            "使用するにはiOS 16.4以降に更新してください"}
+        </Typography>
+      )}
+
       {formMode === "register" ? (
         <>
-          <Typography sx={{ marginBottom: "5px" }}>新規登録</Typography>
           <form onSubmit={handleRegisterSubmit}>
             <Box
               sx={{
@@ -93,6 +100,7 @@ export default function AuthForm() {
                 gap: "12px",
               }}
             >
+              <Typography>新規登録</Typography>
               <TextField
                 label="ユーザー名"
                 value={name}
@@ -139,7 +147,6 @@ export default function AuthForm() {
         </>
       ) : (
         <>
-          <Typography sx={{ marginBottom: "5px" }}>ログイン</Typography>
           <form onSubmit={handleLoginSubmit}>
             <Box
               sx={{
@@ -148,6 +155,7 @@ export default function AuthForm() {
                 gap: "12px",
               }}
             >
+              <Typography>ログイン</Typography>
               <TextField
                 label="メールアドレス"
                 type="email"
@@ -185,7 +193,9 @@ export default function AuthForm() {
           </form>
         </>
       )}
-      <Divider sx={{ margin: "12px 0" }}>または</Divider>
+
+      <Divider>または</Divider>
+
       <div style={{ display: "flex", flexWrap: "wrap", gap: "12px" }}>
         <RoundedButton
           fullWidth
@@ -217,6 +227,7 @@ export default function AuthForm() {
             "ゲストログイン"
           )}
         </RoundedButton>
+
         <Typography level="body-xs">
           ゲストログインを使用するとアカウントを作成せずに閲覧できます。
           (投稿機能は使用できません。)

@@ -33,7 +33,7 @@ const verifyAppCheckToken = async (
   const appCheckToken = req.get("X-Firebase-AppCheck");
 
   if (!appCheckToken) {
-    res
+    return res
       .status(400)
       .send({ message: "Authentication error: App Check token is missing." });
   }
@@ -43,10 +43,10 @@ const verifyAppCheckToken = async (
       .appCheck()
       .verifyToken(appCheckToken as string);
     console.log("Verified App Check Token:", decodedToken);
-    next();
+    return next();
   } catch (error) {
     logger.error(`Invalid App Check token with ${appCheckToken}:`, error);
-    res.status(401).send("Invalid App Check token.");
+    return res.status(401).send("Invalid App Check token.");
   }
 };
 
@@ -55,7 +55,7 @@ if (process.env.NODE_ENV === "production") {
   app.use((req, res, next) => {
     if (req.headers.token === process.env.NOTIFICATION_KEY) {
       // tasksからの/notificationの場合はスキップ
-      next();
+      return next();
     } else {
       verifyAppCheckToken(req, res, next);
     }

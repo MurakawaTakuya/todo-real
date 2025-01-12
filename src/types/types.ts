@@ -17,6 +17,7 @@ export interface Goal {
   deadline: Date | string;
   text: string;
   post?: Omit<Post, "submittedAt"> & { submittedAt: string };
+  reaction?: Record<string, ReactionTypeMap>;
 }
 
 export interface GoalWithIdAndUserData extends Goal {
@@ -36,14 +37,35 @@ export interface PostWithGoalId extends Post {
   goalId: string;
 }
 
-export const animationTypes = [
+export const ReactionType = {
+  success: {
+    laugh: "😆",
+    surprised: "😲",
+    clap: "👏",
+  },
+  failed: {
+    sad: "😢",
+    angry: "😠",
+    muscle: "💪",
+  },
+};
+
+export type ReactionTypeMap =
+  | "laugh"
+  | "surprised"
+  | "clap"
+  | "sad"
+  | "angry"
+  | "muscle";
+
+export const AnimationTypes = [
   "left",
   "right",
   "center",
   "bottom",
   "top",
 ] as const;
-export type AnimationType = (typeof animationTypes)[number];
+export type AnimationType = (typeof AnimationTypes)[number];
 
 export interface AnimationConfigs {
   children: ReactNode;

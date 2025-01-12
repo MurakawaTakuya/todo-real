@@ -68,7 +68,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
 - URL: /user/:userId
 - Method: DELETE
 
-## Goals
+## Goal
 ### Create Goal
 - URL: /goal
 - Method: POST
@@ -141,7 +141,7 @@ API is provided by Firebase Cloud Functions. Database is provided by Firestore.
 - URL: /goal/:goalId
 - Method: DELETE
 
-## Posts
+## Post
 ### Create Post
 - URL: /post
 - Method: POST
@@ -258,3 +258,20 @@ Use Create Post API to update post.
       ]
   }
   ```
+
+## Reactions
+- URL: /reaction/:goalId
+- Method: PUT
+- Request
+  - Headers
+    - Content-Type: application/json
+  - Body
+    - userId: string
+    - reaction: string
+  - Example
+    ```json
+    {
+        "userId": "IK0Zc2hoUYaYjXoqzmCl",
+        "reactionType": "clap"
+    }
+    ```

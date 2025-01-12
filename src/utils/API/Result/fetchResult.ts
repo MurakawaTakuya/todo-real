@@ -1,6 +1,5 @@
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
 
-// TODO: limitとoffsetを追加する
 /**
  * Cloud FunctionsのAPIを呼び出して、結果の一覧を取得する
  *

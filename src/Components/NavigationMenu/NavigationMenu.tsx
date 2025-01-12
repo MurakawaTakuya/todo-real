@@ -1,4 +1,5 @@
 "use client";
+import { useUser } from "@/utils/UserContext";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import GroupIcon from "@mui/icons-material/Group";
 import HomeIcon from "@mui/icons-material/Home";
@@ -39,6 +40,8 @@ export default function NavigationMenu() {
 
   const colors = ["success", "primary", "warning", "danger"] as const;
 
+  const { user } = useUser();
+
   return (
     <Box
       sx={{
@@ -70,7 +73,6 @@ export default function NavigationMenu() {
             flex: 1,
             transition: "0.3s",
             fontWeight: "md",
-            // TODO: スマホの時に文字が改行されてる
             fontSize: "sm",
             [`&:not(.${tabClasses.selected}):not(:hover)`]: {
               opacity: 0.7,
@@ -89,9 +91,14 @@ export default function NavigationMenu() {
             orientation="vertical"
             sx={{
               padding: "5px 0 !important",
+              transition: "0.5s",
               ...(index === 0 && {
                 backgroundColor: "#e1ffe0 !important",
                 color: "#008954 !important",
+              }),
+              ...(!user && {
+                pointerEvents: "none",
+                opacity: "0.3 !important",
               }),
             }}
           >
@@ -105,9 +112,14 @@ export default function NavigationMenu() {
             orientation="vertical"
             sx={{
               padding: "5px 0 !important",
+              transition: "0.5s",
               ...(index === 1 && {
                 backgroundColor: "#ffecee !important",
                 color: "#bf1818 !important",
+              }),
+              ...(!user && {
+                pointerEvents: "none",
+                opacity: "0.3 !important",
               }),
             }}
           >

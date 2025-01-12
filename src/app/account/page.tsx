@@ -117,12 +117,17 @@ export default function Account() {
               <>
                 {!PWAReady && !isPWA && (
                   <Typography color="danger" textAlign="center">
-                    PWAを起動中です。しばらくしてから再度お試しください。
+                    PWAを準備中です。しばらくしてからページを更新してください。
                   </Typography>
                 )}
-                {(user?.loginType === "Guest" || !user?.isMailVerified) && (
+                {user?.loginType === "Guest" && (
                   <Typography color="danger" textAlign="center">
-                    通知を利用するには認証が必要です。
+                    ゲストユーザーは通知機能を使用できません。
+                  </Typography>
+                )}
+                {!user?.isMailVerified && (
+                  <Typography color="danger" textAlign="center">
+                    通知機能を利用するには認証メールを確認してください。
                   </Typography>
                 )}
 

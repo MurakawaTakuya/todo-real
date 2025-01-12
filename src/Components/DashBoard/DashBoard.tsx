@@ -173,7 +173,7 @@ export default function DashBoard({
       return;
     }
 
-    if (success) {
+    if (success && myUserId) {
       // 最後に成功した目標を取得
       fetchResult({
         userId: myUserId,

@@ -23,6 +23,7 @@ router.get("/", async (req: Request, res: Response) => {
         userId: data.userId,
         text: data.text,
         post: data.post,
+        reaction: data.reaction ?? null,
       };
     });
 
@@ -36,10 +37,6 @@ router.get("/", async (req: Request, res: Response) => {
 // GET: userIdから目標を取得
 router.get("/:userId", async (req: Request, res: Response) => {
   const userId = req.params.userId;
-
-  if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
-  }
 
   try {
     const goalSnapshot = await db
@@ -59,6 +56,7 @@ router.get("/:userId", async (req: Request, res: Response) => {
         deadline: new Date(data.deadline._seconds * 1000),
         text: data.text,
         post: data.post,
+        reaction: data.reaction ?? null,
       };
     });
 
@@ -115,6 +113,10 @@ router.put("/:goalId", async (req: Request, res: Response) => {
   const goalId = req.params.goalId;
   const { userId, deadline, text }: Partial<Goal> = req.body;
 
+  if (!goalId) {
+    return res.status(400).json({ message: "goalId is required" });
+  }
+
   if (!userId && !deadline && !text) {
     return res.status(400).json({
       message: "At least one of userId, deadline, or text is required",
@@ -151,7 +153,7 @@ router.delete("/:goalId", async (req: Request, res: Response) => {
     const goalId = req.params.goalId;
 
     if (!goalId) {
-      return res.status(400).json({ message: "Goal ID is required" });
+      return res.status(400).json({ message: "goalId is required" });
     }
 
     const goalRef = db.collection("goal").doc(goalId);

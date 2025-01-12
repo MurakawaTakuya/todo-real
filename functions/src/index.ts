@@ -15,6 +15,7 @@ admin.initializeApp({
 import goalRouter from "./routers/goalRouter";
 import notificationRouter from "./routers/notificationRouter";
 import postRouter from "./routers/postRouter";
+import reactionRouter from "./routers/reactionRouter";
 import resultRouter from "./routers/resultRouter";
 import userRouer from "./routers/userRouter";
 
@@ -100,13 +101,9 @@ app.use("/goal", goalRouter);
 app.use("/post", postRouter);
 app.use("/result", resultRouter);
 app.use("/notification", notificationRouter);
+app.use("/reaction", reactionRouter);
 
 const region = "asia-northeast1";
-
-export const helloWorld = onRequest({ region: region }, (req, res) => {
-  logger.info("Hello log!", { structuredData: true });
-  res.send("Hello World!");
-});
 
 export const firestore = onRequest({ region: region }, async (req, res) => {
   app(req, res);
@@ -117,3 +114,27 @@ export {
   deleteTasksOnGoalDelete,
   deleteTasksOnPostCreate,
 } from "./tasks";
+
+// テスト用API
+app.use(
+  "/helloWorld",
+  rateLimit({
+    // 10分に最大10回に制限
+    windowMs: 10 * 60 * 1000,
+    max: 10,
+    keyGenerator: (req) => {
+      const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
+      return Array.isArray(key) ? key[0] : key;
+    },
+    handler: (req, res) => {
+      return res
+        .status(429)
+        .json({ message: "Too many requests, please try again later." });
+    },
+  })
+);
+
+export const helloWorld = onRequest({ region: region }, (req, res) => {
+  logger.info("Hello log!", { structuredData: true });
+  res.send("Hello World!");
+});

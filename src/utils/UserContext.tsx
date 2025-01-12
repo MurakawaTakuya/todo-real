@@ -48,15 +48,12 @@ export const UserProvider = ({ children }: Props) => {
     const isGuest = firebaseUser.isAnonymous;
 
     if (isGoogle) {
-      console.log("Googleアカウントでログインしています");
       return "Google";
     }
     if (isEmail) {
-      console.log("メールとパスワードでログインしています");
       return "Mail";
     }
     if (isGuest) {
-      console.log("匿名（ゲスト）でログインしています");
       return "Guest";
     }
 
@@ -68,7 +65,6 @@ export const UserProvider = ({ children }: Props) => {
       auth,
       async (firebaseUser: FirebaseUser | null) => {
         if (!firebaseUser) {
-          console.log("ログインしていません");
           setUser(null);
           return;
         }

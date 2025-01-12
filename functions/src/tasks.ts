@@ -32,7 +32,7 @@ export const createTasksOnGoalCreate = onDocumentCreated(
 
     try {
       const goalData = event.data.data();
-      const marginTime = 5;
+      const marginTime = 10;
       // 期限のmarginTime分前にタスクを設定
       const deadline = new Date(
         goalData.deadline.toDate().getTime() - marginTime * 60 * 1000

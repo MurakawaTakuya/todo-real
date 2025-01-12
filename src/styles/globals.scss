@@ -20,3 +20,7 @@ main {
   background: white;
   padding-bottom: 130px;
 }
+
+.MuiTooltip-popper {
+  z-index: auto !important;
+}

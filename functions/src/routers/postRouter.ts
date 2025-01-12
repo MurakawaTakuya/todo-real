@@ -46,10 +46,6 @@ router.get("/", async (req: Request, res: Response) => {
 router.get("/:userId", async (req: Request, res: Response) => {
   const userId = req.params.userId;
 
-  if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
-  }
-
   try {
     const goalSnapshot = await db
       .collection("goal")
@@ -139,7 +135,7 @@ router.delete("/:goalId", async (req: Request, res: Response) => {
     const goalId = req.params.goalId;
 
     if (!goalId) {
-      return res.status(400).json({ message: "Goal ID is required" });
+      return res.status(400).json({ message: "goalId is required" });
     }
 
     const goalRef = db.collection("goal").doc(goalId);
@@ -167,7 +163,7 @@ router.delete("/:goalId", async (req: Request, res: Response) => {
       post: null,
     });
 
-    return res.json({ message: "Post deleted successfully" });
+    return res.json({ message: "Post deleted successfully", goalId });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ message: "Error deleting post" });

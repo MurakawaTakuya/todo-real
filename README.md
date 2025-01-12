@@ -52,7 +52,7 @@ firebase emulators:start
 ||Document in this project or related PR|Firebase/Google Cloud - Official Documents|
 |-|-|-|
 |API|[API Document](./Documents/API.md)|[Firebase Cloud Functions](https://firebase.google.com/docs/functions)|
-|Database||[Firestore](https://firebase.google.com/docs/firestore)|
+|Database|[Database Document](./Documents/Database.md)|[Firestore](https://firebase.google.com/docs/firestore)|
 |Storage||[Cloud Storage for Firebase](https://firebase.google.com/docs/storage)|
 |Authentication||[Firebase Authentication](https://firebase.google.com/docs/auth)|
 |Receive Notification|[Cloud Messagingを実装 #49](https://github.com/MurakawaTakuya/todo-real/pull/49)|[Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/)|

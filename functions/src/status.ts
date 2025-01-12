@@ -6,7 +6,7 @@ const db = admin.firestore();
 // 完了した目標をカウント(postがnullでないものをカウント)
 export const countCompletedGoals = async (userId: string): Promise<number> => {
   if (!userId) {
-    throw new Error("User ID is required");
+    throw new Error("goalId is required");
   }
 
   try {
@@ -27,7 +27,7 @@ export const countCompletedGoals = async (userId: string): Promise<number> => {
 // 失敗した目標をカウント(今より前の`deadline`を持ち、postがnullの目標の数をカウント)
 export const countFailedGoals = async (userId: string): Promise<number> => {
   if (!userId) {
-    throw new Error("User ID is required");
+    throw new Error("goalId is required");
   }
 
   try {
@@ -55,7 +55,7 @@ export const hasCompletedGoalWithinRange = async (
   endDate: Date
 ): Promise<boolean> => {
   if (!userId) {
-    throw new Error("User ID is required");
+    throw new Error("goalId is required");
   }
 
   try {

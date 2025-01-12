@@ -45,10 +45,6 @@ router.get("/", async (req: Request, res: Response) => {
 router.get("/id/:userId", async (req: Request, res: Response) => {
   const userId = req.params.userId;
 
-  if (!userId) {
-    return res.status(400).json({ message: "User ID is required" });
-  }
-
   try {
     const userDoc = await getUserFromId(userId);
 
@@ -154,6 +150,10 @@ router.put("/:userId", async (req: Request, res: Response) => {
   const userId = req.params.userId;
   const { name, fcmToken }: Partial<User> = req.body;
 
+  if (!userId) {
+    return res.status(400).json({ message: "userId is required" });
+  }
+
   if (!name && fcmToken === undefined) {
     return res.status(400).json({
       message: "At least one of name, streak, or fcmToken is required",
@@ -183,7 +183,7 @@ router.delete("/:userId", async (req: Request, res: Response) => {
     const userId = req.params.userId;
 
     if (!userId) {
-      return res.status(400).json({ message: "User ID is required" });
+      return res.status(400).json({ message: "userId is required" });
     }
 
     const userRef = db.collection("user").doc(userId);

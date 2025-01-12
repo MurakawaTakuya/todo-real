@@ -119,6 +119,7 @@ const processGoals = async (
         storedId: post.storedId,
         submittedAt: post.submittedAt.toDate(),
       },
+      reaction: data.reaction || null,
       userData,
     });
   }

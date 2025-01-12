@@ -11,6 +11,7 @@ export interface Goal {
   deadline: Date;
   text: string;
   post: Post | null;
+  reaction: Reaction | null;
 }
 
 export interface GoalWithId extends Goal {
@@ -32,3 +33,18 @@ export interface Post {
 export interface PostWithGoalId extends Post {
   goalId: string; // Postの所属するGoalId
 }
+
+export interface Reaction {
+  userId: string;
+  reactionType: ReactionType["success"] | ReactionType["failed"];
+}
+
+export interface ReactionType {
+  success: "laugh" | "surprised" | "clap";
+  failed: "sad" | "angry" | "muscle";
+}
+
+export const ReactionTypeMap = {
+  success: ["laugh", "surprised", "clap"] as const,
+  failed: ["sad", "angry", "muscle"] as const,
+};

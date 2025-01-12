@@ -66,7 +66,7 @@ router.post("/", async (req: Request, res: Response) => {
       message: {
         token: userData.fcmToken,
         data: {
-          title: `${marginTime}分以内に目標を完了し写真をアップロードしましょう`,
+          title: `⚠️${marginTime}分以内に完了してください⚠️`,
           body: goalData.text,
           icon: "https://todo-real-c28fa.web.app/appIcon.svg",
         },

@@ -15,6 +15,7 @@ admin.initializeApp({
 import goalRouter from "./routers/goalRouter";
 import notificationRouter from "./routers/notificationRouter";
 import postRouter from "./routers/postRouter";
+import reactionRouter from "./routers/reactionRouter";
 import resultRouter from "./routers/resultRouter";
 import userRouer from "./routers/userRouter";
 
@@ -100,6 +101,7 @@ app.use("/goal", goalRouter);
 app.use("/post", postRouter);
 app.use("/result", resultRouter);
 app.use("/notification", notificationRouter);
+app.use("/reaction", reactionRouter);
 
 const region = "asia-northeast1";
 

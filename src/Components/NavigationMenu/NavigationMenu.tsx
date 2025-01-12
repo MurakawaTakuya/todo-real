@@ -73,7 +73,6 @@ export default function NavigationMenu() {
             flex: 1,
             transition: "0.3s",
             fontWeight: "md",
-            // TODO: スマホの時に文字が改行されてる
             fontSize: "sm",
             [`&:not(.${tabClasses.selected}):not(:hover)`]: {
               opacity: 0.7,

@@ -18,11 +18,7 @@ export const PendingStep = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   return (
-    <StepperBlock
-      key={result.goalId}
-      userData={result.userData}
-      resultType="pending"
-    >
+    <StepperBlock key={result.goalId} result={result} resultType="pending">
       <Step
         active
         indicator={

@@ -13,11 +13,7 @@ export const FailedStep = ({
   user: User;
 }) => {
   return (
-    <StepperBlock
-      key={result.goalId}
-      userData={result.userData}
-      resultType="failed"
-    >
+    <StepperBlock key={result.goalId} result={result} resultType="failed">
       <Step
         indicator={
           <StepIndicator variant="solid" color="danger">

@@ -1,4 +1,4 @@
-import { User } from "@/types/types";
+import { GoalWithIdAndUserData } from "@/types/types";
 import { getSuccessRate } from "@/utils/successRate";
 import { Divider } from "@mui/joy";
 import Card from "@mui/joy/Card";
@@ -8,6 +8,7 @@ import Stepper from "@mui/joy/Stepper";
 import Typography, { typographyClasses } from "@mui/joy/Typography";
 import { ReactNode } from "react";
 import CenterIn from "../Animation/CenterIn";
+import { Reaction } from "./Reaction";
 
 const outerBorderColors = {
   success: "#008c328a",
@@ -17,13 +18,15 @@ const outerBorderColors = {
 
 export const StepperBlock = ({
   children,
-  userData = null,
   resultType,
+  result,
 }: {
   children: ReactNode;
-  userData?: User | null;
   resultType?: "success" | "failed" | "pending";
+  result: GoalWithIdAndUserData;
 }) => {
+  const userData = result.userData;
+
   const successRate = userData
     ? getSuccessRate(userData.completed, userData.failed)
     : 0;
@@ -119,6 +122,8 @@ export const StepperBlock = ({
         >
           {children}
         </Stepper>
+
+        <Reaction resultType={resultType} result={result} />
       </Card>
     </CenterIn>
   );

@@ -66,11 +66,7 @@ export const SuccessStep = ({
   });
 
   return (
-    <StepperBlock
-      key={result.goalId}
-      userData={result.userData}
-      resultType="success"
-    >
+    <StepperBlock key={result.goalId} resultType="success" result={result}>
       <Step
         active
         completed

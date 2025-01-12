@@ -1,4 +1,5 @@
 "use client";
+import { useUser } from "@/utils/UserContext";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import GroupIcon from "@mui/icons-material/Group";
 import HomeIcon from "@mui/icons-material/Home";
@@ -38,6 +39,8 @@ export default function NavigationMenu() {
   }, [index]);
 
   const colors = ["success", "primary", "warning", "danger"] as const;
+
+  const { user } = useUser();
 
   return (
     <Box
@@ -89,9 +92,14 @@ export default function NavigationMenu() {
             orientation="vertical"
             sx={{
               padding: "5px 0 !important",
+              transition: "0.5s",
               ...(index === 0 && {
                 backgroundColor: "#e1ffe0 !important",
                 color: "#008954 !important",
+              }),
+              ...(!user && {
+                pointerEvents: "none",
+                opacity: "0.3 !important",
               }),
             }}
           >
@@ -105,9 +113,14 @@ export default function NavigationMenu() {
             orientation="vertical"
             sx={{
               padding: "5px 0 !important",
+              transition: "0.5s",
               ...(index === 1 && {
                 backgroundColor: "#ffecee !important",
                 color: "#bf1818 !important",
+              }),
+              ...(!user && {
+                pointerEvents: "none",
+                opacity: "0.3 !important",
               }),
             }}
           >

@@ -90,7 +90,7 @@ export const StepperBlock = ({
             [`& .${stepClasses.completed}`]: {
               "&::after": { bgcolor: "success.solidBg" },
             },
-            // copletedとactive両方の場合
+            // completedとactive両方の場合
             [`& .${stepClasses.completed}.${stepClasses.active}`]: {
               [`& .${stepIndicatorClasses.root}`]: {
                 border: "4px solid #fff",

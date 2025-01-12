@@ -103,11 +103,6 @@ app.use("/notification", notificationRouter);
 
 const region = "asia-northeast1";
 
-export const helloWorld = onRequest({ region: region }, (req, res) => {
-  logger.info("Hello log!", { structuredData: true });
-  res.send("Hello World!");
-});
-
 export const firestore = onRequest({ region: region }, async (req, res) => {
   app(req, res);
 });
@@ -117,3 +112,27 @@ export {
   deleteTasksOnGoalDelete,
   deleteTasksOnPostCreate,
 } from "./tasks";
+
+// テスト用API
+app.use(
+  "/helloWorld",
+  rateLimit({
+    // 10分に最大10回に制限
+    windowMs: 10 * 60 * 1000,
+    max: 10,
+    keyGenerator: (req) => {
+      const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
+      return Array.isArray(key) ? key[0] : key;
+    },
+    handler: (req, res) => {
+      return res
+        .status(429)
+        .json({ message: "Too many requests, please try again later." });
+    },
+  })
+);
+
+export const helloWorld = onRequest({ region: region }, (req, res) => {
+  logger.info("Hello log!", { structuredData: true });
+  res.send("Hello World!");
+});

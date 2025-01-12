@@ -30,6 +30,7 @@ export const PendingStep = ({
             <AppRegistrationRoundedIcon />
           </StepIndicator>
         }
+        sx={{ gap: "10px 16px" }}
       >
         <GoalCard
           deadline={result.deadline}

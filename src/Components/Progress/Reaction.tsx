@@ -187,7 +187,8 @@ export const Reaction = ({
                       style={{
                         fontSize: "28px",
                         lineHeight: "1",
-                        filter: isReacted === key ? "none" : "grayscale(1)",
+                        // filter: isReacted === key ? "none" : "grayscale(1)",
+                        opacity: isReacted === key ? 1 : 0.3,
                         transition: "0.3s",
                       }}
                     >

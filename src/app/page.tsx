@@ -22,6 +22,8 @@ export default function Top() {
       <CenterIn>
         <StyledTypography level="h4" component="h2" sx={{ paddingTop: "20px" }}>
           友達と共有・競争できるTODOリスト
+          <span style={{ filter: "grayscale(100%)" }}>😆</span>
+          <span style={{ filter: "grayscale(1)" }}>😆</span>
         </StyledTypography>
         <div
           style={{

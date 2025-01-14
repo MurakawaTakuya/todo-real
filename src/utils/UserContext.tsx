@@ -85,8 +85,6 @@ export const UserProvider = ({ children }: Props) => {
 
         try {
           const userData = await fetchUserById(firebaseUser.uid);
-          // ユーザーデータを作成する前にfetchしようとして"User not found"になるので、postした場所でsetさせている
-          // "User not found"ではない(= 初回ログイン直後ではない)場合のみsetする
           if (userData.userId) {
             setUser({
               ...userData,

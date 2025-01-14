@@ -1,29 +1,15 @@
 import { auth, googleProvider } from "@/app/firebase";
 import { showSnackBar } from "@/Components/SnackBar/SnackBar";
-import { createUser } from "@/utils/API/User/createUser";
-import { updateUser } from "@/utils/UserContext";
-import { getAdditionalUserInfo, signInWithPopup } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 
 /**
  * Firebase Authenticationを使ってGoogleアカウントでログインする
- * 初回ログインの時のみデータベースにユーザー情報を登録する
+ *
  *
  */
 export const signInWithGoogleAccount = async () => {
   try {
-    const result = await signInWithPopup(auth, googleProvider);
-
-    // 初めての時だけユーザー情報を登録する
-    if (getAdditionalUserInfo(result)?.isNewUser) {
-      // uidとdocument IDを一致させる
-      await createUser(result.user.displayName ?? "no name", result.user.uid);
-      updateUser({
-        userId: result.user.uid,
-        name: result.user.displayName ?? "no name",
-        loginType: "Google",
-        isMailVerified: result.user.emailVerified,
-      });
-    }
+    await signInWithPopup(auth, googleProvider);
 
     showSnackBar({
       message: "Googleアカウントでログインしました",

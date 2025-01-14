@@ -55,7 +55,7 @@ if (typeof window !== "undefined") {
       isTokenAutoRefreshEnabled: true,
     });
 
-    getToken(appCheck)
+    await getToken(appCheck)
       .then((token) => {
         console.log("App Check: Success");
         appCheckToken = token.token;

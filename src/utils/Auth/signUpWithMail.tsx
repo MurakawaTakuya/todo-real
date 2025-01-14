@@ -1,12 +1,11 @@
-import { auth } from "@/app/firebase";
+import { appCheckToken, auth, functionsEndpoint } from "@/app/firebase";
 import { showSnackBar } from "@/Components/SnackBar/SnackBar";
-import { createUser } from "@/utils/API/User/createUser";
-import { updateUser } from "@/utils/UserContext";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
+import { updateUser } from "../UserContext";
 
 /**
  * Firebase Authenticationを使ってメールでユーザーを作成し、生成されたuserIdをドキュメントIDとしてFirestoreにユーザー情報を登録する
@@ -33,8 +32,22 @@ export const signUpWithMail = async (
         console.error("プロファイル更新に失敗しました:", profileUpdateError);
       }
 
-      // userIdとdocument IDを一致させる
-      await createUser(name, user.uid);
+      // displayNameをFirestoreに登録
+      const response = await fetch(`${functionsEndpoint}/user/${user.uid}`, {
+        method: "PUT",
+        headers: {
+          "X-Firebase-AppCheck": appCheckToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      if (!response.ok) {
+        const status = response.status;
+        const data = await response.json();
+        throw new Error(`Error ${status}: ${data.message}`);
+      }
+
       updateUser({
         userId: user.uid,
         name: name,
@@ -46,7 +59,7 @@ export const signUpWithMail = async (
       try {
         await sendEmailVerification(user);
       } catch (verificationError) {
-        console.error("failed to send email verification:", verificationError);
+        console.error("Failed to send email verification:", verificationError);
       }
 
       showSnackBar({

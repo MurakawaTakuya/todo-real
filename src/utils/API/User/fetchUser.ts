@@ -33,7 +33,7 @@ export const fetchUserById = async (userId: string): Promise<User> => {
  * @return {*}
  */
 export const handleFetchUserError = (error: unknown) => {
-  let snackBarMessage = "初回ログインかユーザーデータが見つかりません";
+  let snackBarMessage = "ユーザーデータが見つかりません";
 
   if (error instanceof Error) {
     if (error.message.includes("404")) {

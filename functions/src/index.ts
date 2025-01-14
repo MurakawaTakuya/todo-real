@@ -3,7 +3,8 @@ import express from "express";
 import { rateLimit } from "express-rate-limit";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
-import { onRequest } from "firebase-functions/v2/https";
+import { HttpsError, onRequest } from "firebase-functions/v2/https";
+import { beforeUserCreated } from "firebase-functions/v2/identity";
 import helmet from "helmet";
 import serviceAccount from "./serviceAccountKey.json";
 
@@ -138,3 +139,32 @@ export const helloWorld = onRequest({ region: region }, (req, res) => {
   logger.info("Hello log!", { structuredData: true });
   res.send("Hello World!");
 });
+
+const db = admin.firestore();
+
+// アカウント作成時に実行される処理
+export const beforecreated = beforeUserCreated(
+  { region: region },
+  async (event) => {
+    const user = event.data;
+
+    if (!user) {
+      throw new HttpsError("invalid-argument", "No user data provided.");
+    }
+    const userId = user?.uid;
+    const name = user?.displayName || "No Name";
+
+    try {
+      await db.collection("user").doc(userId).set({
+        name: name,
+        streak: 0,
+        fcmToken: "",
+      });
+    } catch (error) {
+      logger.error(error);
+      throw new HttpsError("internal", "Error creating user data.");
+    }
+
+    return;
+  }
+);

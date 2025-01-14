@@ -83,7 +83,7 @@ export default function Account() {
               textAlign="center"
               fontWeight={600}
             >
-              通知を受信・アプリに追加
+              アプリに追加・通知を受信
             </Typography>
 
             <div className={styles.buttonContainer}>

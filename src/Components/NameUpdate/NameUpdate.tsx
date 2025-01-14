@@ -24,6 +24,15 @@ export default function NameUpdate() {
   const handleNameUpdate = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    const maxNameLength = 30;
+    if (newName.length > maxNameLength) {
+      showSnackBar({
+        message: `名前は${maxNameLength}文字以内で入力してください`,
+        type: "warning",
+      });
+      return;
+    }
+
     try {
       const response = await fetch(
         `${functionsEndpoint}/user/${user?.userId}`,

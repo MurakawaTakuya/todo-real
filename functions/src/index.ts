@@ -160,6 +160,7 @@ export const beforecreated = beforeUserCreated(
         streak: 0,
         fcmToken: "",
       });
+      logger.info(`User data created for ${userId}`);
     } catch (error) {
       logger.error(error);
       throw new HttpsError("internal", "Error creating user data.");

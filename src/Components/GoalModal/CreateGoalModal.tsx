@@ -41,7 +41,7 @@ export default function CreateGoalModal({
     const localNextDay = new Date(
       nextDay.getTime() - nextDay.getTimezoneOffset() * 60000
     );
-    setDeadline(localNextDay.toISOString().slice(0, 16));
+    return localNextDay.toISOString().slice(0, 16);
   };
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export default function CreateGoalModal({
       localDate.setDate(localDate.getDate() + 1); // 明日にする
       setDeadline(localDate.toISOString().slice(0, 16));
     } else {
-      resetDeadline();
+      setDeadline(resetDeadline());
     }
   }, [defaultText, defaultDeadline]);
 
@@ -78,8 +78,8 @@ export default function CreateGoalModal({
       });
       triggerDashBoardRerender();
 
-      setText("");
-      resetDeadline();
+      setText(defaultText || "");
+      setDeadline(defaultDeadline || resetDeadline());
       setOpen(false);
     } catch (error: unknown) {
       console.error("Error creating goal:", error);

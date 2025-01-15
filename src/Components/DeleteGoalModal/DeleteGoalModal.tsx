@@ -1,6 +1,6 @@
 "use client";
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
-import { triggerDashBoardRerender } from "@/Components/DashBoard/DashBoard"; // インポートパスを修正
+import { triggerDashBoardRerender } from "@/Components/DashBoard/DashBoard";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { DialogContent, DialogTitle, Modal, ModalDialog } from "@mui/joy";
 import JoyButton from "@mui/joy/Button";

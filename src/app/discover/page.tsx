@@ -3,6 +3,7 @@ import DashBoard, {
   triggerDashBoardRerender,
 } from "@/Components/DashBoard/DashBoard";
 import GoalModalButton from "@/Components/GoalModal/GoalModalButton";
+import { ResultProvider } from "@/utils/ResultContext";
 import { useEffect } from "react";
 
 export default function Discover() {
@@ -12,7 +13,9 @@ export default function Discover() {
 
   return (
     <>
-      <DashBoard pending={false} />
+      <ResultProvider>
+        <DashBoard pending={false} />
+      </ResultProvider>
       <GoalModalButton />
     </>
   );

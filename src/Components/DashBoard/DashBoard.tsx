@@ -15,9 +15,6 @@ import CenterIn from "../Animation/CenterIn";
 import Progress from "../Progress/Progress";
 import styles from "./DashBoard.module.scss";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-let rerenderDashBoard: () => void = () => {};
-
 export default function DashBoard({
   userId = "",
   success = true,
@@ -38,6 +35,12 @@ export default function DashBoard({
     setFailedResults,
     pendingResults,
     setPendingResults,
+    lastPostDate,
+    setLastPostDate,
+    noMorePending,
+    setNoMorePending,
+    noMoreFinished,
+    setNoMoreFinished,
   } = useResults();
   const [noResult, setNoResult] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -45,10 +48,6 @@ export default function DashBoard({
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const isAlreadyFetching = useRef(false);
-  const [noMorePending, setNoMorePending] = useState<boolean>(false);
-  const [noMoreFinished, setNoMoreFinished] = useState<boolean>(false);
-
-  const [lastPostDate, setLastPostDate] = useState<string | null>(null); // 投稿が0の場合はnull
 
   const { user } = useUser();
   const myUserId = user?.userId;
@@ -56,20 +55,20 @@ export default function DashBoard({
   const limit = 10; // limitずつ表示
 
   const fetchData = () => {
-    if ((pending && noMorePending) || (success && failed && noMoreFinished)) {
-      return; // TODO: うまく動作していない
-    }
+    // すでにfetchしている場合はreturn
     if (isAlreadyFetching.current) {
       return;
     } else {
       isAlreadyFetching.current = true;
     }
+    // 画面下に到達して既にロード中の場合はreturn
     if (reachedBottom && !isLoadingMore) {
       setIsLoadingMore(true);
     }
     const offset = pending
       ? pendingResults.length
       : successResults.length + failedResults.length;
+    // TODO: offsetを実際に取得しにいった数だけでもいいかも
     fetchResult({
       userId,
       success,
@@ -161,11 +160,15 @@ export default function DashBoard({
   }, [isLoading, noMorePending, noMoreFinished, bottomRef.current, bottomRef]);
 
   useEffect(() => {
-    rerenderDashBoard = fetchData;
-    if (userId) {
+    if (
+      (pending && pendingResults.length === 0) ||
+      (success && successResults.length === 0)
+    ) {
       fetchData();
+    } else {
+      setIsLoading(false);
     }
-  }, [userId, success, failed, pending]);
+  }, [userId]);
 
   useEffect(() => {
     setNoResult(
@@ -177,6 +180,13 @@ export default function DashBoard({
 
   useEffect(() => {
     if (user?.loginType === "Guest") {
+      return;
+    }
+
+    if (
+      (success && successResults.length > 0) ||
+      (pending && pendingResults.length > 0)
+    ) {
       return;
     }
 
@@ -265,8 +275,4 @@ export default function DashBoard({
       )}
     </>
   );
-}
-
-export function triggerDashBoardRerender() {
-  rerenderDashBoard();
 }

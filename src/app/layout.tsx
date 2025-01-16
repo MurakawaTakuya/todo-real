@@ -7,7 +7,8 @@ import { UserProvider } from "@/utils/UserContext";
 import type { Metadata } from "next";
 import "./firebase";
 
-const description = "TODO REALはTODOリストとBeRealを組み合わせたアプリです。";
+const description =
+  "TODO REALは、TODOリストとBeRealを組み合わせたアプリです。友達とTODOリストを共有し、目標達成をサポートし合うことで、達成感や楽しさを共有できます。完了したTODOの写真投稿や競争機能で、目標達成がもっと楽しくなります!";
 export const rootURL = "https://todo-real-c28fa.web.app/";
 
 export const metadata: Metadata = {
@@ -29,7 +30,7 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "TODO REAL",
-    url: "https://todo-real-c28fa.web.app/",
+    url: rootURL,
   };
 
   return (

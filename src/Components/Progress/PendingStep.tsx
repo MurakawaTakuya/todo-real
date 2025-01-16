@@ -2,9 +2,8 @@ import { GoalWithIdAndUserData, User } from "@/types/types";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import Step from "@mui/joy/Step";
 import StepIndicator from "@mui/joy/StepIndicator";
-import { useState } from "react";
+import CreatePostModal from "../CreatePostModal/CreatePostModal";
 import CopyGoalAfterPostButton from "../GoalModal/CopyGoalAfterPostButton";
-import PostModal from "../PostModal/PostModal";
 import { GoalCard } from "./GoalCard";
 import { StepperBlock } from "./StepperBlock";
 
@@ -15,8 +14,6 @@ export const PendingStep = ({
   result: GoalWithIdAndUserData;
   user: User;
 }) => {
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
   return (
     <StepperBlock key={result.goalId} result={result} resultType="pending">
       <Step
@@ -37,7 +34,7 @@ export const PendingStep = ({
           user={user}
         />
 
-        {isSubmitted ? (
+        {result.post ? (
           // 投稿したら同じ目標で明日にも作成できるボタンを表示する
           <CopyGoalAfterPostButton
             goalText={result.text}
@@ -46,7 +43,7 @@ export const PendingStep = ({
         ) : (
           // 自分の作成した目標の場合のみ投稿可能にする
           result.userId === user?.userId && (
-            <PostModal goalId={result.goalId} setIsSubmitted={setIsSubmitted} />
+            <CreatePostModal goalId={result.goalId} />
           )
         )}
       </Step>

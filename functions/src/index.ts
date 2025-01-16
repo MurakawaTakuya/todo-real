@@ -64,15 +64,15 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// 10分間で最大100回に制限
+// 10分間で最大200回に制限
 app.use(
   rateLimit({
     windowMs: 10 * 60 * 1000,
-    max: 100,
-    keyGenerator: (req) => {
-      const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
-      return Array.isArray(key) ? key[0] : key;
-    },
+    max: 200,
+    // keyGenerator: (req) => {
+    //   const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
+    //   return Array.isArray(key) ? key[0] : key;
+    // },
     handler: (req, res) => {
       return res
         .status(429)
@@ -80,15 +80,15 @@ app.use(
     },
   })
 );
-// 1時間で最大300回に制限
+// 1時間で最大500回に制限
 app.use(
   rateLimit({
     windowMs: 60 * 60 * 1000,
-    max: 300,
-    keyGenerator: (req) => {
-      const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
-      return Array.isArray(key) ? key[0] : key;
-    },
+    max: 500,
+    // keyGenerator: (req) => {
+    //   const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
+    //   return Array.isArray(key) ? key[0] : key;
+    // },
     handler: (req, res) => {
       return res
         .status(429)

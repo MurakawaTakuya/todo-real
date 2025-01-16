@@ -27,9 +27,8 @@ export const signUpWithMail = async (
       // Firebase AuthのdisplayNameを設定
       try {
         await updateProfile(user, { displayName: name });
-        console.log("ユーザー名を設定しました:", name);
       } catch (profileUpdateError) {
-        console.error("プロファイル更新に失敗しました:", profileUpdateError);
+        console.error("Error updating user name:", profileUpdateError);
       }
 
       // displayNameをFirestoreに登録

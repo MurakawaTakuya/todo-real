@@ -1,12 +1,12 @@
 "use client";
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { useDeletePost } from "@/utils/ResultContext";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { DialogContent, DialogTitle, Modal, ModalDialog } from "@mui/joy";
 import JoyButton from "@mui/joy/Button";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useState } from "react";
-import { triggerDashBoardRerender } from "../DashBoard/DashBoard";
 import { showSnackBar } from "../SnackBar/SnackBar";
 
 export default function DeletePostModal({
@@ -16,6 +16,7 @@ export default function DeletePostModal({
   goalId: string;
   deadline: string;
 }) {
+  const deletePost = useDeletePost();
   const [open, setOpen] = useState(false);
 
   const handleDeletePost = async () => {
@@ -38,7 +39,7 @@ export default function DeletePostModal({
         message: "目標を削除しました",
         type: "success",
       });
-      triggerDashBoardRerender();
+      deletePost(goalId);
     }
   };
 

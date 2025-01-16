@@ -20,7 +20,7 @@ export default function MyContent() {
   const [value, setValue] = useState<"pending" | "finished">("pending");
 
   return (
-    <>
+    <ResultProvider>
       <div
         style={{
           display: "flex",
@@ -63,24 +63,20 @@ export default function MyContent() {
           メールに届いた認証リンクを確認してください。
         </Typography>
       ) : value === "pending" ? (
-        <ResultProvider>
-          <DashBoard
-            key="pending"
-            userId={user?.userId}
-            success={false}
-            failed={false}
-            orderBy="asc"
-          />
-        </ResultProvider>
+        <DashBoard
+          key="pending"
+          userId={user?.userId}
+          success={false}
+          failed={false}
+          orderBy="asc"
+        />
       ) : (
         value === "finished" && (
-          <ResultProvider>
-            <DashBoard key="finished" userId={user?.userId} pending={false} />
-          </ResultProvider>
+          <DashBoard key="finished" userId={user?.userId} pending={false} />
         )
       )}
 
       <GoalModalButton />
-    </>
+    </ResultProvider>
   );
 }

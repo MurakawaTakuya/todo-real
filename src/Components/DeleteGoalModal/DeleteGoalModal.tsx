@@ -1,6 +1,6 @@
 "use client";
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
-import { triggerDashBoardRerender } from "@/Components/DashBoard/DashBoard";
+import { useDeleteGoal } from "@/utils/ResultContext";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { DialogContent, DialogTitle, Modal, ModalDialog } from "@mui/joy";
 import JoyButton from "@mui/joy/Button";
@@ -10,6 +10,7 @@ import { useState } from "react";
 import { showSnackBar } from "../SnackBar/SnackBar";
 
 export default function DeleteGoalModal({ goalId }: { goalId: string }) {
+  const deleleGoal = useDeleteGoal();
   const [open, setOpen] = useState(false);
 
   const handleDeleteGoal = async () => {
@@ -32,7 +33,7 @@ export default function DeleteGoalModal({ goalId }: { goalId: string }) {
         message: "目標を削除しました",
         type: "success",
       });
-      triggerDashBoardRerender();
+      deleleGoal(goalId);
     }
   };
 

@@ -109,7 +109,7 @@ export default function DashBoard({
         if (pending) {
           pendingOffset.current += limit;
         } else {
-          pendingOffset.current += limit;
+          finishedOffset.current += limit;
         }
 
         // 全部のデータを読み取った場合

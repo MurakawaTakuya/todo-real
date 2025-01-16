@@ -1,6 +1,7 @@
 "use client";
 import DashBoard from "@/Components/DashBoard/DashBoard";
 import GoalModalButton from "@/Components/GoalModal/GoalModalButton";
+import { ResultProvider } from "@/utils/ResultContext";
 import { useUser } from "@/utils/UserContext";
 import Typography from "@mui/joy/Typography";
 import { styled } from "@mui/material/styles";
@@ -19,7 +20,7 @@ export default function MyContent() {
   const [value, setValue] = useState<"pending" | "finished">("pending");
 
   return (
-    <>
+    <ResultProvider>
       <div
         style={{
           display: "flex",
@@ -70,10 +71,12 @@ export default function MyContent() {
           orderBy="asc"
         />
       ) : (
-        <DashBoard key="finished" userId={user?.userId} pending={false} />
+        value === "finished" && (
+          <DashBoard key="finished" userId={user?.userId} pending={false} />
+        )
       )}
 
       <GoalModalButton />
-    </>
+    </ResultProvider>
   );
 }

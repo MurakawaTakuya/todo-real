@@ -50,6 +50,12 @@ export const StepperBlock = ({
               : outerBorderColors.pending,
           boxShadow: "1px 1px 8px #d9d9d96b",
           gap: "6px",
+          backgroundColor:
+            resultType == "success"
+              ? "#eff9f1ad"
+              : resultType == "failed"
+              ? "#fff5f5"
+              : "#f6f8ff",
         }}
       >
         <div
@@ -60,7 +66,11 @@ export const StepperBlock = ({
             gap: "5px 20px",
           }}
         >
-          <Typography level="title-lg" component="span">
+          <Typography
+            level="title-lg"
+            component="span"
+            sx={{ overflow: "hidden", textOverflow: "ellipsis" }}
+          >
             {userData?.name}
           </Typography>
 

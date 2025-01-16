@@ -2,6 +2,7 @@
 import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { PostWithGoalId } from "@/types/types";
 import { createPost, handleCreatePostError } from "@/utils/API/Post/createPost";
+import { useAddPost } from "@/utils/ResultContext";
 import { removeImageMetadata, uploadImage } from "@/utils/Uploader";
 import { useUser } from "@/utils/UserContext";
 import { Add } from "@mui/icons-material";
@@ -24,13 +25,7 @@ import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import React, { ChangeEvent, useState } from "react";
 
-export default function PostModal({
-  goalId,
-  setIsSubmitted,
-}: {
-  goalId: string;
-  setIsSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+export default function CreatePostModal({ goalId }: { goalId: string }) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
@@ -38,6 +33,7 @@ export default function PostModal({
   const [fileName, setFileName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { user } = useUser();
+  const addPost = useAddPost();
 
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
     setText(event.target.value);
@@ -48,7 +44,7 @@ export default function PostModal({
 
     if (!selectedFile) {
       showSnackBar({
-        message: "ファイルが選択されていません",
+        message: "画像が選択されていません",
         type: "warning",
       });
       return;
@@ -80,7 +76,7 @@ export default function PostModal({
   const handleUpload = async () => {
     if (!image) {
       showSnackBar({
-        message: "ファイルが選択されていません",
+        message: "画像が選択されていません",
         type: "warning",
       });
       return;
@@ -110,7 +106,12 @@ export default function PostModal({
               message: "投稿しました",
               type: "success",
             });
-            setIsSubmitted(true);
+
+            const postDataWithStringDate = {
+              ...postData,
+              submittedAt: (postData.submittedAt as Date).toISOString(),
+            };
+            addPost(goalId, postDataWithStringDate);
 
             setImage(null);
             setText("");

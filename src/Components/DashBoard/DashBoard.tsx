@@ -5,6 +5,7 @@ import {
   fetchResult,
   handleFetchResultError,
 } from "@/utils/API/Result/fetchResult";
+import { useResults } from "@/utils/ResultContext";
 import { useUser } from "@/utils/UserContext";
 import CircularProgress from "@mui/joy/CircularProgress";
 import Typography from "@mui/joy/Typography";
@@ -13,9 +14,6 @@ import { useEffect, useRef, useState } from "react";
 import CenterIn from "../Animation/CenterIn";
 import Progress from "../Progress/Progress";
 import styles from "./DashBoard.module.scss";
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-let rerenderDashBoard: () => void = () => {};
 
 export default function DashBoard({
   userId = "",
@@ -30,78 +28,58 @@ export default function DashBoard({
   pending?: boolean;
   orderBy?: "asc" | "desc";
 }) {
-  const [successResults, setSuccessResults] = useState<GoalWithIdAndUserData[]>(
-    []
-  );
-  const [failedResults, setFailedResults] = useState<GoalWithIdAndUserData[]>(
-    []
-  );
-  const [pendingResults, setPendingResults] = useState<GoalWithIdAndUserData[]>(
-    []
-  );
+  const {
+    successResults,
+    setSuccessResults,
+    failedResults,
+    setFailedResults,
+    pendingResults,
+    setPendingResults,
+    lastPostDate,
+    setLastPostDate,
+    pendingOffset,
+    finishedOffset,
+    noMorePending,
+    noMoreFinished,
+  } = useResults();
   const [noResult, setNoResult] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [reachedBottom, setReachedBottom] = useState<boolean>(false);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const isAlreadyFetching = useRef(false);
-  const offset = useRef(0);
-  const noMore = useRef(false);
-
-  const [lastPostDate, setLastPostDate] = useState<string | null>(null); // 投稿が0の場合はnull
 
   const { user } = useUser();
   const myUserId = user?.userId;
 
   const limit = 10; // limitずつ表示
 
-  useEffect(() => {
-    setTimeout(() => {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting && !isLoading && !noMore.current) {
-            setReachedBottom(true);
-            fetchData();
-          }
-        },
-        { threshold: 1 }
-      );
-
-      if (bottomRef.current) {
-        observer.observe(bottomRef.current);
-      }
-
-      return () => {
-        if (bottomRef.current) {
-          observer.disconnect();
-        }
-      };
-    }, 1000);
-  }, [isLoading, noMore.current, bottomRef.current, bottomRef]);
-
-  useEffect(() => {
-    offset.current =
-      successResults.length + failedResults.length + pendingResults.length;
-  }, [successResults, failedResults, pendingResults]);
-
   const fetchData = () => {
-    if (noMore.current) {
-      return;
-    }
+    // すでにfetchしている場合はreturn
     if (isAlreadyFetching.current) {
       return;
     } else {
       isAlreadyFetching.current = true;
     }
+    // 画面下に到達して既にロード中の場合はreturn
     if (reachedBottom && !isLoadingMore) {
       setIsLoadingMore(true);
     }
+    // 全て読み込んだ場合
+    if (
+      (pending && noMorePending.current) ||
+      (success && failed && noMoreFinished.current)
+    ) {
+      setIsLoading(false);
+      return;
+    }
+
     fetchResult({
       userId,
       success,
       failed,
       pending,
-      offset: offset.current,
+      offset: pending ? pendingOffset.current : finishedOffset.current,
       limit,
     })
       .then((data) => {
@@ -128,13 +106,22 @@ export default function DashBoard({
           return [...prev, ...newResults];
         });
 
+        if (pending) {
+          pendingOffset.current += limit;
+        } else {
+          finishedOffset.current += limit;
+        }
+
+        // 全部のデータを読み取った場合
+        if (pending && data.pendingResults.length < limit) {
+          noMorePending.current = true;
+        }
         if (
-          data.successResults.length +
-            data.failedResults.length +
-            data.pendingResults.length <
-          limit
+          success &&
+          failed &&
+          data.successResults.length + data.failedResults.length < limit
         ) {
-          noMore.current = true;
+          noMoreFinished.current = true;
         }
 
         setIsLoading(false);
@@ -153,12 +140,52 @@ export default function DashBoard({
       });
   };
 
+  // 画面下に到達したことを検知
   useEffect(() => {
-    rerenderDashBoard = fetchData;
-    if (userId) {
+    setTimeout(() => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (
+            entries[0].isIntersecting &&
+            !isLoading &&
+            ((pending && !noMorePending.current) ||
+              (success && failed && !noMoreFinished.current))
+          ) {
+            setReachedBottom(true);
+            fetchData();
+          }
+        },
+        { threshold: 1 }
+      );
+
+      if (bottomRef.current) {
+        observer.observe(bottomRef.current);
+      }
+
+      return () => {
+        if (bottomRef.current) {
+          observer.disconnect();
+        }
+      };
+    }, 1000);
+  }, [
+    isLoading,
+    noMorePending.current,
+    noMoreFinished.current,
+    bottomRef.current,
+    bottomRef,
+  ]);
+
+  useEffect(() => {
+    if (
+      (pending && pendingResults.length === 0) ||
+      (success && successResults.length === 0)
+    ) {
       fetchData();
+    } else {
+      setIsLoading(false);
     }
-  }, [userId, success, failed, pending]);
+  }, [userId]);
 
   useEffect(() => {
     setNoResult(
@@ -170,6 +197,13 @@ export default function DashBoard({
 
   useEffect(() => {
     if (user?.loginType === "Guest") {
+      return;
+    }
+
+    if (
+      (success && successResults.length > 0) ||
+      (pending && pendingResults.length > 0)
+    ) {
       return;
     }
 
@@ -197,6 +231,7 @@ export default function DashBoard({
   return (
     <>
       {isLoading ? (
+        // ロード中
         <LinearProgress
           sx={{
             width: "90%",
@@ -205,6 +240,7 @@ export default function DashBoard({
           }}
         />
       ) : noResult ? (
+        // 目標や投稿が無い場合
         <CenterIn delay={1}>
           <Typography
             level="h4"
@@ -224,7 +260,9 @@ export default function DashBoard({
           />
           <div className="bottom" ref={bottomRef}></div>
 
-          {!noMore.current &&
+          {/* 下に到達した時に続きを表示 */}
+          {((pending && !noMorePending.current) ||
+            (success && failed && !noMoreFinished.current)) &&
             (reachedBottom ? (
               <div
                 style={{
@@ -254,8 +292,4 @@ export default function DashBoard({
       )}
     </>
   );
-}
-
-export function triggerDashBoardRerender() {
-  rerenderDashBoard();
 }

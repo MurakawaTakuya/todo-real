@@ -2,6 +2,7 @@
 import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { Goal } from "@/types/types";
 import { createGoal, handleCreateGoalError } from "@/utils/API/Goal/createGoal";
+import { useAddGoal } from "@/utils/ResultContext";
 import { useUser } from "@/utils/UserContext";
 import AddIcon from "@mui/icons-material/Add";
 import {
@@ -15,7 +16,6 @@ import {
   Typography,
 } from "@mui/joy";
 import React, { useEffect, useState } from "react";
-import { triggerDashBoardRerender } from "../DashBoard/DashBoard";
 
 export default function CreateGoalModal({
   open,
@@ -32,6 +32,7 @@ export default function CreateGoalModal({
   const [deadline, setDeadline] = useState("");
 
   const { user } = useUser();
+  const addResult = useAddGoal();
 
   const resetDeadline = () => {
     // 次の日の23時に設定
@@ -41,7 +42,7 @@ export default function CreateGoalModal({
     const localNextDay = new Date(
       nextDay.getTime() - nextDay.getTimezoneOffset() * 60000
     );
-    setDeadline(localNextDay.toISOString().slice(0, 16));
+    return localNextDay.toISOString().slice(0, 16);
   };
 
   useEffect(() => {
@@ -56,12 +57,20 @@ export default function CreateGoalModal({
       localDate.setDate(localDate.getDate() + 1); // 明日にする
       setDeadline(localDate.toISOString().slice(0, 16));
     } else {
-      resetDeadline();
+      setDeadline(resetDeadline());
     }
   }, [defaultText, defaultDeadline]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (deadline < new Date().toISOString().slice(0, 16)) {
+      showSnackBar({
+        message: "過去の時間を設定することはできません",
+        type: "warning",
+      });
+      return;
+    }
 
     const postData: Goal = {
       userId: user?.userId as string,
@@ -70,16 +79,24 @@ export default function CreateGoalModal({
     };
 
     try {
-      await createGoal(postData);
+      const data = await createGoal(postData);
 
       showSnackBar({
         message: "目標を作成しました",
         type: "success",
       });
-      triggerDashBoardRerender();
 
-      setText("");
-      resetDeadline();
+      if (user) {
+        addResult({
+          ...postData,
+          goalId: data.goalId,
+          userData: user,
+          deadline: deadline,
+        });
+      }
+
+      setText(defaultText || "");
+      setDeadline(defaultDeadline || resetDeadline());
       setOpen(false);
     } catch (error: unknown) {
       console.error("Error creating goal:", error);

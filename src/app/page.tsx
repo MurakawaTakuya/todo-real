@@ -36,7 +36,11 @@ export default function Top() {
             TODO REAL
           </StyledTypography>
         </div>
-        <img src="/img/app.webp" style={{ borderRadius: "0" }} />
+        <img
+          src="/img/app.webp"
+          alt="アプリ画面"
+          style={{ borderRadius: "0" }}
+        />
       </CenterIn>
 
       <div>
@@ -46,7 +50,7 @@ export default function Top() {
             やりたいことがつい後回しになってしまったり、毎日続けたいと思っていた習慣が途切れてしまったり…そんな経験はありませんか?
             <br />
             TODO REALはあなたの目標達成・継続を手助けします!
-            <img src="/img/todoListImage.webp" />
+            <img src="/img/todoListImage.webp" alt="TODOリストイメージ画像" />
             TODO REALでは目標を完了したら写真を投稿することができ、
             <Highlight>
               SNS感覚でTODOリストを使ったり友達と共有できます!
@@ -67,7 +71,7 @@ export default function Top() {
           <StyledTypography level="body-md">
             完了したTODOリストは友達に公開されます。友達に共有することで、達成感を共有できます。
           </StyledTypography>
-          <img src="/img/completed1.webp" />
+          <img src="/img/completed1.webp" alt="完了したら共有される" />
         </CenterIn>
       </div>
 
@@ -79,7 +83,7 @@ export default function Top() {
           <StyledTypography level="body-md">
             失敗してもペナルティの無いTODOリストとは異なり、期限内に完了しなかったTODOリストも公開されます。なんて恥ずかしい。
           </StyledTypography>
-          <img src="/img/failed.webp" />
+          <img src="/img/failed.webp" alt="失敗しても共有される" />
         </CenterIn>
       </div>
 
@@ -91,7 +95,7 @@ export default function Top() {
           <StyledTypography level="body-md">
             リアクション機能を使うことで友達と応援し合ったり驚きや達成感を共有することができます。リアクションは成功した目標と失敗した目標で異なります。
           </StyledTypography>
-          <img src="/img/reaction.webp" />
+          <img src="/img/reaction.webp" alt="リアクション機能" />
         </CenterIn>
       </div>
 
@@ -104,7 +108,7 @@ export default function Top() {
             10分前になると通知を送信します。通知を受け取ることで、TODOリストの達成を手助けします。(iOS
             16.3以前の端末や通知に対応していない端末では使用できません。)
           </StyledTypography>
-          <img src="/img/notification.webp" />
+          <img src="/img/notification.webp" alt="10分前に通知を送信" />
         </CenterIn>
       </div>
 
@@ -118,7 +122,11 @@ export default function Top() {
             <br />
             また、達成率や達成回数で友達と競うこともできます!
           </StyledTypography>
-          <img src="/img/competition.webp" style={{ width: "70%" }} />
+          <img
+            src="/img/competition.webp"
+            alt="毎日継続"
+            style={{ width: "70%" }}
+          />
         </CenterIn>
       </div>
 
@@ -132,7 +140,7 @@ export default function Top() {
             <br />
             完了投稿をすると投稿ボタンが変化して同じ目標をワンクリックで複製できるように!
           </StyledTypography>
-          <img src="/img/copyGoal.webp" />
+          <img src="/img/copyGoal.webp" alt="簡単に目標を複製" />
         </CenterIn>
       </div>
 
@@ -144,7 +152,7 @@ export default function Top() {
           <StyledTypography level="body-md">
             友達の投稿を表示するには、あなたの完了した目標をシェアしましょう。あなたが最後に投稿した時間より後の目標の画像はモザイクがかかっています。(ゲストログインの場合は特別に表示されます)
           </StyledTypography>
-          <img src="/img/blur.webp" />
+          <img src="/img/blur.webp" alt="投稿するまでモザイク" />
         </CenterIn>
       </div>
 
@@ -171,7 +179,11 @@ export default function Top() {
           <StyledTypography level="body-md">
             画面右下の+ボタンから目標を作成できます。
           </StyledTypography>
-          <img src="/img/create.webp" style={{ marginBottom: "15px" }} />
+          <img
+            src="/img/create.webp"
+            alt="作成"
+            style={{ marginBottom: "15px" }}
+          />
 
           <StyledTypography level="h4" component="h3">
             2. 投稿
@@ -179,12 +191,16 @@ export default function Top() {
           <StyledTypography level="body-md">
             目標を完了したら写真をアップロードして共有しましょう!
           </StyledTypography>
-          <img src="/img/post.webp" style={{ marginBottom: "10px" }} />
+          <img
+            src="/img/post.webp"
+            alt="アップロード"
+            style={{ marginBottom: "10px" }}
+          />
 
           <StyledTypography level="body-md">
             アップロードしたら自動で友達に公開されます!
           </StyledTypography>
-          <img src="/img/completed2.webp" />
+          <img src="/img/completed2.webp" alt="公開" />
         </CenterIn>
       </div>
 

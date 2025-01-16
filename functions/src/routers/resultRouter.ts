@@ -41,6 +41,7 @@ const getResults = async (
 
   const userList = new Map<string, User>(); // ユーザー情報のキャッシュ
 
+  // これからの目標のみ
   if (onlyPending || (!onlyPending && !onlyFinished)) {
     const pendingSnapshot = await baseQuery
       .where("post", "==", null)
@@ -52,15 +53,30 @@ const getResults = async (
     pendingResults.push(...pendingGoals);
   }
 
+  // 完了・失敗した目標のみ
   if (onlyFinished || (!onlyPending && !onlyFinished)) {
     const completedSnapshot = await baseQuery
       .where("post", "!=", null)
       .orderBy("post.submittedAt", "desc") // 新しいものが先
       .get();
 
+    // completedSnapshotをsubmittedAtでソートして最も昔の日時を取得
+    const earliestSubmittedAt = completedSnapshot.docs
+      .map((doc) => doc.data().post.submittedAt)
+      .sort((a, b) => a.toDate().getTime() - b.toDate().getTime())[0];
+
+    if (!earliestSubmittedAt) {
+      return {
+        successResults,
+        failedResults,
+        pendingResults,
+      };
+    }
+
     const failedSnapshot = await baseQuery
       .where("post", "==", null)
       .where("deadline", "<=", now)
+      .where("deadline", ">", earliestSubmittedAt)
       .orderBy("deadline", "desc") // 新しいものが先
       .get();
 
@@ -81,6 +97,7 @@ const getResults = async (
   };
 };
 
+// ユーザーデータを組み込む
 const processGoals = async (
   docs: FirebaseFirestore.QueryDocumentSnapshot[],
   userList: Map<string, User>
@@ -128,6 +145,7 @@ const processGoals = async (
 };
 
 // GET: 全ての目標または特定のユーザーの目標に対する結果を取得
+// onlyFinishedの場合のlimitはsuccessをlimitの数返してその期間内のfailedを追加で返す
 router.get("/:userId?", async (req: Request, res: Response) => {
   const userId = req.params.userId;
 

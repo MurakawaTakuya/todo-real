@@ -13,5 +13,6 @@
     "skipLibCheck": true
   },
   "compileOnSave": true,
-  "include": ["src/*", "functions/src/**/*", "src/**/*.ts"]
+  "include": ["src/*", "functions/src/**/*", "src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

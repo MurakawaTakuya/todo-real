@@ -103,21 +103,25 @@ export const useDeleteGoal = () => {
 // 投稿作成時
 // pendingから削除してsuccessに追加
 export const useAddPost = () => {
-  const { setPendingResults, setSuccessResults } = useResults();
+  const { setPendingResults, setSuccessResults, setLastPostDate } =
+    useResults();
+
   return (
     goalId: string,
     post: Omit<Post, "submittedAt"> & { submittedAt: string }
   ) => {
     let targetResult: GoalWithIdAndUserData | null = null;
+
     setPendingResults((prev) =>
       prev.filter((pendingResult) => {
         if (pendingResult.goalId === goalId) {
           targetResult = pendingResult; // 投稿した目標を取得
-          pendingResult.post = post; // 投稿データをつけると
+          pendingResult.post = post; // 投稿データをつける
         }
         return true;
       })
     );
+
     setSuccessResults((prev) => {
       if (targetResult) {
         // 投稿した目標に対してpostデータを追加
@@ -129,6 +133,10 @@ export const useAddPost = () => {
       }
       return prev;
     });
+
+    // 最新投稿日時を更新
+    const now = new Date();
+    setLastPostDate(now.toISOString());
   };
 };
 

@@ -47,7 +47,7 @@ export const handleCreateGoalError = (error: unknown) => {
 
   if (error instanceof Error) {
     if (error.message.includes("past deadline can't be set")) {
-      snackBarMessage = "過去の時間を指定することはできません";
+      snackBarMessage = "過去の時間を設定することはできません";
     }
     if (error.message.includes("too long comment")) {
       snackBarMessage = "目標の文字数は100文字以下にしてください";

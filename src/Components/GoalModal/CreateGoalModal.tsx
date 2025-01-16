@@ -64,6 +64,14 @@ export default function CreateGoalModal({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    if (deadline < new Date().toISOString().slice(0, 16)) {
+      showSnackBar({
+        message: "過去の時間を設定することはできません",
+        type: "warning",
+      });
+      return;
+    }
+
     const postData: Goal = {
       userId: user?.userId as string,
       text: text,

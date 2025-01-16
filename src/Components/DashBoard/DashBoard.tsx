@@ -41,6 +41,10 @@ export default function DashBoard({
     setNoMorePending,
     noMoreFinished,
     setNoMoreFinished,
+    pendingOffset,
+    setPendingOffset,
+    finishedOffset,
+    setFinishedOffset,
   } = useResults();
   const [noResult, setNoResult] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -65,16 +69,13 @@ export default function DashBoard({
     if (reachedBottom && !isLoadingMore) {
       setIsLoadingMore(true);
     }
-    const offset = pending
-      ? pendingResults.length
-      : successResults.length + failedResults.length;
-    // TODO: offsetを実際に取得しにいった数だけでもいいかも
+
     fetchResult({
       userId,
       success,
       failed,
       pending,
-      offset,
+      offset: pending ? pendingOffset : finishedOffset,
       limit,
     })
       .then((data) => {
@@ -101,10 +102,16 @@ export default function DashBoard({
           return [...prev, ...newResults];
         });
 
+        if (pending) {
+          setPendingOffset(pendingOffset + limit);
+        } else {
+          setFinishedOffset(finishedOffset + limit);
+        }
+
+        // 全部のデータを読み取った場合
         if (pending && data.pendingResults.length < limit) {
           setNoMorePending(true);
         }
-
         if (
           success &&
           failed &&

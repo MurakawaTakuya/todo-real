@@ -21,6 +21,10 @@ interface ResultContextType {
   setNoMorePending: React.Dispatch<boolean>;
   noMoreFinished: boolean;
   setNoMoreFinished: React.Dispatch<boolean>;
+  pendingOffset: number;
+  setPendingOffset: React.Dispatch<number>;
+  finishedOffset: number;
+  setFinishedOffset: React.Dispatch<number>;
 }
 
 const ResultContext = createContext<ResultContextType | undefined>(undefined);
@@ -38,7 +42,8 @@ export const ResultProvider = ({ children }: { children: ReactNode }) => {
   const [lastPostDate, setLastPostDate] = useState<string | null>(null); // 投稿が0の場合はnull
   const [noMorePending, setNoMorePending] = useState<boolean>(false);
   const [noMoreFinished, setNoMoreFinished] = useState<boolean>(false);
-  // TODO: offsetも管理
+  const [pendingOffset, setPendingOffset] = useState<number>(0);
+  const [finishedOffset, setFinishedOffset] = useState<number>(0);
 
   return (
     <ResultContext.Provider
@@ -55,6 +60,10 @@ export const ResultProvider = ({ children }: { children: ReactNode }) => {
         setNoMorePending,
         noMoreFinished,
         setNoMoreFinished,
+        pendingOffset,
+        setPendingOffset,
+        finishedOffset,
+        setFinishedOffset,
       }}
     >
       {children}

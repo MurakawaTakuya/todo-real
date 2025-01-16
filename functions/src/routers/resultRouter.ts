@@ -66,7 +66,11 @@ const getResults = async (
       .sort((a, b) => a.toDate().getTime() - b.toDate().getTime())[0];
 
     if (!earliestSubmittedAt) {
-      return;
+      return {
+        successResults,
+        failedResults,
+        pendingResults,
+      };
     }
 
     const failedSnapshot = await baseQuery

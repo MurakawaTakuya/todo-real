@@ -1,6 +1,12 @@
 "use client";
 import { GoalWithIdAndUserData, Post } from "@/types/types";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 
 interface ResultContextType {
   successResults: GoalWithIdAndUserData[];
@@ -17,14 +23,10 @@ interface ResultContextType {
   >;
   lastPostDate: string | null;
   setLastPostDate: React.Dispatch<string | null>;
-  noMorePending: boolean;
-  setNoMorePending: React.Dispatch<boolean>;
-  noMoreFinished: boolean;
-  setNoMoreFinished: React.Dispatch<boolean>;
-  pendingOffset: number;
-  setPendingOffset: React.Dispatch<number>;
-  finishedOffset: number;
-  setFinishedOffset: React.Dispatch<number>;
+  pendingOffset: React.RefObject<number>;
+  finishedOffset: React.RefObject<number>;
+  noMorePending: React.RefObject<boolean>;
+  noMoreFinished: React.RefObject<boolean>;
 }
 
 const ResultContext = createContext<ResultContextType | undefined>(undefined);
@@ -40,10 +42,10 @@ export const ResultProvider = ({ children }: { children: ReactNode }) => {
     []
   );
   const [lastPostDate, setLastPostDate] = useState<string | null>(null); // 投稿が0の場合はnull
-  const [noMorePending, setNoMorePending] = useState<boolean>(false);
-  const [noMoreFinished, setNoMoreFinished] = useState<boolean>(false);
-  const [pendingOffset, setPendingOffset] = useState<number>(0);
-  const [finishedOffset, setFinishedOffset] = useState<number>(0);
+  const pendingOffset = useRef<number>(0);
+  const finishedOffset = useRef<number>(0);
+  const noMorePending = useRef<boolean>(false);
+  const noMoreFinished = useRef<boolean>(false);
 
   return (
     <ResultContext.Provider
@@ -56,14 +58,10 @@ export const ResultProvider = ({ children }: { children: ReactNode }) => {
         setPendingResults,
         lastPostDate,
         setLastPostDate,
-        noMorePending,
-        setNoMorePending,
-        noMoreFinished,
-        setNoMoreFinished,
         pendingOffset,
-        setPendingOffset,
         finishedOffset,
-        setFinishedOffset,
+        noMorePending,
+        noMoreFinished,
       }}
     >
       {children}

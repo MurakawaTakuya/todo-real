@@ -37,14 +37,10 @@ export default function DashBoard({
     setPendingResults,
     lastPostDate,
     setLastPostDate,
-    noMorePending,
-    setNoMorePending,
-    noMoreFinished,
-    setNoMoreFinished,
     pendingOffset,
-    setPendingOffset,
     finishedOffset,
-    setFinishedOffset,
+    noMorePending,
+    noMoreFinished,
   } = useResults();
   const [noResult, setNoResult] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -69,13 +65,21 @@ export default function DashBoard({
     if (reachedBottom && !isLoadingMore) {
       setIsLoadingMore(true);
     }
+    // 全て読み込んだ場合
+    if (
+      (pending && noMorePending.current) ||
+      (success && failed && noMoreFinished.current)
+    ) {
+      setIsLoading(false);
+      return;
+    }
 
     fetchResult({
       userId,
       success,
       failed,
       pending,
-      offset: pending ? pendingOffset : finishedOffset,
+      offset: pending ? pendingOffset.current : finishedOffset.current,
       limit,
     })
       .then((data) => {
@@ -103,21 +107,21 @@ export default function DashBoard({
         });
 
         if (pending) {
-          setPendingOffset(pendingOffset + limit);
+          pendingOffset.current += limit;
         } else {
-          setFinishedOffset(finishedOffset + limit);
+          pendingOffset.current += limit;
         }
 
         // 全部のデータを読み取った場合
         if (pending && data.pendingResults.length < limit) {
-          setNoMorePending(true);
+          noMorePending.current = true;
         }
         if (
           success &&
           failed &&
           data.successResults.length + data.failedResults.length < limit
         ) {
-          setNoMoreFinished(true);
+          noMoreFinished.current = true;
         }
 
         setIsLoading(false);
@@ -144,8 +148,8 @@ export default function DashBoard({
           if (
             entries[0].isIntersecting &&
             !isLoading &&
-            ((pending && !noMorePending) ||
-              (success && failed && !noMoreFinished))
+            ((pending && !noMorePending.current) ||
+              (success && failed && !noMoreFinished.current))
           ) {
             setReachedBottom(true);
             fetchData();
@@ -164,7 +168,13 @@ export default function DashBoard({
         }
       };
     }, 1000);
-  }, [isLoading, noMorePending, noMoreFinished, bottomRef.current, bottomRef]);
+  }, [
+    isLoading,
+    noMorePending.current,
+    noMoreFinished.current,
+    bottomRef.current,
+    bottomRef,
+  ]);
 
   useEffect(() => {
     if (
@@ -251,8 +261,8 @@ export default function DashBoard({
           <div className="bottom" ref={bottomRef}></div>
 
           {/* 下に到達した時に続きを表示 */}
-          {((pending && !noMorePending) ||
-            (success && failed && !noMoreFinished)) &&
+          {((pending && !noMorePending.current) ||
+            (success && failed && !noMoreFinished.current)) &&
             (reachedBottom ? (
               <div
                 style={{

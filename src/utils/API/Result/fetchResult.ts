@@ -69,6 +69,9 @@ export const handleFetchResultError = (error: unknown) => {
     if (error.message.includes("404")) {
       snackBarMessage = "データが見つかりませんでした";
     }
+    if (error.message.includes("429")) {
+      snackBarMessage = "リクエストが多すぎます。数分後に再度お試しください。";
+    }
     if (error.message.includes("500")) {
       snackBarMessage = "サーバーエラーが発生しました";
     }

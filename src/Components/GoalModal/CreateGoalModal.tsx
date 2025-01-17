@@ -28,11 +28,11 @@ export default function CreateGoalModal({
   defaultText?: string;
   defaultDeadline?: string;
 }) {
-  const [text, setText] = useState("");
-  const [deadline, setDeadline] = useState("");
-
   const { user } = useUser();
   const addResult = useAddGoal();
+
+  const [text, setText] = useState("");
+  const [deadline, setDeadline] = useState("");
 
   const resetDeadline = () => {
     // 次の日の23時に設定

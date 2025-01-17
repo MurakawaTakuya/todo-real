@@ -4,8 +4,9 @@ import { Divider } from "@mui/joy";
 import Card from "@mui/joy/Card";
 import CardContent from "@mui/joy/CardContent";
 import Typography from "@mui/joy/Typography";
-import DeleteGoalModal from "../DeleteGoalModal/DeleteGoalModal";
 import CopyModalButton from "../GoalModal/CopyGoalButton";
+import DeleteGoalModal from "../GoalModal/DeleteGoalModal";
+import EditGoalModal from "../GoalModal/EditGoalModal";
 
 export const innerBorderColors = {
   success: "#0034125e",
@@ -23,7 +24,7 @@ export const GoalCard = ({
 }: {
   deadline: string;
   goalText: string;
-  resultType?: "success" | "failed" | "pending";
+  resultType: "success" | "failed" | "pending";
   goalId: string;
   userId: string;
   user: User;
@@ -60,14 +61,17 @@ export const GoalCard = ({
             {formatStringToDate(deadline)}までに
           </Typography>
 
-          <div style={{ display: "flex", gap: "5px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
             {user.loginType !== "Guest" && user.isMailVerified && (
               <CopyModalButton deadline={deadline} goalText={goalText} />
             )}
 
-            {/* 期限の1時間以内、もしくは自分の目標ではない場合は削除できないようにする */}
+            {/* 期限の1時間以内、もしくは自分の目標ではない場合は編集・削除できないようにする */}
             {!isWithinOneHour && userId === user?.userId && (
-              <DeleteGoalModal goalId={goalId} />
+              <>
+                <EditGoalModal goalId={goalId} resultType={resultType} />
+                <DeleteGoalModal goalId={goalId} />
+              </>
             )}
           </div>
         </div>

@@ -2,8 +2,8 @@ import { GoalWithIdAndUserData, User } from "@/types/types";
 import AppRegistrationRoundedIcon from "@mui/icons-material/AppRegistrationRounded";
 import Step from "@mui/joy/Step";
 import StepIndicator from "@mui/joy/StepIndicator";
-import CreatePostModal from "../CreatePostModal/CreatePostModal";
 import CopyGoalAfterPostButton from "../GoalModal/CopyGoalAfterPostButton";
+import CreatePostModal from "../PostModal/CreatePostModal";
 import { GoalCard } from "./GoalCard";
 import { StepperBlock } from "./StepperBlock";
 

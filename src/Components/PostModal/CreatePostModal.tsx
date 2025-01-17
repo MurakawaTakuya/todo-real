@@ -26,18 +26,15 @@ import { styled } from "@mui/material/styles";
 import React, { ChangeEvent, useState } from "react";
 
 export default function CreatePostModal({ goalId }: { goalId: string }) {
+  const { user } = useUser();
+  const addPost = useAddPost();
+
   const [open, setOpen] = useState(false);
   const [text, setText] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
   const [progress, setProgress] = useState<number>(100);
   const [fileName, setFileName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const { user } = useUser();
-  const addPost = useAddPost();
-
-  const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setText(event.target.value);
-  };
 
   const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -189,7 +186,7 @@ export default function CreatePostModal({ goalId }: { goalId: string }) {
               <Input
                 type="text"
                 value={text}
-                onChange={handleTextChange}
+                onChange={(e) => setText(e.target.value)}
                 placeholder="投稿コメントを入力して下さい"
               />
               <MuiButton

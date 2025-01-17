@@ -31,11 +31,11 @@ export const Reaction = ({
 
   const { user } = useUser();
 
-  const [isReacted, setIsReacted] = useState("");
+  const [isReacted, setIsReacted] = useState(""); // 値はリアクションの種類
   const [isOnceClicked, setIsOnceClicked] = useState(true);
   const [reactionList, setReactionList] = useState<
     Record<string, reactionValue>
-  >({});
+  >({}); // <リアクションの種類, リアクションのアイコンとカウント>
 
   useEffect(() => {
     // 絵文字の種類を定義
@@ -187,7 +187,8 @@ export const Reaction = ({
                       style={{
                         fontSize: "28px",
                         lineHeight: "1",
-                        filter: isReacted === key ? "none" : "grayscale(1)",
+                        filter: `grayscale(${isReacted === key ? 0 : 100}%)`,
+                        opacity: isReacted === key ? 1 : 0.5,
                         transition: "0.3s",
                       }}
                     >

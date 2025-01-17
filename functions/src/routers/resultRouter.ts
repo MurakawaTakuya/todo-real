@@ -17,6 +17,7 @@ const getResults = async (
   onlyFinished = false
 ) => {
   let baseQuery = db.collection("goal").limit(limit).offset(offset);
+  let failedBaseQuery = db.collection("goal").limit(100).offset(0);
 
   if (userId) {
     const userDoc = await getUserFromId(userId);
@@ -24,6 +25,7 @@ const getResults = async (
       return res.status(404).json({ message: "User not found" });
     }
     baseQuery = baseQuery.where("userId", "==", userId);
+    failedBaseQuery = failedBaseQuery.where("userId", "==", userId);
   }
 
   if (onlyPending && onlyFinished) {
@@ -73,7 +75,7 @@ const getResults = async (
       };
     }
 
-    const failedSnapshot = await baseQuery
+    const failedSnapshot = await failedBaseQuery
       .where("post", "==", null)
       .where("deadline", "<=", now)
       .where("deadline", ">", earliestSubmittedAt)

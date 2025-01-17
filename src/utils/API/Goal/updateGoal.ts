@@ -1,25 +1,39 @@
 import { appCheckToken, functionsEndpoint } from "@/app/firebase";
-import { PostWithGoalId } from "@/types/types";
 
 /**
- * Cloud FunctionsのAPIを呼び出して、投稿をFirestoreに登録する
+ * Cloud FunctionsのAPIを呼び出して、目標を編集する
  *
- * @param {PostWithGoalId} postData
+ * @param {string} goalId
+ * @param {{
+ *     text?: string;
+ *     deadline?: Date;
+ *   }} putData
  * @return {*}
  */
-export const createPost = async (postData: PostWithGoalId) => {
-  // 文字は100文字まで
-  if (postData.text.length > 100) {
+export const updateGoal = async (
+  goalId: string,
+  putData: {
+    text?: string;
+    deadline?: Date;
+  }
+) => {
+  // 過去の時間が入力されている場合
+  if (putData.deadline && new Date(putData.deadline).getTime() < Date.now()) {
+    throw new Error("past deadline can't be set");
+  }
+
+  // 文字数制限を100文字までにする
+  if (putData.text && putData.text.length > 100) {
     throw new Error("too long comment");
   }
 
-  const response = await fetch(`${functionsEndpoint}/post/`, {
-    method: "POST",
+  const response = await fetch(`${functionsEndpoint}/goal/${goalId}`, {
+    method: "PUT",
     headers: {
       "X-Firebase-AppCheck": appCheckToken,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(postData),
+    body: JSON.stringify(putData),
   });
 
   if (!response.ok) {
@@ -32,17 +46,20 @@ export const createPost = async (postData: PostWithGoalId) => {
 };
 
 /**
- * 投稿作成時のエラーハンドリング
+ * 目標編集時のエラーハンドリング
  *
  * @param {unknown} error
  * @return {*}
  */
-export const handleCreatePostError = (error: unknown) => {
-  let snackBarMessage = "投稿の作成・編集に失敗しました";
+export const handleUpdateGoalError = (error: unknown) => {
+  let snackBarMessage = "目標の編集に失敗しました";
 
   if (error instanceof Error) {
+    if (error.message.includes("past deadline can't be set")) {
+      snackBarMessage = "過去の時間を設定することはできません";
+    }
     if (error.message.includes("too long comment")) {
-      snackBarMessage = "投稿コメントは100文字以下にしてください";
+      snackBarMessage = "目標の文字数は100文字以下にしてください";
     }
     if (error.message.includes("400")) {
       snackBarMessage = "入力内容に問題があります";

@@ -43,7 +43,7 @@ export const handleFetchUserError = (error: unknown) => {
       snackBarMessage = "サーバーエラーが発生しました";
     }
     if (error.message.includes("429")) {
-      snackBarMessage = "リクエストが多すぎます。数分後に再度お試しください";
+      snackBarMessage = "リクエストが多すぎます。数分後に再度お試しください。";
     }
   } else {
     console.error("An unknown error occurred");

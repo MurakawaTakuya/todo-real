@@ -21,7 +21,7 @@ import resultRouter from "./routers/resultRouter";
 import userRouer from "./routers/userRouter";
 
 const app = express();
-app.set("trust proxy", true);
+app.set("trust proxy", true); // trueにしないと全ユーザーでlimitが共通になる
 app.use(helmet());
 app.use(cors());
 app.use(express.json());

@@ -160,4 +160,35 @@ export const useDeletePost = () => {
   };
 };
 
-// TODO: implement updateResult
+// 目標編集時
+export const useUpdateGoal = () => {
+  const { setPendingResults, setSuccessResults } = useResults();
+  return (goalId: string, updatedGoal: GoalWithIdAndUserData) => {
+    setPendingResults((prev) =>
+      prev.map((result) => (result.goalId === goalId ? updatedGoal : result))
+    );
+    setSuccessResults((prev) =>
+      prev.map((result) => (result.goalId === goalId ? updatedGoal : result))
+    );
+  };
+};
+
+// 投稿編集時
+export const useUpdatePost = () => {
+  const { setSuccessResults } = useResults();
+  return (goalId: string, updatedPost: Post) => {
+    setSuccessResults((prev) =>
+      prev.map((result) =>
+        result.goalId === goalId
+          ? {
+              ...result,
+              post: {
+                ...updatedPost,
+                submittedAt: String(updatedPost.submittedAt),
+              },
+            }
+          : result
+      )
+    );
+  };
+};

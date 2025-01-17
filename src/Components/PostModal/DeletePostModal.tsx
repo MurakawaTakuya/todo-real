@@ -19,27 +19,34 @@ export default function DeletePostModal({
   const deletePost = useDeletePost();
   const [open, setOpen] = useState(false);
 
-  const handleDeletePost = async () => {
-    const response = await fetch(`${functionsEndpoint}/post/${goalId}`, {
-      method: "DELETE",
-      headers: {
-        "X-Firebase-AppCheck": appCheckToken,
-        "Content-Type": "application/json",
-      },
-    });
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`${functionsEndpoint}/post/${goalId}`, {
+        method: "DELETE",
+        headers: {
+          "X-Firebase-AppCheck": appCheckToken,
+          "Content-Type": "application/json",
+        },
+      });
 
-    if (!response.ok) {
+      if (!response.ok) {
+        showSnackBar({
+          message: "目標の削除に失敗しました",
+          type: "warning",
+        });
+      } else {
+        setOpen(false);
+        showSnackBar({
+          message: "目標を削除しました",
+          type: "success",
+        });
+        deletePost(goalId);
+      }
+    } catch {
       showSnackBar({
         message: "目標の削除に失敗しました",
         type: "warning",
       });
-    } else {
-      setOpen(false);
-      showSnackBar({
-        message: "目標を削除しました",
-        type: "success",
-      });
-      deletePost(goalId);
     }
   };
 
@@ -77,11 +84,7 @@ export default function DeletePostModal({
             >
               キャンセル
             </JoyButton>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleDeletePost}
-            >
+            <Button variant="contained" color="error" onClick={handleDelete}>
               削除
             </Button>
           </Stack>

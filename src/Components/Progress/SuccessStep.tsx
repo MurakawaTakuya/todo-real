@@ -12,7 +12,8 @@ import Typography from "@mui/joy/Typography";
 import { getDownloadURL, getStorage, ref } from "firebase/storage";
 import { useState } from "react";
 import CenterIn from "../Animation/CenterIn";
-import DeletePostModal from "../DeletePostModal/DeletePostModal";
+import DeletePostModal from "../PostModal/DeletePostModal";
+import EditPostModal from "../PostModal/EditPostModal";
 import { GoalCard, innerBorderColors } from "./GoalCard";
 import { StepperBlock } from "./StepperBlock";
 
@@ -179,7 +180,7 @@ export const SuccessStep = ({
             )}
           </div>
 
-          <CardContent sx={{ padding: "3px 10px 10px" }}>
+          <CardContent sx={{ padding: "5px 10px 5px" }}>
             <div
               style={{
                 display: "flex",
@@ -190,19 +191,26 @@ export const SuccessStep = ({
               <Typography level="body-sm">
                 {formatStringToDate(post.submittedAt)}に完了
               </Typography>
-              {/* 自分の作成した投稿のみ削除できるようにする */}
+              {/* 自分の作成した投稿のみ編集・削除できるようにする */}
               {result.userId === user?.userId && (
-                <DeletePostModal
-                  goalId={result.goalId}
-                  deadline={result.deadline}
-                />
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "5px" }}
+                >
+                  <EditPostModal goalId={result.goalId} />
+                  <DeletePostModal
+                    goalId={result.goalId}
+                    deadline={result.deadline}
+                  />
+                </div>
               )}
             </div>
 
             {post.text && (
               <>
                 <Divider />
-                <Typography level="title-md">{post.text}</Typography>
+                <Typography level="title-md" sx={{ paddingBottom: "3px" }}>
+                  {post.text}
+                </Typography>
               </>
             )}
           </CardContent>

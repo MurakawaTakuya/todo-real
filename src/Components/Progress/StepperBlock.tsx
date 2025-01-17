@@ -37,7 +37,7 @@ export const StepperBlock = ({
         variant="soft"
         size="sm"
         sx={{
-          width: "87%",
+          width: "90%",
           margin: "10px auto",
           padding: "10px 13px",
           borderRadius: "8px",
@@ -52,9 +52,9 @@ export const StepperBlock = ({
           gap: "6px",
           backgroundColor:
             resultType == "success"
-              ? "#eff9f1ad"
+              ? "#f8fffa"
               : resultType == "failed"
-              ? "#fff5f5"
+              ? "#fffbfb"
               : "#f6f8ff",
         }}
       >

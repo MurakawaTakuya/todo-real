@@ -3,7 +3,6 @@ import { createPost, handleCreatePostError } from "@/utils/API/Post/createPost";
 import { useResults } from "@/utils/ResultContext";
 import { useUser } from "@/utils/UserContext";
 import EditIcon from "@mui/icons-material/Edit";
-import SendIcon from "@mui/icons-material/Send";
 import {
   DialogContent,
   DialogTitle,
@@ -118,8 +117,8 @@ export default function EditPostModal({ goalId }: { goalId: string }) {
                 <JoyButton
                   type="submit"
                   variant="solid"
-                  color="primary"
-                  endDecorator={<SendIcon />}
+                  color="success"
+                  endDecorator={<EditIcon />}
                   onClick={handleEdit}
                 >
                   変更

@@ -38,7 +38,7 @@ export const createPost = async (postData: PostWithGoalId) => {
  * @return {*}
  */
 export const handleCreatePostError = (error: unknown) => {
-  let snackBarMessage = "投稿の作成に失敗しました";
+  let snackBarMessage = "投稿の作成・編集に失敗しました";
 
   if (error instanceof Error) {
     if (error.message.includes("too long comment")) {

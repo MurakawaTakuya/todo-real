@@ -64,6 +64,9 @@ export const handleUpdateGoalError = (error: unknown) => {
     if (error.message.includes("400")) {
       snackBarMessage = "入力内容に問題があります";
     }
+    if (error.message.includes("429")) {
+      snackBarMessage = "リクエストが多すぎます。数分後に再度お試しください。";
+    }
     if (error.message.includes("500")) {
       snackBarMessage = "サーバーエラーが発生しました";
     }

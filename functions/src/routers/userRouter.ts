@@ -72,46 +72,6 @@ router.get("/id/:userId", async (req: Request, res: Response) => {
   }
 });
 
-// GET: userNameからユーザー情報を取得
-router.get("/name/:userName", async (req: Request, res: Response) => {
-  const userName = req.params.userName;
-
-  if (!userName) {
-    return res.status(400).json({ message: "User name is required" });
-  }
-
-  try {
-    const userSnapshot = await getUserFromName(userName);
-
-    if (userSnapshot.empty) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const userData: User[] = await Promise.all(
-      userSnapshot.docs.map(async (doc) => {
-        const data = doc.data();
-        const userId = doc.id;
-        const totalCompletedGoals = await countCompletedGoals(userId);
-        const totalFailedGoals = await countFailedGoals(userId);
-        const streak = await getStreak(userId);
-
-        return {
-          userId,
-          name: data.name,
-          completed: totalCompletedGoals,
-          failed: totalFailedGoals,
-          streak,
-        };
-      })
-    );
-
-    return res.json(userData);
-  } catch (error) {
-    logger.error(error);
-    return res.status(500).json({ message: "Error fetching user data" });
-  }
-});
-
 // POST: 新しいユーザーを登録
 router.post("/", async (req: Request, res: Response) => {
   let userId: string;

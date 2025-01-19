@@ -36,11 +36,7 @@ export default function Top() {
             TODO REAL
           </StyledTypography>
         </div>
-        <img
-          src="/img/app.webp"
-          alt="アプリ画面"
-          style={{ borderRadius: "0" }}
-        />
+        <img src="/img/app.webp" alt="アプリ画面" />
       </CenterIn>
 
       <div>
@@ -77,11 +73,11 @@ export default function Top() {
 
       <div>
         <StyledTypography level="h3" component="h2">
-          失敗したら友達に晒す
+          期限に間に合わなくても公開される
         </StyledTypography>
         <CenterIn>
           <StyledTypography level="body-md">
-            失敗してもペナルティの無いTODOリストとは異なり、期限内に完了しなかったTODOリストも公開されます。なんて恥ずかしい。
+            通常のペナルティの無いTODOリストとは異なり、期限内に完了しなかった目標は失敗として公開され、その目標に対する完了投稿はできなくなります。写真を共有するためには期限内に完了しましょう!
           </StyledTypography>
           <img src="/img/failed.webp" alt="失敗しても共有される" />
         </CenterIn>
@@ -93,7 +89,7 @@ export default function Top() {
         </StyledTypography>
         <CenterIn>
           <StyledTypography level="body-md">
-            リアクション機能を使うことで友達と応援し合ったり驚きや達成感を共有することができます。リアクションは成功した目標と失敗した目標で異なります。
+            リアクション機能を使うことで友達と応援し合ったり、驚きや達成感を共有することができます。リアクションは成功した目標と失敗した目標で異なります。
           </StyledTypography>
           <img src="/img/reaction.webp" alt="リアクション機能" />
         </CenterIn>
@@ -105,8 +101,8 @@ export default function Top() {
         </StyledTypography>
         <CenterIn>
           <StyledTypography level="body-md">
-            10分前になると通知を送信します。通知を受け取ることで、TODOリストの達成を手助けします。(iOS
-            16.3以前の端末や通知に対応していない端末では使用できません。)
+            期限10分前にまだ完了していない場合は通知を送信します。通知を受け取ることで、TODOリストの達成を手助けします。(iOS
+            16.3以前の端末や、通知に対応していない端末では使用できません。)
           </StyledTypography>
           <img src="/img/notification.webp" alt="10分前に通知を送信" />
         </CenterIn>
@@ -119,7 +115,6 @@ export default function Top() {
         <CenterIn>
           <StyledTypography level="body-md">
             連続記録で毎日目標を達成することを促進します!
-            <br />
             また、達成率や達成回数で友達と競うこともできます!
           </StyledTypography>
           <img
@@ -132,13 +127,12 @@ export default function Top() {
 
       <div>
         <StyledTypography level="h3" component="h2">
-          目標を作成する面倒を無くす
+          明日の目標も簡単に作成
         </StyledTypography>
         <CenterIn>
           <StyledTypography level="body-md">
             毎回目標を設定するのが面倒?ワンクリックで作成可能に!
-            <br />
-            完了投稿をすると投稿ボタンが変化して同じ目標をワンクリックで複製できるように!
+            完了投稿をすると投稿ボタンが変化して、同じ目標をワンクリックで複製できるようになります!
           </StyledTypography>
           <img src="/img/copyGoal.webp" alt="簡単に目標を複製" />
         </CenterIn>
@@ -146,11 +140,11 @@ export default function Top() {
 
       <div>
         <StyledTypography level="h3" component="h2">
-          見るだけではなく行動しましょう
+          見る専になるのを防ぐ
         </StyledTypography>
         <CenterIn>
           <StyledTypography level="body-md">
-            友達の投稿を表示するには、あなたの完了した目標をシェアしましょう。あなたが最後に投稿した時間より後の目標の画像はモザイクがかかっています。(ゲストログインの場合は特別に表示されます)
+            あなたが最後に目標を完了した時間より後の投稿はモザイクがかかっています。友達の投稿を表示するには、あなたも完了した目標をシェアしましょう!(ゲストログインの場合は特別に表示されます)
           </StyledTypography>
           <img src="/img/blur.webp" alt="投稿するまでモザイク" />
         </CenterIn>
@@ -162,8 +156,8 @@ export default function Top() {
         </StyledTypography>
         <CenterIn>
           <StyledTypography level="body-md">
-            アカウントページからホーム画面にアプリとして追加することができ、使いたいときにすぐにアクセスできます。また、見た目もモバイルアプリのようになります。(iOS
-            16.3以前の端末やPWAに対応していない端末では使用できません。)
+            アカウントページからホーム画面にアプリとして追加することができ、使いたいときにすぐにアクセスできます!また、見た目もモバイルアプリのようになります。(iOS
+            16.3以前の端末や、PWAに対応していない端末では使用できません。)
           </StyledTypography>
         </CenterIn>
       </div>
@@ -176,7 +170,7 @@ export default function Top() {
           <StyledTypography level="h4" component="h3">
             1. 目標を作成
           </StyledTypography>
-          <StyledTypography level="body-md">
+          <StyledTypography level="body-md" textAlign="center">
             画面右下の+ボタンから目標を作成できます。
           </StyledTypography>
           <img
@@ -188,16 +182,16 @@ export default function Top() {
           <StyledTypography level="h4" component="h3">
             2. 投稿
           </StyledTypography>
-          <StyledTypography level="body-md">
+          <StyledTypography level="body-md" textAlign="center">
             目標を完了したら写真をアップロードして共有しましょう!
           </StyledTypography>
           <img
-            src="/img/post.webp"
+            src="/img/goal.webp"
             alt="アップロード"
             style={{ marginBottom: "10px" }}
           />
 
-          <StyledTypography level="body-md">
+          <StyledTypography level="body-md" textAlign="center">
             アップロードしたら自動で友達に公開されます!
           </StyledTypography>
           <img src="/img/completed2.webp" alt="公開" />
@@ -211,7 +205,7 @@ export default function Top() {
             level="body-sm"
             sx={{ textAlign: "center", padding: "5px 0 8px !important" }}
           >
-            あなたの最初の目標はこのアプリを使い始めることです。
+            あなたの最初の目標はこのアプリを使い始めることです!
           </StyledTypography>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Button variant="outlined" size="lg" component="a" href="/account">
@@ -222,7 +216,7 @@ export default function Top() {
             level="body-sm"
             sx={{ textAlign: "center", paddingTop: "10px", fontWeight: 600 }}
           >
-            ゲストログインを使用するとアカウントを作成せずに閲覧できますが、投稿機能は使用できません。
+            ゲストログインを使用するとアカウントを作成せずに閲覧できますが、閲覧以外の機能は利用できません。
           </Typography>
         </CenterIn>
       </div>

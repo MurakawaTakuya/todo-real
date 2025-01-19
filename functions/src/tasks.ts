@@ -21,12 +21,12 @@ export const createTasksOnGoalCreate = onDocumentCreated(
     }
 
     if (!projectId) {
-      logger.info("GCP_PROJECT_ID is not defined.");
+      logger.error("GCP_PROJECT_ID is not defined.");
       return;
     }
 
     if (!event.data) {
-      logger.info("No data found in event.");
+      logger.error("No data found in event.");
       return;
     }
 
@@ -77,12 +77,12 @@ export const deleteTasksOnGoalDelete = onDocumentDeleted(
     }
 
     if (!projectId) {
-      logger.info("GCP_PROJECT_ID is not defined.");
+      logger.error("GCP_PROJECT_ID is not defined.");
       return;
     }
 
     if (!event.data) {
-      logger.info("No data found in event.");
+      logger.error("No data found in event.");
       return;
     }
 
@@ -93,7 +93,7 @@ export const deleteTasksOnGoalDelete = onDocumentDeleted(
       await tasksClient.deleteTask({ name: taskName });
       logger.info("Task deleted for goalId:", goalId);
     } catch (error) {
-      logger.info("Error deleting task:", error);
+      logger.error("Error deleting task:", error);
     }
   }
 );
@@ -110,12 +110,12 @@ export const deleteTasksOnPostCreate = onDocumentUpdated(
     }
 
     if (!projectId) {
-      logger.info("GCP_PROJECT_ID is not defined.");
+      logger.error("GCP_PROJECT_ID is not defined.");
       return;
     }
 
     if (!event.data) {
-      logger.info("No data found in event.");
+      logger.error("No data found in event.");
       return;
     }
 
@@ -130,7 +130,7 @@ export const deleteTasksOnPostCreate = onDocumentUpdated(
       await tasksClient.deleteTask({ name: taskName });
       logger.info("Task deleted for goalId:", goalId);
     } catch (error) {
-      logger.info("Error deleting task:", error);
+      logger.error("Error deleting task:", error);
     }
   }
 );

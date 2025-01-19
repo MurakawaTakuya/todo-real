@@ -1,5 +1,5 @@
 import cors from "cors";
-import express from "express";
+import express, { Request } from "express";
 import { rateLimit } from "express-rate-limit";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
@@ -21,7 +21,7 @@ import resultRouter from "./routers/resultRouter";
 import userRouer from "./routers/userRouter";
 
 const app = express();
-app.set("trust proxy", true); // trueにしないと全ユーザーでlimitが共通になる
+app.set("trust proxy", false);
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
@@ -41,13 +41,15 @@ const verifyAppCheckToken = async (
   }
 
   try {
-    const decodedToken = await admin
-      .appCheck()
-      .verifyToken(appCheckToken as string);
-    console.log("Verified App Check Token:", decodedToken);
+    await admin.appCheck().verifyToken(appCheckToken as string);
     return next();
   } catch (error) {
-    logger.error(`Invalid App Check token with ${appCheckToken}:`, error);
+    logger.error({
+      message: `Invalid App Check token with ${appCheckToken}:`,
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(401).send("Invalid App Check token.");
   }
 };
@@ -69,10 +71,10 @@ app.use(
   rateLimit({
     windowMs: 10 * 60 * 1000,
     max: 200,
-    // keyGenerator: (req) => {
-    //   const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
-    //   return Array.isArray(key) ? key[0] : key;
-    // },
+    keyGenerator: (req) => {
+      const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
+      return Array.isArray(key) ? key[0] : key;
+    },
     handler: (req, res) => {
       return res
         .status(429)
@@ -85,10 +87,10 @@ app.use(
   rateLimit({
     windowMs: 60 * 60 * 1000,
     max: 500,
-    // keyGenerator: (req) => {
-    //   const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
-    //   return Array.isArray(key) ? key[0] : key;
-    // },
+    keyGenerator: (req) => {
+      const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
+      return Array.isArray(key) ? key[0] : key;
+    },
     handler: (req, res) => {
       return res
         .status(429)
@@ -117,27 +119,28 @@ export {
 } from "./tasks";
 
 // テスト用API
-app.use(
-  "/helloWorld",
-  rateLimit({
-    // 10分に最大10回に制限
-    windowMs: 10 * 60 * 1000,
-    max: 10,
-    keyGenerator: (req) => {
-      const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
-      return Array.isArray(key) ? key[0] : key;
-    },
-    handler: (req, res) => {
-      return res
-        .status(429)
-        .json({ message: "Too many requests, please try again later." });
-    },
-  })
-);
+const helloWorldRateLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10分
+  max: 10, // 最大10回
+  keyGenerator: (req) => {
+    const key = req.headers["x-forwarded-for"] || req.ip || "unknown";
+    return Array.isArray(key) ? key[0] : key;
+  },
+  handler: (req, res) => {
+    return res
+      .status(429)
+      .json({ message: "Too many requests, please try again later." });
+  },
+});
 
-export const helloWorld = onRequest({ region: region }, (req, res) => {
-  logger.info("Hello log!", { structuredData: true });
-  res.send("Hello World!");
+export const helloWorld = onRequest({ region: region }, async (req, res) => {
+  helloWorldRateLimiter(req, res, async () => {
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
+    res.send("Hello World!");
+  });
 });
 
 const db = admin.firestore();
@@ -169,3 +172,32 @@ export const beforecreated = beforeUserCreated(
     return;
   }
 );
+
+// リクエストのheader, parameters, bodyを取得
+export const getRequestData = (req: Request) => {
+  // requestLog
+  return {
+    headers: req.headers,
+    parameters: {
+      query: req.query,
+      params: req.params,
+    },
+    body: req.body,
+  };
+};
+
+// リクエストのhttp情報を取得
+export const getHttpRequestData = (req: Request) => {
+  // httpRequest
+  const statusCode = req.statusCode || "202";
+  return {
+    requestMethod: req.method,
+    requestUrl: `${req.method} ${statusCode}: ${req.protocol}://${req.get(
+      "host"
+    )}${req.originalUrl}`,
+    status: statusCode,
+    userAgent: req.get("User-Agent"),
+    remoteIp: req.ip,
+    protocol: req.httpVersion ? `HTTP/${req.httpVersion}` : req.protocol,
+  };
+};

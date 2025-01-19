@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { getHttpRequestData, getRequestData } from "..";
 import { updateStreak } from "../status";
 import { PostWithGoalId } from "../types";
 
@@ -10,6 +11,10 @@ const db = admin.firestore();
 // GET: 全ての投稿を取得
 router.get("/", async (req: Request, res: Response) => {
   try {
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     const goalSnapshot = await db.collection("goal").get();
 
     if (goalSnapshot.empty) {
@@ -37,16 +42,24 @@ router.get("/", async (req: Request, res: Response) => {
 
     return res.json(postData);
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error fetching posts" });
   }
 });
 
 // GET: userIdから投稿を取得
 router.get("/:userId", async (req: Request, res: Response) => {
-  const userId = req.params.userId;
-
   try {
+    const userId = req.params.userId;
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
+
     const goalSnapshot = await db
       .collection("goal")
       .where("userId", "==", userId)
@@ -73,12 +86,16 @@ router.get("/:userId", async (req: Request, res: Response) => {
 
     return res.json(postData);
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error fetching user's posts" });
   }
 });
 
-// POST: 新しい投稿を作成
+// POST: 投稿を作成・更新
 router.post("/", async (req: Request, res: Response) => {
   let goalId: PostWithGoalId["goalId"];
   let text: PostWithGoalId["text"];
@@ -87,8 +104,16 @@ router.post("/", async (req: Request, res: Response) => {
 
   try {
     ({ goalId, text = "", storedId, submittedAt } = req.body);
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(400).json({ message: "Invalid request body" });
   }
 
@@ -120,11 +145,21 @@ router.post("/", async (req: Request, res: Response) => {
       },
     });
 
+    logger.info({
+      message: "Post updated successfully",
+      goalId,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res
       .status(201)
-      .json({ message: "Post created successfully", goalId });
+      .json({ message: "Post updated successfully", goalId });
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error creating post" });
   }
 });
@@ -133,6 +168,10 @@ router.post("/", async (req: Request, res: Response) => {
 router.delete("/:goalId", async (req: Request, res: Response) => {
   try {
     const goalId = req.params.goalId;
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
 
     if (!goalId) {
       return res.status(400).json({ message: "goalId is required" });
@@ -154,7 +193,11 @@ router.delete("/:goalId", async (req: Request, res: Response) => {
         await file.delete();
         logger.info("Image deleted successfully:", storedId);
       } catch (error) {
-        logger.error("Error deleting image:", error);
+        logger.error({
+          error: `Error deleting image: ${error}`,
+          httpRequest: getHttpRequestData(req),
+          requestLog: getRequestData(req),
+        });
         return res.status(500).json({ message: "Error deleting image" });
       }
     }
@@ -163,9 +206,19 @@ router.delete("/:goalId", async (req: Request, res: Response) => {
       post: null,
     });
 
+    logger.info({
+      message: "Post deleted successfully",
+      goalId,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.json({ message: "Post deleted successfully", goalId });
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error deleting post" });
   }
 });

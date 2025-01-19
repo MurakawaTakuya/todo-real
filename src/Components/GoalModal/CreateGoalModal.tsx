@@ -137,7 +137,7 @@ export default function CreateGoalModal({
               required
             />
             <Typography color="danger">
-              期限が1時間以内の目標は削除できなくなります
+              期限が1時間以内の目標は削除・編集できなくなります
             </Typography>
             <Stack direction="row" spacing={1} justifyContent="flex-end">
               <Button

@@ -36,11 +36,7 @@ export default function Top() {
             TODO REAL
           </StyledTypography>
         </div>
-        <img
-          src="/img/app.webp"
-          alt="アプリ画面"
-          style={{ borderRadius: "0" }}
-        />
+        <img src="/img/app.webp" alt="アプリ画面" />
       </CenterIn>
 
       <div>
@@ -192,7 +188,7 @@ export default function Top() {
             目標を完了したら写真をアップロードして共有しましょう!
           </StyledTypography>
           <img
-            src="/img/post.webp"
+            src="/img/goal.webp"
             alt="アップロード"
             style={{ marginBottom: "10px" }}
           />

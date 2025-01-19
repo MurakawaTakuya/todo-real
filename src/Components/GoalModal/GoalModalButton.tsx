@@ -18,7 +18,7 @@ export default function GoalModalButton() {
           display: "flex",
           flexDirection: "row-reverse",
           position: "fixed",
-          bottom: "90px",
+          bottom: "83px",
           width: "100%",
           maxWidth: "600px",
           zIndex: 1000,

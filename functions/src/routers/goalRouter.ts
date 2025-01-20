@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { getHttpRequestData, getRequestData } from "..";
 import { Goal, GoalWithId } from "../types";
 
 const router = express.Router();
@@ -9,6 +10,10 @@ const db = admin.firestore();
 // GET: 全ての目標を取得
 router.get("/", async (req: Request, res: Response) => {
   try {
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     const goalSnapshot = await db.collection("goal").get();
 
     if (goalSnapshot.empty) {
@@ -29,23 +34,33 @@ router.get("/", async (req: Request, res: Response) => {
 
     return res.json(goalData);
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error fetching goals" });
   }
 });
 
 // GET: userIdから目標を取得
 router.get("/:userId", async (req: Request, res: Response) => {
-  const userId = req.params.userId;
-
   try {
+    const userId = req.params.userId;
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
+
     const goalSnapshot = await db
       .collection("goal")
       .where("userId", "==", userId)
       .get();
 
     if (goalSnapshot.empty) {
-      return res.status(404).json({ message: "No goals found for this user" });
+      return res
+        .status(404)
+        .json({ message: "No goals found for this user", userId });
     }
 
     const goalData: GoalWithId[] = goalSnapshot.docs.map((doc) => {
@@ -62,7 +77,11 @@ router.get("/:userId", async (req: Request, res: Response) => {
 
     return res.json(goalData);
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error fetching goals" });
   }
 });
@@ -75,8 +94,16 @@ router.post("/", async (req: Request, res: Response) => {
 
   try {
     ({ userId, deadline, text } = req.body as Goal);
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(400).json({ message: "Invalid request body" });
   }
 
@@ -99,11 +126,21 @@ router.post("/", async (req: Request, res: Response) => {
         post: null,
       });
 
+    logger.info({
+      message: "Goal created successfully",
+      goalId,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res
       .status(201)
       .json({ message: "Goal created successfully", goalId });
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error creating goal" });
   }
 });
@@ -111,6 +148,10 @@ router.post("/", async (req: Request, res: Response) => {
 // PUT: 目標を更新
 router.put("/:goalId", async (req: Request, res: Response) => {
   const goalId = req.params.goalId;
+  logger.info({
+    httpRequest: getHttpRequestData(req),
+    requestLog: getRequestData(req),
+  });
   const { userId, deadline, text }: Partial<Goal> = req.body;
 
   if (!goalId) {
@@ -140,9 +181,19 @@ router.put("/:goalId", async (req: Request, res: Response) => {
 
   try {
     await db.collection("goal").doc(goalId).update(updateData);
+    logger.info({
+      message: "Goal updated successfully",
+      goalId,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.json({ message: "Goal updated successfully", goalId });
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error updating goal" });
   }
 });
@@ -151,6 +202,10 @@ router.put("/:goalId", async (req: Request, res: Response) => {
 router.delete("/:goalId", async (req: Request, res: Response) => {
   try {
     const goalId = req.params.goalId;
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
 
     if (!goalId) {
       return res.status(400).json({ message: "goalId is required" });
@@ -172,15 +227,29 @@ router.delete("/:goalId", async (req: Request, res: Response) => {
         await file.delete();
         logger.info("Image deleted successfully:", storedId);
       } catch (error) {
-        logger.error("Error deleting image:", error);
+        logger.error({
+          error: `Error deleting image: ${error}`,
+          httpRequest: getHttpRequestData(req),
+          requestLog: getRequestData(req),
+        });
         return res.status(500).json({ message: "Error deleting image" });
       }
     }
 
     await goalRef.delete();
+    logger.info({
+      message: "Goal deleted successfully",
+      goalId,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.json({ message: "Goal deleted successfully", goalId });
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error deleting goal" });
   }
 });

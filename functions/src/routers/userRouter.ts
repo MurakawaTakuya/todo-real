@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { getHttpRequestData, getRequestData } from "..";
 import { countCompletedGoals, countFailedGoals, getStreak } from "../status";
 import { User } from "../types";
 
@@ -10,6 +11,10 @@ const db = admin.firestore();
 // GET: 全てのユーザーデータを取得
 router.get("/", async (req: Request, res: Response) => {
   try {
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     const userSnapshot = await db.collection("user").get();
 
     if (userSnapshot.empty) {
@@ -36,16 +41,24 @@ router.get("/", async (req: Request, res: Response) => {
 
     return res.json(userData);
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error fetching user data" });
   }
 });
 
 // GET: userIdからユーザー情報を取得
 router.get("/id/:userId", async (req: Request, res: Response) => {
-  const userId = req.params.userId;
-
   try {
+    const userId = req.params.userId;
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
+
     const userDoc = await getUserFromId(userId);
 
     if (!userDoc.exists) {
@@ -67,7 +80,11 @@ router.get("/id/:userId", async (req: Request, res: Response) => {
 
     return res.json(userData);
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error fetching user data" });
   }
 });
@@ -80,8 +97,16 @@ router.post("/", async (req: Request, res: Response) => {
 
   try {
     ({ name, userId, fcmToken = "" } = req.body);
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(400).json({ message: "Invalid request body" });
   }
 
@@ -96,11 +121,22 @@ router.post("/", async (req: Request, res: Response) => {
       fcmToken: fcmToken,
     });
 
+    logger.info({
+      message: "User created successfully",
+      userId,
+      name,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res
       .status(201)
       .json({ message: "User created successfully", userId });
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error creating user" });
   }
 });
@@ -108,6 +144,10 @@ router.post("/", async (req: Request, res: Response) => {
 // PUT: ユーザー情報を更新
 router.put("/:userId", async (req: Request, res: Response) => {
   const userId = req.params.userId;
+  logger.info({
+    httpRequest: getHttpRequestData(req),
+    requestLog: getRequestData(req),
+  });
   const { name, fcmToken }: Partial<User> = req.body;
 
   if (!userId) {
@@ -130,9 +170,19 @@ router.put("/:userId", async (req: Request, res: Response) => {
 
   try {
     await db.collection("user").doc(userId).update(updateData);
+    logger.info({
+      message: "User updated successfully",
+      userId,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.json({ message: "User updated successfully", userId });
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error updating user" });
   }
 });
@@ -141,6 +191,10 @@ router.put("/:userId", async (req: Request, res: Response) => {
 router.delete("/:userId", async (req: Request, res: Response) => {
   try {
     const userId = req.params.userId;
+    logger.info({
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
 
     if (!userId) {
       return res.status(400).json({ message: "userId is required" });
@@ -154,9 +208,19 @@ router.delete("/:userId", async (req: Request, res: Response) => {
     }
 
     await userRef.delete();
+    logger.info({
+      message: "User deleted successfully",
+      userId,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.json({ message: "User deleted successfully", userId });
   } catch (error) {
-    logger.error(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error deleting user" });
   }
 });

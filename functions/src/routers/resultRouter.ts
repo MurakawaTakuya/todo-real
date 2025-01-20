@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 import { logger } from "firebase-functions";
+import { getHttpRequestData, getRequestData } from "..";
 import { countCompletedGoals, countFailedGoals, getStreak } from "../status";
 import { GoalWithIdAndUserData, User } from "../types";
 import { getUserFromId } from "./userRouter";
@@ -150,6 +151,10 @@ const processGoals = async (
 // onlyFinishedの場合のlimitはsuccessをlimitの数返してその期間内のfailedを追加で返す
 router.get("/:userId?", async (req: Request, res: Response) => {
   const userId = req.params.userId;
+  logger.info({
+    httpRequest: getHttpRequestData(req),
+    requestLog: getRequestData(req),
+  });
 
   let limit = parseInt(req.query.limit as string) || 10;
   if (limit < 1 || limit > 100) {
@@ -170,7 +175,11 @@ router.get("/:userId?", async (req: Request, res: Response) => {
     );
     return res.json(results);
   } catch (error) {
-    logger.info(error);
+    logger.error({
+      error,
+      httpRequest: getHttpRequestData(req),
+      requestLog: getRequestData(req),
+    });
     return res.status(500).json({ message: "Error fetching results" });
   }
 });

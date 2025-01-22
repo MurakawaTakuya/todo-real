@@ -39,7 +39,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" type="image/svg+xml" href="/appIcon.svg" />
         <link rel="apple-touch-icon" href="/icon512_maskable.png"></link>
-        <meta name="theme-color" content="#2EC6FE" />
+        <meta name="theme-color" content="#e8f7ff" />
         <meta name="description" content={description} />
 
         {/* Open Graph */}

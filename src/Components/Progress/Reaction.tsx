@@ -180,22 +180,17 @@ export const Reaction = ({
                       border: "none",
                       backgroundColor: "transparent",
                       cursor: "pointer",
+                      fontSize: "28px",
+                      lineHeight: "1",
+                      transition: "0.3s",
+                      filter: `grayscale(${isReacted === key ? 0 : 100}%)`,
+                      opacity: isReacted === key ? 1 : 0.5,
                     }}
                     onClick={() => handleReaction(key)}
                   >
-                    <span
-                      style={{
-                        fontSize: "28px",
-                        lineHeight: "1",
-                        filter: `grayscale(${isReacted === key ? 0 : 100}%)`,
-                        opacity: isReacted === key ? 1 : 0.5,
-                        transition: "0.3s",
-                      }}
-                    >
-                      <motion.div whileTap={{ scale: 0.6 }}>
-                        {reaction.icon}
-                      </motion.div>
-                    </span>
+                    <motion.div whileTap={{ scale: 0.4 }}>
+                      {reaction.icon}
+                    </motion.div>
                   </button>
                   <span>{reaction.count}</span>
                 </React.Fragment>

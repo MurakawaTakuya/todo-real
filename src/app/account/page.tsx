@@ -118,6 +118,8 @@ export default function Account() {
                 {!PWAReady && !isPWA && (
                   <Typography color="danger" textAlign="center">
                     PWAを準備中です。しばらくしてからページを更新してください。
+                    <br />
+                    ブラウザの「ホーム画面に追加」からすぐにインストールすることもできます。
                   </Typography>
                 )}
                 {user?.loginType === "Guest" && (

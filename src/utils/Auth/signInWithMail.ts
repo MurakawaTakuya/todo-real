@@ -13,7 +13,8 @@ export const signInWithMail = async (email: string, password: string) => {
   await signInWithEmailAndPassword(auth, email, password)
     .then(() => {
       showSnackBar({
-        message: "メールでログインしました",
+        message:
+          "メールアドレスでログインしました。ユーザーデータを取得しています。",
         type: "success",
       });
     })
@@ -22,7 +23,7 @@ export const signInWithMail = async (email: string, password: string) => {
       console.error("errorMessage:", (error as Error)?.message);
 
       const errorMessage = (error as Error)?.message;
-      let snackBarMessage = "メールでのログインに失敗しました";
+      let snackBarMessage = "メールアドレスでのログインに失敗しました";
 
       if (errorMessage.includes("auth/wrong-password")) {
         snackBarMessage = "パスワードが間違っています";

@@ -156,7 +156,7 @@ export const SuccessStep = ({
                   textAlign: "center",
                 }}
               >
-                <CenterIn delay={0.5}>
+                <CenterIn>
                   <Typography
                     level="body-lg"
                     sx={{

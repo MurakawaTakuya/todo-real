@@ -7,7 +7,6 @@ import {
 } from "@/utils/API/Result/fetchResult";
 import { useResults } from "@/utils/ResultContext";
 import { useUser } from "@/utils/UserContext";
-import CircularProgress from "@mui/joy/CircularProgress";
 import Typography from "@mui/joy/Typography";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useEffect, useRef, useState } from "react";
@@ -42,12 +41,11 @@ export default function DashBoard({
     noMorePending,
     noMoreFinished,
   } = useResults();
-  const [noResult, setNoResult] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [reachedBottom, setReachedBottom] = useState<boolean>(false);
-  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+  const [noResult, setNoResult] = useState<boolean>(false); // 目標が一つもない場合
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Dashboardの初期ロード
+  const [reachedBottom, setReachedBottom] = useState<boolean>(false); // 画面下に到達して読み込み
   const bottomRef = useRef<HTMLDivElement>(null);
-  const isAlreadyFetching = useRef(false);
+  const isAlreadyFetching = useRef(false); // 重複してfetchを防ぐ
 
   const { user } = useUser();
   const myUserId = user?.userId;
@@ -60,10 +58,6 @@ export default function DashBoard({
       return;
     } else {
       isAlreadyFetching.current = true;
-    }
-    // 画面下に到達して既にロード中の場合はreturn
-    if (reachedBottom && !isLoadingMore) {
-      setIsLoadingMore(true);
     }
     // 全て読み込んだ場合
     if (
@@ -127,7 +121,6 @@ export default function DashBoard({
         setIsLoading(false);
         setReachedBottom(false);
         isAlreadyFetching.current = false;
-        setIsLoadingMore(false);
       })
       .catch((error) => {
         console.error("Error fetching results:", error);
@@ -176,6 +169,7 @@ export default function DashBoard({
     bottomRef,
   ]);
 
+  // 目標があるか確認
   useEffect(() => {
     if (
       (pending && pendingResults.length === 0) ||
@@ -195,6 +189,7 @@ export default function DashBoard({
     );
   }, [success, failed, pending, successResults, failedResults, pendingResults]);
 
+  // 投稿のモザイク処理
   useEffect(() => {
     if (user?.loginType === "Guest") {
       return;
@@ -262,32 +257,16 @@ export default function DashBoard({
 
           {/* 下に到達した時に続きを表示 */}
           {((pending && !noMorePending.current) ||
-            (success && failed && !noMoreFinished.current)) &&
-            (reachedBottom ? (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: "20px",
-                }}
-              >
-                <CircularProgress
-                  color="primary"
-                  variant="soft"
-                  size="lg"
-                  value={30}
-                />
-              </div>
-            ) : (
-              <Typography
-                level="body-md"
-                color="primary"
-                textAlign="center"
-                sx={{ fontWeight: 700 }}
-              >
-                スクロールしてもっと表示
-              </Typography>
-            ))}
+            (success && failed && !noMoreFinished.current)) && (
+            <Typography
+              level="body-md"
+              color={reachedBottom ? "success" : "primary"}
+              textAlign="center"
+              fontWeight={700}
+            >
+              {reachedBottom ? "Loading..." : "Display More"}
+            </Typography>
+          )}
         </div>
       )}
     </>

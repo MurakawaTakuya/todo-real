@@ -12,7 +12,8 @@ export const signInWithGoogleAccount = async () => {
     await signInWithPopup(auth, googleProvider);
 
     showSnackBar({
-      message: "Googleアカウントでログインしました",
+      message:
+        "Googleアカウントでログインしました。ユーザーデータを取得しています。",
       type: "success",
     });
   } catch (error) {

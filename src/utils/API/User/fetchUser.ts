@@ -1,5 +1,6 @@
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { functionsEndpoint } from "@/app/firebase";
 import { User } from "@/types/types";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、ユーザー情報をFirestoreから取得する
@@ -8,6 +9,8 @@ import { User } from "@/types/types";
  * @return {*}  {Promise<User>}
  */
 export const fetchUserById = async (userId: string): Promise<User> => {
+  const appCheckToken = await getAppCheckToken();
+
   const response = await fetch(`${functionsEndpoint}/user/id/${userId}`, {
     method: "GET",
     headers: {
@@ -44,6 +47,10 @@ export const handleFetchUserError = (error: unknown) => {
     }
     if (error.message.includes("429")) {
       snackBarMessage = "リクエストが多すぎます。数分後に再度お試しください。";
+    }
+    if (error.message.includes("App Checkの初期化に失敗しました。")) {
+      snackBarMessage =
+        "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。";
     }
   } else {
     console.error("An unknown error occurred");

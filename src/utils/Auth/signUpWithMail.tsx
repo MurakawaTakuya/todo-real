@@ -1,10 +1,11 @@
-import { appCheckToken, auth, functionsEndpoint } from "@/app/firebase";
+import { auth, functionsEndpoint } from "@/app/firebase";
 import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
+import getAppCheckToken from "../getAppCheckToken";
 import { updateUser } from "../UserContext";
 
 /**
@@ -29,6 +30,23 @@ export const signUpWithMail = async (
         await updateProfile(user, { displayName: name });
       } catch (profileUpdateError) {
         console.error("Error updating user name:", profileUpdateError);
+      }
+
+      const appCheckToken = await getAppCheckToken().catch((error) => {
+        showSnackBar({
+          message: error.message,
+          type: "warning",
+        });
+        return "";
+      });
+
+      if (!appCheckToken) {
+        showSnackBar({
+          message:
+            "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。",
+          type: "warning",
+        });
+        return;
       }
 
       // displayNameをFirestoreに登録

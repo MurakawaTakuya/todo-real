@@ -1,4 +1,6 @@
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { functionsEndpoint } from "@/app/firebase";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、目標を編集する
@@ -25,6 +27,18 @@ export const updateGoal = async (
   // 文字数制限を100文字までにする
   if (putData.text && putData.text.length > 100) {
     throw new Error("too long comment");
+  }
+
+  const appCheckToken = await getAppCheckToken().catch((error) => {
+    showSnackBar({
+      message: error.message,
+      type: "warning",
+    });
+    return "";
+  });
+
+  if (!appCheckToken) {
+    return;
   }
 
   const response = await fetch(`${functionsEndpoint}/goal/${goalId}`, {

@@ -1,5 +1,7 @@
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { functionsEndpoint } from "@/app/firebase";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { Goal } from "@/types/types";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、目標をFirestoreに登録する
@@ -16,6 +18,18 @@ export const createGoal = async (postData: Goal) => {
   // 文字数制限を100文字までにする
   if (postData.text.length > 100) {
     throw new Error("too long comment");
+  }
+
+  const appCheckToken = await getAppCheckToken().catch((error) => {
+    showSnackBar({
+      message: error.message,
+      type: "warning",
+    });
+    return "";
+  });
+
+  if (!appCheckToken) {
+    return;
   }
 
   const response = await fetch(`${functionsEndpoint}/goal/`, {

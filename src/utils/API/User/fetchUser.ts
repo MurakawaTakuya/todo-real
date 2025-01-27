@@ -1,5 +1,7 @@
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { functionsEndpoint } from "@/app/firebase";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { User } from "@/types/types";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、ユーザー情報をFirestoreから取得する
@@ -8,6 +10,18 @@ import { User } from "@/types/types";
  * @return {*}  {Promise<User>}
  */
 export const fetchUserById = async (userId: string): Promise<User> => {
+  const appCheckToken = await getAppCheckToken().catch((error) => {
+    showSnackBar({
+      message: error.message,
+      type: "warning",
+    });
+    return "";
+  });
+
+  if (!appCheckToken) {
+    throw new Error("Failed to get App Check token");
+  }
+
   const response = await fetch(`${functionsEndpoint}/user/id/${userId}`, {
     method: "GET",
     headers: {

@@ -45,6 +45,7 @@ export const createTasksOnGoalCreate = onDocumentCreated(
       const queuePath = tasksClient.queuePath(projectId, region, queue);
       const accessToken = process.env.NOTIFICATION_KEY;
 
+      logger.info(`Creating task: ${queuePath}/tasks/${goalId}`);
       await tasksClient.createTask({
         parent: queuePath,
         task: {
@@ -64,6 +65,49 @@ export const createTasksOnGoalCreate = onDocumentCreated(
       logger.info("Task created for goalId:", goalId);
     } catch (error) {
       logger.error("Error scheduling task:", error);
+    }
+  }
+);
+
+// 目標を完了した時にtasksから通知予定を削除する
+export const deleteTasksOnPostCreate = onDocumentUpdated(
+  {
+    region: region,
+    document: "goal/{goalId}",
+  },
+  async (event) => {
+    if (process.env.NODE_ENV !== "production") {
+      return;
+    }
+
+    if (!projectId) {
+      logger.error("GCP_PROJECT_ID is not defined.");
+      return;
+    }
+
+    if (!event.data) {
+      logger.error("No data found in event.");
+      return;
+    }
+
+    // null -> post に変更された場合のみ削除、それ以外の場合は何もしない
+    if (
+      event.data.before.data().post !== null ||
+      event.data.after.data().post === null
+    ) {
+      logger.info("Skipping task deletion.");
+      return;
+    }
+
+    try {
+      const goalId = event.params.goalId;
+      const queuePath = tasksClient.queuePath(projectId, region, queue);
+      const taskName = `${queuePath}/tasks/${goalId}`; // goalIdが名前になっているタスクを削除
+      logger.info("Deleting task:", taskName);
+      await tasksClient.deleteTask({ name: taskName });
+      logger.info("Task deleted for goalId:", goalId);
+    } catch (error) {
+      logger.error("Error deleting task:", error);
     }
   }
 );
@@ -90,43 +134,7 @@ export const deleteTasksOnGoalDelete = onDocumentDeleted(
       const goalId = event.params.goalId;
       const queuePath = tasksClient.queuePath(projectId, region, queue);
       const taskName = `${queuePath}/tasks/${goalId}`; // goalIdが名前になっているタスクを削除
-      await tasksClient.deleteTask({ name: taskName });
-      logger.info("Task deleted for goalId:", goalId);
-    } catch (error) {
-      logger.error("Error deleting task:", error);
-    }
-  }
-);
-
-// 目標を完了した時にtasksから通知予定を削除する
-export const deleteTasksOnPostCreate = onDocumentUpdated(
-  {
-    region: region,
-    document: "goal/{goalId}",
-  },
-  async (event) => {
-    if (process.env.NODE_ENV !== "production") {
-      return;
-    }
-
-    if (!projectId) {
-      logger.error("GCP_PROJECT_ID is not defined.");
-      return;
-    }
-
-    if (!event.data) {
-      logger.error("No data found in event.");
-      return;
-    }
-
-    if (event.data.after.data().post !== null) {
-      return;
-    }
-
-    try {
-      const goalId = event.params.goalId;
-      const queuePath = tasksClient.queuePath(projectId, region, queue);
-      const taskName = `${queuePath}/tasks/${goalId}`; // goalIdが名前になっているタスクを削除
+      logger.info("Deleting task:", taskName);
       await tasksClient.deleteTask({ name: taskName });
       logger.info("Task deleted for goalId:", goalId);
     } catch (error) {

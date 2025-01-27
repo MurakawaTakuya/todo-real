@@ -1,5 +1,7 @@
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { functionsEndpoint } from "@/app/firebase";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { ReactionTypeMap } from "@/types/types";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、リアクションを更新する
@@ -15,6 +17,18 @@ export const updateReaction = async (
   goalId: string,
   reactionType: ReactionTypeMap | ""
 ) => {
+  const appCheckToken = await getAppCheckToken().catch((error) => {
+    showSnackBar({
+      message: error.message,
+      type: "warning",
+    });
+    return "";
+  });
+
+  if (!appCheckToken) {
+    return;
+  }
+
   const response = await fetch(`${functionsEndpoint}/reaction/${goalId}`, {
     method: "PUT",
     headers: {

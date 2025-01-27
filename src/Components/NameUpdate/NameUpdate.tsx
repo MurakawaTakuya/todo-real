@@ -1,5 +1,6 @@
 "use client";
-import { appCheckToken, auth, functionsEndpoint } from "@/app/firebase";
+import { auth, functionsEndpoint } from "@/app/firebase";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 import { useUser } from "@/utils/UserContext";
 import {
   DialogContent,
@@ -30,6 +31,18 @@ export default function NameUpdate() {
         message: `名前は${maxNameLength}文字以内で入力してください`,
         type: "warning",
       });
+      return;
+    }
+
+    const appCheckToken = await getAppCheckToken().catch((error) => {
+      showSnackBar({
+        message: error.message,
+        type: "warning",
+      });
+      return "";
+    });
+
+    if (!appCheckToken) {
       return;
     }
 

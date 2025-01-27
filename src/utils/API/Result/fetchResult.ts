@@ -1,4 +1,6 @@
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { functionsEndpoint } from "@/app/firebase";
+import { showSnackBar } from "@/Components/SnackBar/SnackBar";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、結果の一覧を取得する
@@ -32,6 +34,18 @@ export const fetchResult = async ({
   }
   if (limit) {
     queryParams.append("limit", limit.toString());
+  }
+
+  const appCheckToken = await getAppCheckToken().catch((error) => {
+    showSnackBar({
+      message: error.message,
+      type: "warning",
+    });
+    return "";
+  });
+
+  if (!appCheckToken) {
+    return;
   }
 
   const response = await fetch(

@@ -77,6 +77,18 @@ export default function DashBoard({
       limit,
     })
       .then((data) => {
+        if (
+          !data ||
+          !data.successResults ||
+          !data.failedResults ||
+          !data.pendingResults
+        ) {
+          showSnackBar({
+            message: "データの取得に失敗しました。ログインし直してください。",
+            type: "warning",
+          });
+          return;
+        }
         // 既に追加されている場合は追加しない
         setSuccessResults((prev) => {
           const newResults = data.successResults.filter(
@@ -213,6 +225,9 @@ export default function DashBoard({
         limit: 1,
       })
         .then((data) => {
+          if (!data.successResults) {
+            return;
+          }
           if (data.successResults.length > 0) {
             setLastPostDate(data.successResults[0].post?.submittedAt);
           }

@@ -1,5 +1,6 @@
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { functionsEndpoint } from "@/app/firebase";
 import { ReactionTypeMap } from "@/types/types";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、リアクションを更新する
@@ -15,6 +16,8 @@ export const updateReaction = async (
   goalId: string,
   reactionType: ReactionTypeMap | ""
 ) => {
+  const appCheckToken = await getAppCheckToken();
+
   const response = await fetch(`${functionsEndpoint}/reaction/${goalId}`, {
     method: "PUT",
     headers: {

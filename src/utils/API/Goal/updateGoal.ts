@@ -1,4 +1,5 @@
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { functionsEndpoint } from "@/app/firebase";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、目標を編集する
@@ -26,6 +27,8 @@ export const updateGoal = async (
   if (putData.text && putData.text.length > 100) {
     throw new Error("too long comment");
   }
+
+  const appCheckToken = await getAppCheckToken();
 
   const response = await fetch(`${functionsEndpoint}/goal/${goalId}`, {
     method: "PUT",
@@ -69,6 +72,10 @@ export const handleUpdateGoalError = (error: unknown) => {
     }
     if (error.message.includes("500")) {
       snackBarMessage = "サーバーエラーが発生しました";
+    }
+    if (error.message.includes("App Checkの初期化に失敗しました。")) {
+      snackBarMessage =
+        "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。";
     }
   } else {
     console.error("An unknown error occurred");

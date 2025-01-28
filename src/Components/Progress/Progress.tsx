@@ -49,7 +49,7 @@ export default function Progress({
           return (
             <SuccessStep
               key={result.goalId}
-              result={result as GoalWithIdAndUserData}
+              result={result}
               user={user as User}
               isBlured={
                 result.post?.submittedAt && lastPostDate
@@ -64,7 +64,7 @@ export default function Progress({
           return (
             <FailedStep
               key={result.goalId}
-              result={result as GoalWithIdAndUserData}
+              result={result}
               user={user as User}
             />
           );
@@ -72,7 +72,7 @@ export default function Progress({
           return (
             <PendingStep
               key={result.goalId}
-              result={result as GoalWithIdAndUserData}
+              result={result}
               user={user as User}
             />
           );

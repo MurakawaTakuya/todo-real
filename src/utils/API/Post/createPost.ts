@@ -1,5 +1,6 @@
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { functionsEndpoint } from "@/app/firebase";
 import { PostWithGoalId } from "@/types/types";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、投稿をFirestoreに登録する
@@ -12,6 +13,8 @@ export const createPost = async (postData: PostWithGoalId) => {
   if (postData.text.length > 100) {
     throw new Error("too long comment");
   }
+
+  const appCheckToken = await getAppCheckToken();
 
   const response = await fetch(`${functionsEndpoint}/post/`, {
     method: "POST",
@@ -52,6 +55,10 @@ export const handleCreatePostError = (error: unknown) => {
     }
     if (error.message.includes("500")) {
       snackBarMessage = "サーバーエラーが発生しました";
+    }
+    if (error.message.includes("App Checkの初期化に失敗しました。")) {
+      snackBarMessage =
+        "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。";
     }
   } else {
     console.error("An unknown error occurred");

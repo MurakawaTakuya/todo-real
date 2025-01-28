@@ -1,5 +1,6 @@
 "use client";
-import { appCheckToken, auth, functionsEndpoint } from "@/app/firebase";
+import { auth, functionsEndpoint } from "@/app/firebase";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 import { useUser } from "@/utils/UserContext";
 import {
   DialogContent,
@@ -28,6 +29,23 @@ export default function NameUpdate() {
     if (newName.length > maxNameLength) {
       showSnackBar({
         message: `名前は${maxNameLength}文字以内で入力してください`,
+        type: "warning",
+      });
+      return;
+    }
+
+    const appCheckToken = await getAppCheckToken().catch((error) => {
+      showSnackBar({
+        message: error.message,
+        type: "warning",
+      });
+      return "";
+    });
+
+    if (!appCheckToken) {
+      showSnackBar({
+        message:
+          "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。",
         type: "warning",
       });
       return;

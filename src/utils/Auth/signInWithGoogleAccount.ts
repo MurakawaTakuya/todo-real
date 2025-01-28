@@ -23,6 +23,11 @@ export const signInWithGoogleAccount = async () => {
       "Googleアカウントでのログインに失敗しました。ページを更新して再度お試しください。";
     if ((error as Error)?.message.includes("auth/popup-closed-by-user")) {
       message = "ログインがキャンセルされました";
+    } else if (
+      (error as Error)?.message.includes("appCheck/fetch-status-error")
+    ) {
+      message =
+        "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。";
     }
     showSnackBar({
       message,

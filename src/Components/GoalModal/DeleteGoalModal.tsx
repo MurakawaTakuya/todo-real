@@ -1,5 +1,6 @@
 "use client";
-import { appCheckToken, functionsEndpoint } from "@/app/firebase";
+import { functionsEndpoint } from "@/app/firebase";
+import getAppCheckToken from "@/utils/getAppCheckToken";
 import { useDeleteGoal } from "@/utils/ResultContext";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { DialogContent, DialogTitle, Modal, ModalDialog } from "@mui/joy";
@@ -14,6 +15,23 @@ export default function DeleteGoalModal({ goalId }: { goalId: string }) {
   const [open, setOpen] = useState(false);
 
   const handleDelete = async () => {
+    const appCheckToken = await getAppCheckToken().catch((error) => {
+      showSnackBar({
+        message: error.message,
+        type: "warning",
+      });
+      return "";
+    });
+
+    if (!appCheckToken) {
+      showSnackBar({
+        message:
+          "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。",
+        type: "warning",
+      });
+      return;
+    }
+
     try {
       const response = await fetch(`${functionsEndpoint}/goal/${goalId}`, {
         method: "DELETE",

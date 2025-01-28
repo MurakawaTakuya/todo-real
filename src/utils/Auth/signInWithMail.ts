@@ -33,6 +33,9 @@ export const signInWithMail = async (email: string, password: string) => {
       } else if (errorMessage.includes("auth/too-many-requests")) {
         snackBarMessage =
           "リクエストが多すぎます。しばらくしてからもう一度お試しください。";
+      } else if (errorMessage.includes("appCheck/fetch-status-error")) {
+        snackBarMessage =
+          "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください";
       }
 
       showSnackBar({

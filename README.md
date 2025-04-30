@@ -46,5 +46,5 @@ firebase emulators:start
 |認証|[PR: ログイン機能をFirebase Authenticationに接続 #39](https://github.com/MurakawaTakuya/todo-real/pull/39)|[Firebase Authentication](https://firebase.google.com/docs/auth)|
 |通知を受信|[PR: Cloud Messagingを実装 #49](https://github.com/MurakawaTakuya/todo-real/pull/49)|[Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/)|
 |スケジューラー/通知を送信|[PR: 期限が近い目標にCloud Tasksで通知を送信する機能を実装 #100](https://github.com/MurakawaTakuya/todo-real/pull/100)|[Cloud Tasks in Google Cloud](https://cloud.google.com/tasks/docs)|
-|セキュリティ|[PR: App CheckとAnalyticaの導入 #84](https://github.com/MurakawaTakuya/todo-real/pull/84)|[Firebase App Check](https://firebase.google.com/docs/app-check)|
+|セキュリティ|[PR: App CheckとAnalyticsの導入 #84](https://github.com/MurakawaTakuya/todo-real/pull/84)|[Firebase App Check](https://firebase.google.com/docs/app-check)|
 |ログ||[Cloud Logging](https://firebase.google.com/docs/functions/writing-and-viewing-logs?hl=ja&gen=2nd)|

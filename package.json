@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "npm i && next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "test:rules": "firebase emulators:exec --only firestore,storage \"node --test tests/security-rules.test.mjs\"",
+    "test:api-security": "npm --prefix functions run build && firebase emulators:exec --only auth,functions,firestore,storage \"node --test functions/test/api-security.test.js\""
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -17,26 +19,22 @@
     "@mui/joy": "^5.0.0-beta.48",
     "@mui/material": "^6.2.1",
     "@mui/styled-engine-sc": "^6.1.6",
-    "firebase": "^11.0.1",
-    "firebase-admin": "^13.0.2",
-    "firebase-functions": "^6.1.1",
+    "firebase": "^12.18.0",
     "framer-motion": "^11.17.0",
-    "next": "15.5.7",
-    "next-pwa": "^5.6.0",
-    "openai": "^4.78.1",
+    "next": "^16.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sass": "^1.80.6",
-    "styled-components": "^6.1.14"
+    "styled-components": "^6.5.3"
   },
   "devDependencies": {
-    "@types/next-pwa": "^5.6.9",
+    "@firebase/rules-unit-testing": "^5.0.2",
     "@types/node": "^22.9.0",
     "@types/react": "^19.0.4",
     "@types/react-dom": "^19.0.2",
     "@types/uuid": "^10.0.0",
     "eslint": "^9.18.0",
-    "eslint-config-next": "15.5.7",
+    "eslint-config-next": "^16.3.3",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "stylelint": "^16.10.0",

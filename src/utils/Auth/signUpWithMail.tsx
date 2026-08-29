@@ -5,7 +5,7 @@ import {
   sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
-import getAppCheckToken from "../getAppCheckToken";
+import { getApiHeaders } from "../getApiHeaders";
 import { updateUser } from "../UserContext";
 
 /**
@@ -32,30 +32,10 @@ export const signUpWithMail = async (
         console.error("Error updating user name:", profileUpdateError);
       }
 
-      const appCheckToken = await getAppCheckToken().catch((error) => {
-        showSnackBar({
-          message: error.message,
-          type: "warning",
-        });
-        return "";
-      });
-
-      if (!appCheckToken) {
-        showSnackBar({
-          message:
-            "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。",
-          type: "warning",
-        });
-        return;
-      }
-
       // displayNameをFirestoreに登録
       const response = await fetch(`${functionsEndpoint}/user/${user.uid}`, {
         method: "PUT",
-        headers: {
-          "X-Firebase-AppCheck": appCheckToken,
-          "Content-Type": "application/json",
-        },
+        headers: await getApiHeaders({ requireAuth: true }),
         body: JSON.stringify({ name }),
       });
 

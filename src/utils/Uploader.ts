@@ -3,6 +3,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 export const uploadImage = (
   file: File,
+  userId: string,
   onProgress: (progress: number) => void,
   onSuccess: (url: string, id: string) => void
 ) => {
@@ -14,7 +15,8 @@ export const uploadImage = (
   removeImageMetadata(file)
     .then((cleanFile) => {
       const uniqueId = crypto.randomUUID();
-      const storageRef = ref(storage, `post/${uniqueId}`);
+      const storedId = `${userId}/${uniqueId}`;
+      const storageRef = ref(storage, `post/${storedId}`);
       const uploadTask = uploadBytesResumable(storageRef, cleanFile);
 
       uploadTask.on(
@@ -31,7 +33,7 @@ export const uploadImage = (
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            onSuccess(downloadURL, uniqueId); // 完了時にURLとIDを返す
+            onSuccess(downloadURL, storedId);
           });
         }
       );

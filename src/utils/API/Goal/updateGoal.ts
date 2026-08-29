@@ -1,5 +1,5 @@
 import { functionsEndpoint } from "@/app/firebase";
-import getAppCheckToken from "@/utils/getAppCheckToken";
+import { getApiHeaders } from "@/utils/getApiHeaders";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、目標を編集する
@@ -28,14 +28,9 @@ export const updateGoal = async (
     throw new Error("too long comment");
   }
 
-  const appCheckToken = await getAppCheckToken();
-
   const response = await fetch(`${functionsEndpoint}/goal/${goalId}`, {
     method: "PUT",
-    headers: {
-      "X-Firebase-AppCheck": appCheckToken,
-      "Content-Type": "application/json",
-    },
+    headers: await getApiHeaders({ requireAuth: true }),
     body: JSON.stringify(putData),
   });
 

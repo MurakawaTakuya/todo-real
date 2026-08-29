@@ -1,6 +1,6 @@
 import { functionsEndpoint } from "@/app/firebase";
 import { PostWithGoalId } from "@/types/types";
-import getAppCheckToken from "@/utils/getAppCheckToken";
+import { getApiHeaders } from "@/utils/getApiHeaders";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、投稿をFirestoreに登録する
@@ -14,14 +14,9 @@ export const createPost = async (postData: PostWithGoalId) => {
     throw new Error("too long comment");
   }
 
-  const appCheckToken = await getAppCheckToken();
-
   const response = await fetch(`${functionsEndpoint}/post/`, {
     method: "POST",
-    headers: {
-      "X-Firebase-AppCheck": appCheckToken,
-      "Content-Type": "application/json",
-    },
+    headers: await getApiHeaders({ requireAuth: true }),
     body: JSON.stringify(postData),
   });
 

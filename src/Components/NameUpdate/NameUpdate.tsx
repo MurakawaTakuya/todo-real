@@ -1,6 +1,6 @@
 "use client";
 import { auth, functionsEndpoint } from "@/app/firebase";
-import getAppCheckToken from "@/utils/getAppCheckToken";
+import { getApiHeaders } from "@/utils/getApiHeaders";
 import { useUser } from "@/utils/UserContext";
 import {
   DialogContent,
@@ -34,32 +34,12 @@ export default function NameUpdate() {
       return;
     }
 
-    const appCheckToken = await getAppCheckToken().catch((error) => {
-      showSnackBar({
-        message: error.message,
-        type: "warning",
-      });
-      return "";
-    });
-
-    if (!appCheckToken) {
-      showSnackBar({
-        message:
-          "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。",
-        type: "warning",
-      });
-      return;
-    }
-
     try {
       const response = await fetch(
         `${functionsEndpoint}/user/${user?.userId}`,
         {
           method: "PUT",
-          headers: {
-            "X-Firebase-AppCheck": appCheckToken,
-            "Content-Type": "application/json",
-          },
+          headers: await getApiHeaders({ requireAuth: true }),
           body: JSON.stringify({ name: newName }),
         }
       );

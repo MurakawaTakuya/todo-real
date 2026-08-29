@@ -1,13 +1,4 @@
-import nextPWA from "next-pwa";
-
-const withPWA = nextPWA({
-  dest: "public",
-  register: true,
-  skipWaiting: true,
-  buildExcludes: [/middleware-manifest.json$/],
-});
-
-const nextConfig = withPWA({
+const nextConfig = {
   output: "export",
   trailingSlash: true,
   sassOptions: {
@@ -16,6 +7,6 @@ const nextConfig = withPWA({
   images: {
     unoptimized: true,
   },
-});
+};
 
 export default nextConfig;

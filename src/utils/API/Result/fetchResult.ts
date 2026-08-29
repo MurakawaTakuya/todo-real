@@ -1,5 +1,5 @@
 import { functionsEndpoint } from "@/app/firebase";
-import getAppCheckToken from "@/utils/getAppCheckToken";
+import { getApiHeaders } from "@/utils/getApiHeaders";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、結果の一覧を取得する
@@ -35,16 +35,11 @@ export const fetchResult = async ({
     queryParams.append("limit", limit.toString());
   }
 
-  const appCheckToken = await getAppCheckToken();
-
   const response = await fetch(
     `${functionsEndpoint}/result/${userId}?${queryParams.toString()}`,
     {
       method: "GET",
-      headers: {
-        "X-Firebase-AppCheck": appCheckToken,
-        "Content-Type": "application/json",
-      },
+      headers: await getApiHeaders(),
     }
   );
 

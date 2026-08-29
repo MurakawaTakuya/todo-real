@@ -6,6 +6,7 @@ import "@/utils/CloudMessaging/getNotification";
 import { UserProvider } from "@/utils/UserContext";
 import type { Metadata } from "next";
 import "./firebase";
+import PWARegister from "@/Components/PWARegister/PWARegister";
 
 const description =
   "TODO REALは、TODOリストとBeRealを組み合わせたアプリです。友達とTODOリストを共有し、目標達成をサポートし合うことで、達成感や楽しさを共有できます。完了したTODOの写真投稿や競争機能で、目標達成がもっと楽しくなります!";
@@ -76,6 +77,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <PWARegister />
         <UserProvider>
           <Loader>
             {children}

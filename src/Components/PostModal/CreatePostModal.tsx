@@ -47,8 +47,24 @@ export default function CreatePostModal({ goalId }: { goalId: string }) {
       return;
     }
 
+    const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+    if (!allowedTypes.has(selectedFile.type)) {
+      showSnackBar({
+        message: "JPEG、PNG、WebP形式の画像のみアップロードできます",
+        type: "warning",
+      });
+      return;
+    }
+
     // ファイルサイズの上限を設定
     const maxSize = 8; // 上限8MB
+    if (selectedFile.size > maxSize * 1024 * 1024) {
+      showSnackBar({
+        message: `最大ファイルサイズは${maxSize}MBです。`,
+        type: "warning",
+      });
+      return;
+    }
     const fileWithoutMetadata = await removeImageMetadata(selectedFile); // モーションフォトの動画を除いたサイズを取得
     const fileSizeMB = fileWithoutMetadata.size / (1024 * 1024);
     if (fileSizeMB > maxSize) {
@@ -59,13 +75,6 @@ export default function CreatePostModal({ goalId }: { goalId: string }) {
       return;
     }
 
-    if (!selectedFile.type.startsWith("image/")) {
-      showSnackBar({
-        message: "画像ファイルのみアップロードできます",
-        type: "warning",
-      });
-      return;
-    }
     setImage(selectedFile || null);
     setFileName(selectedFile ? selectedFile.name : "");
   };
@@ -84,6 +93,7 @@ export default function CreatePostModal({ goalId }: { goalId: string }) {
     try {
       await uploadImage(
         image,
+        user?.userId as string,
         (percent) => setProgress(percent),
         async (url, id) => {
           const postData: PostWithGoalId = {
@@ -202,7 +212,7 @@ export default function CreatePostModal({ goalId }: { goalId: string }) {
                 </FileName>
                 <VisuallyHiddenInput
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   onChange={handleImageChange}
                   multiple
                 />

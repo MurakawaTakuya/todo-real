@@ -50,4 +50,3 @@ functions\lib
 
 # PWA
 public/workbox-*.js
-public/sw.js

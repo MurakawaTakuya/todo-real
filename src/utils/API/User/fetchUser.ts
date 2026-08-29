@@ -1,6 +1,6 @@
 import { functionsEndpoint } from "@/app/firebase";
 import { User } from "@/types/types";
-import getAppCheckToken from "@/utils/getAppCheckToken";
+import { getApiHeaders } from "@/utils/getApiHeaders";
 
 /**
  * Cloud FunctionsのAPIを呼び出して、ユーザー情報をFirestoreから取得する
@@ -9,14 +9,9 @@ import getAppCheckToken from "@/utils/getAppCheckToken";
  * @return {*}  {Promise<User>}
  */
 export const fetchUserById = async (userId: string): Promise<User> => {
-  const appCheckToken = await getAppCheckToken();
-
   const response = await fetch(`${functionsEndpoint}/user/id/${userId}`, {
     method: "GET",
-    headers: {
-      "X-Firebase-AppCheck": appCheckToken,
-      "Content-Type": "application/json",
-    },
+    headers: await getApiHeaders(),
   });
 
   if (!response.ok) {

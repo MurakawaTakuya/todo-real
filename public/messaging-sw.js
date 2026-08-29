@@ -21,10 +21,10 @@ self.addEventListener("notificationclick", (event) => {
 });
 
 importScripts(
-  "https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"
+  "https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"
 );
 importScripts(
-  "https://www.gstatic.com/firebasejs/9.15.0/firebase-messaging-compat.js"
+  "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging-compat.js"
 );
 
 // Firebase アプリの設定(漏れても問題ない情報)

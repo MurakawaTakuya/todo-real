@@ -1,8 +1,7 @@
 "use client";
 import { functionsEndpoint, messaging } from "@/app/firebase";
-import { showSnackBar } from "@/Components/SnackBar/SnackBar";
 import { getToken } from "firebase/messaging";
-import getAppCheckToken from "../getAppCheckToken";
+import { getApiHeaders } from "../getApiHeaders";
 
 // 通知を受信する
 export async function requestPermission(userId: string): Promise<void> {
@@ -41,30 +40,10 @@ export async function requestPermission(userId: string): Promise<void> {
 
   console.log("currentToken:", notificationToken);
 
-  const appCheckToken = await getAppCheckToken().catch((error) => {
-    showSnackBar({
-      message: error.message,
-      type: "warning",
-    });
-    return "";
-  });
-
-  if (!appCheckToken) {
-    showSnackBar({
-      message:
-        "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。",
-      type: "warning",
-    });
-    return;
-  }
-
   // トークンをFirestoreに登録
   const response = await fetch(`${functionsEndpoint}/user/${userId}`, {
     method: "PUT",
-    headers: {
-      "X-Firebase-AppCheck": appCheckToken,
-      "Content-Type": "application/json",
-    },
+    headers: await getApiHeaders({ requireAuth: true }),
     body: JSON.stringify({ fcmToken: notificationToken }),
   });
 
@@ -98,30 +77,10 @@ export async function revokePermission(userId: string): Promise<void> {
     console.log("No subscription found");
   }
 
-  const appCheckToken = await getAppCheckToken().catch((error) => {
-    showSnackBar({
-      message: error.message,
-      type: "warning",
-    });
-    return "";
-  });
-
-  if (!appCheckToken) {
-    showSnackBar({
-      message:
-        "App Checkの初期化に失敗しました。debug tokenがサーバーに登録されていることを確認してください。",
-      type: "warning",
-    });
-    return;
-  }
-
   // トークンをFirestoreから削除
   const response = await fetch(`${functionsEndpoint}/user/${userId}`, {
     method: "PUT",
-    headers: {
-      "X-Firebase-AppCheck": appCheckToken,
-      "Content-Type": "application/json",
-    },
+    headers: await getApiHeaders({ requireAuth: true }),
     body: JSON.stringify({ fcmToken: "" }),
   });
 

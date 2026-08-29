@@ -1,5 +1,74 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "goal",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "post", "order": "ASCENDING" },
+        { "fieldPath": "post.submittedAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "goal",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "post", "order": "ASCENDING" },
+        { "fieldPath": "deadline", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "goal",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "post", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "goal",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "post.submittedAt", "order": "DESCENDING" },
+        { "fieldPath": "post", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "goal",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "post.submittedAt", "order": "DESCENDING" },
+        { "fieldPath": "post", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "goal",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "post", "order": "ASCENDING" },
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "deadline", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "goal",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "post", "order": "ASCENDING" },
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "deadline", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "goal",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "post", "order": "ASCENDING" },
+        { "fieldPath": "deadline", "order": "ASCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": [
     {
       "collectionGroup": "_securityRateLimits",

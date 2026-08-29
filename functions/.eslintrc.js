@@ -23,6 +23,7 @@ module.exports = {
     "/generated/**/*", // Ignore generated files.
     ".eslintrc.js",
     "/test/**/*",
+    "/scripts/**/*",
   ],
   plugins: ["@typescript-eslint", "import", "eslint-plugin-unused-imports"],
   rules: {

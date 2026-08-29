@@ -1,7 +1,5 @@
-import admin from "firebase-admin";
 import { logger } from "firebase-functions";
-
-const db = admin.firestore();
+import { db, Timestamp } from "./firebaseAdmin";
 
 // 完了した目標をカウント(postがnullでないものをカウント)
 export const countCompletedGoals = async (userId: string): Promise<number> => {
@@ -31,7 +29,7 @@ export const countFailedGoals = async (userId: string): Promise<number> => {
   }
 
   try {
-    const now = admin.firestore.Timestamp.now();
+    const now = Timestamp.now();
 
     const countSnapshot = await db
       .collection("goal")
@@ -59,11 +57,10 @@ export const hasCompletedGoalWithinRange = async (
   }
 
   try {
-    const startTimestamp = admin.firestore.Timestamp.fromDate(startDate);
-    const endTimestamp = admin.firestore.Timestamp.fromDate(endDate);
+    const startTimestamp = Timestamp.fromDate(startDate);
+    const endTimestamp = Timestamp.fromDate(endDate);
 
-    const snapshot = await admin
-      .firestore()
+    const snapshot = await db
       .collection("goal")
       .where("userId", "==", userId)
       .where("post", "!=", null)

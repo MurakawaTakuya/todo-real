@@ -1,76 +1,62 @@
 import express, { Request, Response } from "express";
-import admin from "firebase-admin";
 import { logger } from "firebase-functions";
-import { getHttpRequestData, getRequestData } from "..";
-import { Reaction, ReactionTypeMap } from "../types";
+import { db } from "../firebaseAdmin";
+import { getHttpRequestData } from "../requestLog";
+import {
+  AuthenticatedLocals,
+  getAuthenticatedUser,
+  requireFirebaseAuth,
+} from "../middleware/security";
+import { authenticatedWriteRateLimit } from "../middleware/writeRateLimit";
+import {
+  documentIdSchema,
+  parseInput,
+  reactionUpdateSchema,
+} from "../validation";
 
 const router = express.Router();
-const db = admin.firestore();
 
-// PUT: リアクションを更新
-router.put("/:goalId", async (req: Request, res: Response) => {
-  const goalId = req.params.goalId;
-  logger.info({
-    httpRequest: getHttpRequestData(req),
-    requestLog: getRequestData(req),
-  });
-  const { userId, reactionType }: Partial<Reaction> = req.body;
-
-  if (!userId || !goalId) {
-    return res.status(400).json({
-      message: "userID and goalId are required",
-    });
-  }
-
-  try {
+router.put(
+  "/:goalId",
+  requireFirebaseAuth(),
+  authenticatedWriteRateLimit,
+  async (req: Request, res: Response<unknown, AuthenticatedLocals>) => {
+    const goalId = parseInput(documentIdSchema, req.params.goalId, res);
+    const input = parseInput(reactionUpdateSchema, req.body, res);
+    if (!goalId || !input) return;
+    const { uid } = getAuthenticatedUser(res);
     const goalRef = db.collection("goal").doc(goalId);
-    const goalDoc = await goalRef.get();
 
-    if (!goalDoc.exists) {
-      return res.status(404).json({ message: "Goal not found" });
-    }
-
-    const goalData = goalDoc.data();
-
-    const currentReactions = goalData?.reaction || {}; // 元のリアクションデータ
-    if (!reactionType) {
-      // リアクション削除
-      delete currentReactions[userId];
-    } else {
-      // リアクション追加
-      // リアクションタイプが正しいか確認
-      const validReactionTypes = [
-        ...ReactionTypeMap.success,
-        ...ReactionTypeMap.failed,
-      ];
-      if (!validReactionTypes.includes(reactionType)) {
-        return res.status(400).json({ message: "Invalid reactionType" });
+    try {
+      await db.runTransaction(async (transaction) => {
+        const goalDoc = await transaction.get(goalRef);
+        if (!goalDoc.exists) {
+          throw new GoalNotFoundError();
+        }
+        const reactions = {
+          ...(goalDoc.data()?.reaction || {}),
+        } as Record<string, string>;
+        if (input.reactionType) {
+          reactions[uid] = input.reactionType;
+        } else {
+          delete reactions[uid];
+        }
+        transaction.update(goalRef, {
+          reaction: Object.keys(reactions).length > 0 ? reactions : null,
+        });
+      });
+      return res.json({ message: "Reaction updated successfully", goalId });
+    } catch (error) {
+      if (error instanceof GoalNotFoundError) {
+        return res.status(404).json({ message: "Goal not found" });
       }
-
-      currentReactions[userId] = reactionType;
+      logger.error({ error, httpRequest: getHttpRequestData(req) });
+      return res.status(500).json({ message: "Error updating reaction" });
     }
-
-    await goalRef.update({
-      ...goalData,
-      reaction: currentReactions,
-    });
-
-    logger.info({
-      message: "Reaction updated successfully",
-      goalId,
-      userId,
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
-    });
-    return res.json({ message: "Reaction updated successfully", goalId });
-  } catch (error) {
-    logger.error({
-      error,
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
-    });
-    return res.status(500).json({ message: "Error updating Reaction" });
   }
-});
+);
+
+/** Signals that a requested goal document does not exist. */
+class GoalNotFoundError extends Error {}
 
 export default router;

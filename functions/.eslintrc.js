@@ -15,17 +15,14 @@ module.exports = {
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: [
-      "tsconfig.json",
-      "functions/tsconfig.json",
-      "functions/tsconfig.functions.json",
-    ],
+    project: ["tsconfig.json"],
     sourceType: "module",
   },
   ignorePatterns: [
     "/lib/**/*", // Ignore built files.
     "/generated/**/*", // Ignore generated files.
     ".eslintrc.js",
+    "/test/**/*",
   ],
   plugins: ["@typescript-eslint", "import", "eslint-plugin-unused-imports"],
   rules: {
@@ -33,5 +30,9 @@ module.exports = {
     "import/no-unresolved": 0,
     indent: ["error", 2],
     "new-cap": ["error", { capIsNew: false }],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { argsIgnorePattern: "^_" },
+    ],
   },
 };

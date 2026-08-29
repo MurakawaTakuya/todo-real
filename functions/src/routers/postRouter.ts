@@ -1,226 +1,171 @@
 import express, { Request, Response } from "express";
-import admin from "firebase-admin";
 import { logger } from "firebase-functions";
-import { getHttpRequestData, getRequestData } from "..";
+import { db, storage, Timestamp } from "../firebaseAdmin";
 import { updateStreak } from "../status";
-import { PostWithGoalId } from "../types";
+import { getHttpRequestData, getRequestData } from "../requestLog";
+import {
+  AuthenticatedLocals,
+  getAuthenticatedUser,
+  requireFirebaseAuth,
+} from "../middleware/security";
+import { authenticatedWriteRateLimit } from "../middleware/writeRateLimit";
+import {
+  documentIdSchema,
+  parseInput,
+  postUpdateSchema,
+} from "../validation";
 
 const router = express.Router();
-const db = admin.firestore();
+const requireWriter = requireFirebaseAuth();
 
-// GET: 全ての投稿を取得
 router.get("/", async (req: Request, res: Response) => {
   try {
     logger.info({
       httpRequest: getHttpRequestData(req),
       requestLog: getRequestData(req),
     });
-    const goalSnapshot = await db.collection("goal").get();
-
-    if (goalSnapshot.empty) {
+    const snapshot = await db.collection("goal").get();
+    if (snapshot.empty) {
       return res.status(404).json({ message: "No goals found" });
     }
-
-    const postData: PostWithGoalId[] = [];
-
-    for (const goalDoc of goalSnapshot.docs) {
-      const goalData = goalDoc.data();
-      if (goalData.post) {
-        postData.push({
-          goalId: goalDoc.id,
-          userId: goalData.userId,
-          text: goalData.post.text,
-          storedId: goalData.post.storedId,
-          submittedAt: goalData.post.submittedAt.toDate(),
-        });
-      }
-    }
-
-    if (postData.length === 0) {
+    const posts = snapshot.docs.flatMap((doc) => {
+      const data = doc.data();
+      if (!data.post) return [];
+      return [
+        {
+          goalId: doc.id,
+          userId: data.userId,
+          text: data.post.text,
+          storedId: data.post.storedId,
+          submittedAt: data.post.submittedAt.toDate(),
+        },
+      ];
+    });
+    if (posts.length === 0) {
       return res.status(404).json({ message: "No posts found" });
     }
-
-    return res.json(postData);
+    return res.json(posts);
   } catch (error) {
-    logger.error({
-      error,
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
-    });
+    logger.error({ error, httpRequest: getHttpRequestData(req) });
     return res.status(500).json({ message: "Error fetching posts" });
   }
 });
 
-// GET: userIdから投稿を取得
 router.get("/:userId", async (req: Request, res: Response) => {
+  const userId = parseInput(documentIdSchema, req.params.userId, res);
+  if (!userId) return;
   try {
-    const userId = req.params.userId;
-    logger.info({
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
-    });
-
-    const goalSnapshot = await db
+    const snapshot = await db
       .collection("goal")
       .where("userId", "==", userId)
       .get();
-
-    if (goalSnapshot.empty) {
-      return res.status(404).json({ message: "No goals found for this user" });
-    }
-
-    const postData: PostWithGoalId[] = [];
-
-    for (const goalDoc of goalSnapshot.docs) {
-      const goalData = goalDoc.data();
-      if (goalData.post) {
-        postData.push({
-          goalId: goalDoc.id,
-          userId: goalData.userId,
-          text: goalData.post.text,
-          storedId: goalData.post.storedId,
-          submittedAt: goalData.post.submittedAt.toDate(),
-        });
-      }
-    }
-
-    return res.json(postData);
-  } catch (error) {
-    logger.error({
-      error,
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
+    const posts = snapshot.docs.flatMap((doc) => {
+      const data = doc.data();
+      if (!data.post) return [];
+      return [
+        {
+          goalId: doc.id,
+          userId: data.userId,
+          text: data.post.text,
+          storedId: data.post.storedId,
+          submittedAt: data.post.submittedAt.toDate(),
+        },
+      ];
     });
+    return res.json(posts);
+  } catch (error) {
+    logger.error({ error, httpRequest: getHttpRequestData(req) });
     return res.status(500).json({ message: "Error fetching user's posts" });
   }
 });
 
-// POST: 投稿を作成・更新
-router.post("/", async (req: Request, res: Response) => {
-  let goalId: PostWithGoalId["goalId"];
-  let text: PostWithGoalId["text"];
-  let storedId: PostWithGoalId["storedId"];
-  let submittedAt: PostWithGoalId["submittedAt"];
+router.post(
+  "/",
+  requireWriter,
+  authenticatedWriteRateLimit,
+  async (req: Request, res: Response<unknown, AuthenticatedLocals>) => {
+    const input = parseInput(postUpdateSchema, req.body, res);
+    if (!input) return;
+    const { uid } = getAuthenticatedUser(res);
+    const goalRef = db.collection("goal").doc(input.goalId);
 
-  try {
-    ({ goalId, text = "", storedId, submittedAt } = req.body);
-    logger.info({
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
-    });
-  } catch (error) {
-    logger.error({
-      error,
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
-    });
-    return res.status(400).json({ message: "Invalid request body" });
-  }
-
-  if (!goalId || !storedId || !submittedAt) {
-    return res.status(400).json({
-      message: "userId, storedId, goalId, and submittedAt are required",
-    });
-  }
-
-  try {
-    const goalRef = db.collection("goal").doc(goalId);
-    const goalDoc = await goalRef.get();
-
-    if (!goalDoc.exists) {
-      return res.status(404).json({ message: "Goal not found" });
-    }
-
-    // streakを更新
-    const goalData = goalDoc.data();
-    if (goalData?.userId) {
-      await updateStreak(goalData.userId);
-    }
-
-    await goalRef.update({
-      post: {
-        text,
-        storedId,
-        submittedAt: new Date(submittedAt),
-      },
-    });
-
-    logger.info({
-      message: "Post updated successfully",
-      goalId,
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
-    });
-    return res
-      .status(201)
-      .json({ message: "Post updated successfully", goalId });
-  } catch (error) {
-    logger.error({
-      error,
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
-    });
-    return res.status(500).json({ message: "Error creating post" });
-  }
-});
-
-// DELETE: 投稿を削除
-router.delete("/:goalId", async (req: Request, res: Response) => {
-  try {
-    const goalId = req.params.goalId;
-    logger.info({
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
-    });
-
-    if (!goalId) {
-      return res.status(400).json({ message: "goalId is required" });
-    }
-
-    const goalRef = db.collection("goal").doc(goalId);
-    const goalDoc = await goalRef.get();
-
-    if (!goalDoc.exists) {
-      return res.status(404).json({ message: "Goal not found" });
-    }
-
-    // Storageから画像を削除
-    const storedId = goalDoc.data()?.post?.storedId;
-    if (storedId) {
-      try {
-        const bucket = admin.storage().bucket();
-        const file = bucket.file(`post/${storedId}`);
-        await file.delete();
-        logger.info("Image deleted successfully:", storedId);
-      } catch (error) {
-        logger.error({
-          error: `Error deleting image: ${error}`,
-          httpRequest: getHttpRequestData(req),
-          requestLog: getRequestData(req),
-        });
-        return res.status(500).json({ message: "Error deleting image" });
+    try {
+      const goalDoc = await goalRef.get();
+      if (!goalDoc.exists) {
+        return res.status(404).json({ message: "Goal not found" });
       }
+      const goalData = goalDoc.data();
+      if (goalData?.userId !== uid) {
+        return res
+          .status(403)
+          .json({ message: "Cannot update another user's post" });
+      }
+
+      const existingStoredId = goalData?.post?.storedId as string | undefined;
+      if (
+        input.storedId !== existingStoredId &&
+        !input.storedId.startsWith(`${uid}/`)
+      ) {
+        return res.status(400).json({ message: "Invalid storage object owner" });
+      }
+
+      const isFirstPost = !goalData?.post;
+      await goalRef.update({
+        post: {
+          text: input.text,
+          storedId: input.storedId,
+          submittedAt:
+            goalData?.post?.submittedAt || Timestamp.now(),
+        },
+      });
+      if (isFirstPost) {
+        await updateStreak(uid);
+      }
+      return res
+        .status(201)
+        .json({ message: "Post updated successfully", goalId: input.goalId });
+    } catch (error) {
+      logger.error({ error, httpRequest: getHttpRequestData(req) });
+      return res.status(500).json({ message: "Error creating post" });
     }
-
-    await goalRef.update({
-      post: null,
-    });
-
-    logger.info({
-      message: "Post deleted successfully",
-      goalId,
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
-    });
-    return res.json({ message: "Post deleted successfully", goalId });
-  } catch (error) {
-    logger.error({
-      error,
-      httpRequest: getHttpRequestData(req),
-      requestLog: getRequestData(req),
-    });
-    return res.status(500).json({ message: "Error deleting post" });
   }
-});
+);
+
+router.delete(
+  "/:goalId",
+  requireWriter,
+  authenticatedWriteRateLimit,
+  async (req: Request, res: Response<unknown, AuthenticatedLocals>) => {
+    const goalId = parseInput(documentIdSchema, req.params.goalId, res);
+    if (!goalId) return;
+    const { uid } = getAuthenticatedUser(res);
+    const goalRef = db.collection("goal").doc(goalId);
+
+    try {
+      const goalDoc = await goalRef.get();
+      if (!goalDoc.exists) {
+        return res.status(404).json({ message: "Goal not found" });
+      }
+      const goalData = goalDoc.data();
+      if (goalData?.userId !== uid) {
+        return res
+          .status(403)
+          .json({ message: "Cannot delete another user's post" });
+      }
+      const storedId = goalData?.post?.storedId;
+      if (storedId) {
+        await storage
+          .bucket()
+          .file(`post/${storedId}`)
+          .delete({ ignoreNotFound: true });
+      }
+      await goalRef.update({ post: null });
+      return res.json({ message: "Post deleted successfully", goalId });
+    } catch (error) {
+      logger.error({ error, httpRequest: getHttpRequestData(req) });
+      return res.status(500).json({ message: "Error deleting post" });
+    }
+  }
+);
 
 export default router;

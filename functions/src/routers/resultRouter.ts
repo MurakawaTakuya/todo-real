@@ -20,52 +20,68 @@ const getResults = async (
   onlyPending = false,
   onlyFinished = false
 ) => {
-  let baseQuery = db.collection("goal").limit(limit).offset(offset);
-  let failedBaseQuery = db.collection("goal").limit(100);
-
   if (userId) {
     if (!(await getUserFromId(userId)).exists) {
       throw new UserNotFoundError();
     }
-    baseQuery = baseQuery.where("userId", "==", userId);
-    failedBaseQuery = failedBaseQuery.where("userId", "==", userId);
   }
 
-  const now = Timestamp.now();
+  const snapshot = userId
+    ? await db.collection("goal").where("userId", "==", userId).get()
+    : await db.collection("goal").get();
+  const docs = snapshot.docs;
+  const now = Timestamp.now().toMillis();
   const pendingResults: GoalWithIdAndUserData[] = [];
   const successResults: GoalWithIdAndUserData[] = [];
   const failedResults: GoalWithIdAndUserData[] = [];
   const userList = new Map<string, User>();
 
   if (onlyPending || (!onlyPending && !onlyFinished)) {
-    const pendingSnapshot = await baseQuery
-      .where("post", "==", null)
-      .where("deadline", ">", now)
-      .orderBy("deadline", "asc")
-      .get();
-    pendingResults.push(...(await processGoals(pendingSnapshot.docs, userList)));
+    const pendingDocs = docs
+      .filter(
+        (doc) =>
+          doc.data().post === null && doc.data().deadline.toMillis() > now
+      )
+      .sort(
+        (left, right) =>
+          left.data().deadline.toMillis() - right.data().deadline.toMillis()
+      )
+      .slice(offset, offset + limit);
+    pendingResults.push(...(await processGoals(pendingDocs, userList)));
   }
 
   if (onlyFinished || (!onlyPending && !onlyFinished)) {
-    const completedSnapshot = await baseQuery
-      .where("post", "!=", null)
-      .orderBy("post.submittedAt", "desc")
-      .get();
-    const earliestSubmittedAt = completedSnapshot.docs
-      .map((doc) => doc.data().post.submittedAt)
-      .sort((a, b) => a.toMillis() - b.toMillis())[0];
+    const completedDocs = docs
+      .filter((doc) => doc.data().post !== null)
+      .sort(
+        (left, right) =>
+          right.data().post.submittedAt.toMillis() -
+          left.data().post.submittedAt.toMillis()
+      )
+      .slice(offset, offset + limit);
+    const earliestSubmittedAt = completedDocs
+      .map((doc) => doc.data().post.submittedAt.toMillis())
+      .sort((left, right) => left - right)[0];
 
     if (earliestSubmittedAt) {
-      const failedSnapshot = await failedBaseQuery
-        .where("post", "==", null)
-        .where("deadline", "<=", now)
-        .where("deadline", ">", earliestSubmittedAt)
-        .orderBy("deadline", "desc")
-        .get();
-      successResults.push(
-        ...(await processGoals(completedSnapshot.docs, userList))
-      );
-      failedResults.push(...(await processGoals(failedSnapshot.docs, userList)));
+      const failedDocs = docs
+        .filter((doc) => {
+          const data = doc.data();
+          const deadline = data.deadline.toMillis();
+          return (
+            data.post === null &&
+            deadline <= now &&
+            deadline > earliestSubmittedAt
+          );
+        })
+        .sort(
+          (left, right) =>
+            right.data().deadline.toMillis() -
+            left.data().deadline.toMillis()
+        )
+        .slice(0, 100);
+      successResults.push(...(await processGoals(completedDocs, userList)));
+      failedResults.push(...(await processGoals(failedDocs, userList)));
     }
   }
 

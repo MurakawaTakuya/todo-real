@@ -8,14 +8,11 @@ export const countCompletedGoals = async (userId: string): Promise<number> => {
   }
 
   try {
-    const countSnapshot = await db
+    const snapshot = await db
       .collection("goal")
       .where("userId", "==", userId)
-      .where("post", "!=", null)
-      .count()
       .get();
-
-    return countSnapshot.data().count;
+    return snapshot.docs.filter((doc) => doc.data().post !== null).length;
   } catch (error) {
     logger.error("Error counting completed goals:", error);
     return 0;
@@ -29,17 +26,15 @@ export const countFailedGoals = async (userId: string): Promise<number> => {
   }
 
   try {
-    const now = Timestamp.now();
-
-    const countSnapshot = await db
+    const now = Timestamp.now().toMillis();
+    const snapshot = await db
       .collection("goal")
       .where("userId", "==", userId)
-      .where("deadline", "<", now)
-      .where("post", "==", null)
-      .count()
       .get();
-
-    return countSnapshot.data().count;
+    return snapshot.docs.filter((doc) => {
+      const data = doc.data();
+      return data.post === null && data.deadline.toMillis() < now;
+    }).length;
   } catch (error) {
     logger.error("Error counting expired goals with null post:", error);
     return 0;
@@ -57,19 +52,18 @@ export const hasCompletedGoalWithinRange = async (
   }
 
   try {
-    const startTimestamp = Timestamp.fromDate(startDate);
-    const endTimestamp = Timestamp.fromDate(endDate);
-
     const snapshot = await db
       .collection("goal")
       .where("userId", "==", userId)
-      .where("post", "!=", null)
-      .where("post.submittedAt", ">=", startTimestamp)
-      .where("post.submittedAt", "<", endTimestamp)
-      .limit(1) // データが1件でもあればOK
       .get();
-
-    return !snapshot.empty;
+    const start = startDate.getTime();
+    const end = endDate.getTime();
+    return snapshot.docs.some((doc) => {
+      const post = doc.data().post;
+      if (!post?.submittedAt) return false;
+      const submittedAt = post.submittedAt.toMillis();
+      return submittedAt >= start && submittedAt < end;
+    });
   } catch (error) {
     logger.error("Error checking goals within range:", error);
     return false;
